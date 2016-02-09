@@ -1,4 +1,12 @@
 
+plotEvaluation <- function(x) {
+  res <- extractEvalCurve(x)
+  s <- seq(x$propmin, x$propmax, length.out = 100)
+  x.lab <- paste0(x$propname, ' (', x$propuom, ')')
+  plot(s, res(s), type='l', xlab=x.lab, cex.lab=0.85, ylab='fuzzy rating', main=x$evalname, sub=x$evaluationtype, cex.sub=0.85, las=1)
+}
+
+
 getAndCacheData <- function() {
   # init connection
   channel <- odbcDriverConnect(connection = "DSN=nasis_local;UID=NasisSqlRO;PWD=nasisRe@d0n1y")
@@ -15,7 +23,7 @@ FROM evaluation_View_0
 LEFT OUTER JOIN (SELECT * FROM MetadataDomainDetail WHERE DomainID = 4884) AS et ON evaluationtype = et.ChoiceValue", stringsAsFactors=FALSE)
   
   # get all properties
-  properties <- sqlQuery(channel, "SELECT propiid, propuom, propmin, propmax, propdefval FROM property_View_0", stringsAsFactors=FALSE)
+  properties <- sqlQuery(channel, "SELECT propiid, propuom, propmin, propmax, propdefval, propname FROM property_View_0", stringsAsFactors=FALSE)
   
   ## CHECK THIS
   # there is onle 1 property / evaluation, so join them

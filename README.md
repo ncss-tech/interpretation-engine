@@ -24,6 +24,7 @@ The [data.tree](https://cran.r-project.org/web/packages/data.tree/vignettes/data
 3. link properties or insert new data
 4. apply logical / arith. operators to nodes
 5. **are the parsed rule trees correct?**
+6. how can we get required properties from SDA?
 
 
 

@@ -16,10 +16,6 @@ library(plyr)
 library(data.tree)
 library(digest)
 
-
-## TODO: finish evaluation parsing functions
-
-
 # source local functions
 source('local-functions.R')
 
@@ -28,76 +24,82 @@ source('local-functions.R')
 
 # load cached data
 load('cached-NASIS-data.Rda')
-
-###
-### evaluation curves
-###
-
-## TODO: someimes the property min/max values are crazy
-
-## arbitrary curve: example: Storie Index C factor 
-e <- evals[evals$evalname == '*Storie Factor C Slope 0 to 100%', ]
-res <- extractEvalCurve(e)
-s <- seq(e$propmin, e$propmax, length.out = 100)
-plot(s, res(s), type='l', xlab='domain', ylab='fuzzy rating', main=e$evaluationtype)
 ```
 
-<img src="nasis-interp-guts_files/figure-html/unnamed-chunk-1-1.png" title="" alt="" width="100%" style="display: block; margin: auto;" />
+
+## Evaluation Curves
+Someimes the property min/max values are crazy.
+
+```r
+## arbitrary curve: example: Storie Index C factor 
+e <- evals[evals$evalname == '*Storie Factor C Slope 0 to 100%', ]
+plotEvaluation(e)
+```
+
+<img src="nasis-interp-guts_files/figure-html/unnamed-chunk-2-1.png" title="" alt="" width="576" style="display: block; margin: auto;" />
+
+```r
+# get a function to describe the evaluation
+s <- seq(0, 100, length.out = 10)
+f <- extractEvalCurve(e)
+cbind(domain=s, fuzzy.rating=f(s))
+```
+
+    domain   fuzzy.rating
+----------  -------------
+   0.00000      1.0000000
+  11.11111      0.8777778
+  22.22222      0.7777778
+  33.33333      0.6555556
+  44.44444      0.5074074
+  55.55556      0.4296296
+  66.66667      0.3555556
+  77.77778      0.2944444
+  88.88889      0.2722222
+ 100.00000      0.2500000
 
 ```r
 ## sigmoid:
 e <- evals[evals$evalname == 'SAR, <.5, 0-100cm (0 to 40")', ]
-res <- extractEvalCurve(e)
-s <- seq(e$propmin, e$propmax, length.out = 25)
-plot(s, res(s), type='l', xlab='domain', ylab='fuzzy rating', main=e$evaluationtype)
+plotEvaluation(e)
 ```
 
-<img src="nasis-interp-guts_files/figure-html/unnamed-chunk-1-2.png" title="" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="nasis-interp-guts_files/figure-html/unnamed-chunk-2-2.png" title="" alt="" width="576" style="display: block; margin: auto;" />
 
 ```r
 ## arbitrary linear
 e <- evals[evals$evalname == 'GRL - EC maximum in depth 25 to 50 cm (NV)', ]
-res <- extractEvalCurve(e)
-s <- seq(e$propmin, e$propmax, length.out = 25)
-plot(s, res(s), type='l', xlab='domain', ylab='fuzzy rating', main=e$evaluationtype)
+plotEvaluation(e)
 ```
 
-<img src="nasis-interp-guts_files/figure-html/unnamed-chunk-1-3.png" title="" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="nasis-interp-guts_files/figure-html/unnamed-chunk-2-3.png" title="" alt="" width="576" style="display: block; margin: auto;" />
 
 ```r
 ## crisp:
 e <- evals[evals$evalname == 'Soil pH (water) >= 4.5 and <= 8.4, 0-100cm', ]
-res <- extractEvalCurve(e)
-s <- seq(e$propmin, e$propmax, length.out = 25)
-plot(s, res(s), type='l', xlab='domain', ylab='fuzzy rating', main=e$evaluationtype)
+plotEvaluation(e)
 ```
 
-<img src="nasis-interp-guts_files/figure-html/unnamed-chunk-1-4.png" title="" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="nasis-interp-guts_files/figure-html/unnamed-chunk-2-4.png" title="" alt="" width="576" style="display: block; margin: auto;" />
 
 ```r
 e <- evals[evals$evalname == 'Available Water Capacity <10cm', ]
-res <- extractEvalCurve(e)
-s <- seq(e$propmin, e$propmax, length.out = 25)
-plot(s, res(s), type='l', xlab='domain', ylab='fuzzy rating', main=e$evaluationtype)
+plotEvaluation(e)
 ```
 
-<img src="nasis-interp-guts_files/figure-html/unnamed-chunk-1-5.png" title="" alt="" width="100%" style="display: block; margin: auto;" />
+<img src="nasis-interp-guts_files/figure-html/unnamed-chunk-2-5.png" title="" alt="" width="576" style="display: block; margin: auto;" />
+
+
+
+## Rule Trees
+* check a couple, RefId points to rows in rules or evaluation tables
+* the dt$Do call links child sub-rules
+* recursion is used to traverse to the deepest nodes, seems to work
+* **caution:** don't run several times on the same object!
+* increase limit argument to see the entire tree
+
 
 ```r
-###
-### Rules
-###
-
-
-# check a couple, RefId points to rows in rules or evaluation tables
-# the dt$Do call links child sub-rules
-# recursion is used to traverse to the deepest nodes, seems to work
-# caution: don't run several times on the same object!
-
-# increase limit argument to see the entire tree
-
-
-## example
 # just some random rule
 y <- rules[rules$rulename == 'Dust PM10 and PM2.5 Generation', ]
 dt <- parseRule(y)
@@ -139,8 +141,9 @@ print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limi
 ## 11                      °--Dust from Silt and Clay Content 20 to 70 Percent Sand                      18447                 18447   Linear
 ```
 
+### More Examples
+
 ```r
-## more examples
 y <- rules[rules$rulename == 'AGR - California Revised Storie Index (CA)', ]
 dt <- parseRule(y)
 dt$Do(traversal='pre-order', fun=linkSubRules)

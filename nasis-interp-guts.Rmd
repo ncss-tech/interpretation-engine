@@ -12,7 +12,7 @@ output:
 ```{r setup, echo=FALSE, results='hide', warning=FALSE}
 library(knitr, quietly = TRUE)
 library(printr, quietly = TRUE)
-opts_chunk$set(message=FALSE, warning=FALSE, out.width="100%", fig.retina = 1, fig.align='center', dev='png', dev.args=list(pointsize=10, antialias='cleartype'), tidy=FALSE)
+opts_chunk$set(message=FALSE, warning=FALSE, fig.retina = 2, fig.align='center', dev='png', dev.args=list(pointsize=10, antialias='cleartype'), tidy=FALSE)
 options(width=300, stringsAsFactors=FALSE)
 
 knit_hooks$set(htmlcap = function(before, options, envir) {
@@ -26,17 +26,13 @@ knit_hooks$set(htmlcap = function(before, options, envir) {
 Extracting NASIS Rules/Evaluations
 ========================================
 
-```{r}
+```{r, fig.width=6, fig.height=4}
 library(soilDB)
 library(RODBC)
 library(XML)
 library(plyr)
 library(data.tree)
 library(digest)
-
-
-## TODO: finish evaluation parsing functions
-
 
 # source local functions
 source('local-functions.R')
@@ -46,58 +42,47 @@ source('local-functions.R')
 
 # load cached data
 load('cached-NASIS-data.Rda')
+```
 
-###
-### evaluation curves
-###
 
-## TODO: someimes the property min/max values are crazy
-
+## Evaluation Curves
+Someimes the property min/max values are crazy.
+```{r, fig.width=6, fig.height=4}
 ## arbitrary curve: example: Storie Index C factor 
 e <- evals[evals$evalname == '*Storie Factor C Slope 0 to 100%', ]
-res <- extractEvalCurve(e)
-s <- seq(e$propmin, e$propmax, length.out = 100)
-plot(s, res(s), type='l', xlab='domain', ylab='fuzzy rating', main=e$evaluationtype)
+plotEvaluation(e)
+
+# get a function to describe the evaluation
+s <- seq(0, 100, length.out = 10)
+f <- extractEvalCurve(e)
+cbind(domain=s, fuzzy.rating=f(s))
 
 ## sigmoid:
 e <- evals[evals$evalname == 'SAR, <.5, 0-100cm (0 to 40")', ]
-res <- extractEvalCurve(e)
-s <- seq(e$propmin, e$propmax, length.out = 25)
-plot(s, res(s), type='l', xlab='domain', ylab='fuzzy rating', main=e$evaluationtype)
+plotEvaluation(e)
 
 ## arbitrary linear
 e <- evals[evals$evalname == 'GRL - EC maximum in depth 25 to 50 cm (NV)', ]
-res <- extractEvalCurve(e)
-s <- seq(e$propmin, e$propmax, length.out = 25)
-plot(s, res(s), type='l', xlab='domain', ylab='fuzzy rating', main=e$evaluationtype)
+plotEvaluation(e)
 
 ## crisp:
 e <- evals[evals$evalname == 'Soil pH (water) >= 4.5 and <= 8.4, 0-100cm', ]
-res <- extractEvalCurve(e)
-s <- seq(e$propmin, e$propmax, length.out = 25)
-plot(s, res(s), type='l', xlab='domain', ylab='fuzzy rating', main=e$evaluationtype)
+plotEvaluation(e)
 
 e <- evals[evals$evalname == 'Available Water Capacity <10cm', ]
-res <- extractEvalCurve(e)
-s <- seq(e$propmin, e$propmax, length.out = 25)
-plot(s, res(s), type='l', xlab='domain', ylab='fuzzy rating', main=e$evaluationtype)
+plotEvaluation(e)
+```
 
 
 
-###
-### Rules
-###
+## Rule Trees
+* check a couple, RefId points to rows in rules or evaluation tables
+* the dt$Do call links child sub-rules
+* recursion is used to traverse to the deepest nodes, seems to work
+* **caution:** don't run several times on the same object!
+* increase limit argument to see the entire tree
 
-
-# check a couple, RefId points to rows in rules or evaluation tables
-# the dt$Do call links child sub-rules
-# recursion is used to traverse to the deepest nodes, seems to work
-# caution: don't run several times on the same object!
-
-# increase limit argument to see the entire tree
-
-
-## example
+```{r, fig.width=6, fig.height=4}
 # just some random rule
 y <- rules[rules$rulename == 'Dust PM10 and PM2.5 Generation', ]
 dt <- parseRule(y)
@@ -108,9 +93,10 @@ dt$Do(traversal='pre-order', fun=linkSubRules)
 # splice-in evaluation functions, if possible
 dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
 print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limit=25)
+```
 
-
-## more examples
+### More Examples
+```{r, fig.width=6, fig.height=4}
 y <- rules[rules$rulename == 'AGR - California Revised Storie Index (CA)', ]
 dt <- parseRule(y)
 dt$Do(traversal='pre-order', fun=linkSubRules)
