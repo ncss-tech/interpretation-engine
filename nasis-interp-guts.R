@@ -86,13 +86,8 @@ plot(0:60, res(0:60), type='l', xlab='domain', ylab='fuzzy rating', main='Crisp 
 
 ## iterate over tree and splice-in via Do()
 # next: splice sub-rules into data.tree object
-
-# manual splice:
 y <- rules[rules$rulename == 'DHS - Catastrophic Mortality, Large Animal Disposal, Pit', ]
 dt <- parseRule(y)
-print(dt, 'Type', 'Value', 'RefId')
-
-dt$RuleOperator$RuleRule_1$AddChildNode(parseRule(rules[rules$ruleiid == '204', ]))
 print(dt, 'Type', 'Value', 'RefId')
 
 # works!
@@ -105,5 +100,12 @@ dt$Do(function(node) {
     return(node)
   }
 })
+
+
+### ... almost correct
+print(dt, 'Type', 'Value', 'RefId')
+
+# more ideas 
+# https://cran.r-project.org/web/packages/data.tree/vignettes/applications.html
 
 
