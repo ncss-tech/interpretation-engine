@@ -1,4 +1,23 @@
 
+getAndCacheData <- function() {
+  # init connection
+  channel <- odbcDriverConnect(connection = "DSN=nasis_local;UID=NasisSqlRO;PWD=nasisRe@d0n1y")
+  
+  # get rules, note that "rule" is a reserved word, use [] to protect
+  # load ALL rules, even those not ready for use
+  rules <- sqlQuery(channel, "SELECT rulename, rd.ChoiceName as ruledesign, primaryinterp, notratedphrase, ruledbiidref, ruleiid, [rule]
+FROM rule_View_0 
+LEFT OUTER JOIN (SELECT * FROM MetadataDomainDetail WHERE DomainID = 2822) AS rd ON ruledesign = rd.ChoiceValue", stringsAsFactors=FALSE)
+  
+  # get all evaluation curves
+  evals <- sqlQuery(channel, "SELECT evaliid, evalname, evaldesc, eval, et.ChoiceName as evaluationtype, invertevaluationresults
+FROM evaluation_View_0 
+LEFT OUTER JOIN (SELECT * FROM MetadataDomainDetail WHERE DomainID = 4884) AS et ON evaluationtype = et.ChoiceValue", stringsAsFactors=FALSE)
+  
+  # save tables for offline testing
+  save(rules, evals, file='cached-NASIS-data.Rda')
+}
+
 
 # parse evaluation chunk XML and return as list
 xmlChunkParse <- function(x) {
@@ -8,6 +27,40 @@ xmlChunkParse <- function(x) {
   x.doc <- xmlParse(x)
   l <- xmlToList(x.doc)
   return(l)
+}
+
+# dispatch specialized functions based on eval type
+# x: evalulation record
+# res: number of intermediate points
+extractEvalCurve <- function(x, res=25) {
+  et <- x$evaluationtype
+  # various types
+  if(et %in% c('ArbitraryCurve','ArbitraryLinear')) {
+    res <- extractArbitraryCurveEval(x$eval)
+    return(res)
+  }
+    
+  if(et == 'Sigmoid') {
+    res <- extractSigmoidCurveEval(x$eval, res)
+    return(res)
+  }
+    
+  if(et == 'Crisp') {
+    res <- extractCrispCurveEval(x$eval, res)
+    return(res)
+  }
+    
+  
+  ## ... there are many others
+#   Linear
+#   Trapezoid
+#   Beta
+#   IsNull
+#   Gauss
+#   Triangle
+#   PI
+  warning("curve type not yet supported", call. = FALSE)
+  return(NULL)
 }
 
 # x: evalulation curve XML text
@@ -24,7 +77,7 @@ extractArbitraryCurveEval <- function(x) {
 
 # x: evalulation curve XML text
 # res: number of intermediate points
-extractSigmoidCurveEval <- function(x, res=25) {
+extractSigmoidCurveEval <- function(x, res) {
   l <- xmlChunkParse(x)
   # get the lower and upper asymptotes
   dp <- as.numeric(as.vector(unlist(l$DomainPoints)))
@@ -47,7 +100,7 @@ extractSigmoidCurveEval <- function(x, res=25) {
 ## TODO: parsing expression must be generalized
 # x: evalulation curve XML text
 # res: number of intermediate points
-extractCrispCurveEval <- function(x, res=25) {
+extractCrispCurveEval <- function(x, res) {
   l <- xmlChunkParse(x)
   # get expression
   crisp.expression <- l$CrispExpression
@@ -73,8 +126,8 @@ extractCrispCurveEval <- function(x, res=25) {
   return(af)
 }
 
-# seems to work
-fixNodeNames <- function(l) {
+# serial number added to names
+makeNamesUnique <- function(l) {
   l.names <- names(l$Children)
   # multiple children types
   tab <- table(l.names)
@@ -98,13 +151,93 @@ fixNodeNames <- function(l) {
         # print('branch')
         names(l$Children)[idx[this.element]] <- paste0(t.names[this.type], '_', this.element)
         # fix this branch and splice back into tree
-        l$Children[[idx[this.element]]] <- fixNodeNames(l.sub)
+        l$Children[[idx[this.element]]] <- makeNamesUnique(l.sub)
       }
     }
   }
 
   return(l)
 }
+
+# use hash function for unique names
+makeNamesUnique2 <- function(l) {
+  
+  # iterate over list elements
+  for(i in seq_along(l$Children)) {
+    # get curret name
+    i.name <- names(l$Children)[i]
+    # get the contents
+    i.contents <- l$Children[[i]]
+    # make a new name via digest
+    i.name.new <- paste0(i.name, '_', digest(i.contents, algo = 'xxhash32'))
+    
+    # if this is a terminal leaf then re-name and continue
+    if(is.null(i.contents$Children)) {
+      # print('leaf')
+      names(l$Children)[i] <- i.name.new
+    }
+    # otherwise re-name and then step into this element and apply this function recursively
+    else {
+      # print('branch')
+      names(l$Children)[i] <- i.name.new
+      # fix this branch and splice back into tree
+      l$Children[[i]] <- makeNamesUnique2(i.contents)
+    }
+  }
+    
+  return(l)
+}
+
+
+
+# lookup the actual rule name
+# split Rule ref Ids from Evaluation ref Ids
+makeNamesUnique3 <- function(l) {
+  
+  # iterate over list elements
+  for(i in seq_along(l$Children)) {
+    # get curret name
+    i.name <- names(l$Children)[i]
+    # get the contents
+    i.contents <- l$Children[[i]]
+    
+    # make new name from sub-rule
+    # note that ALL rules must be loaded
+    if(grepl('RuleRule', i.name)) {
+      # get sub-rule
+      i.rid <- i.contents[['RefId']]
+      sr <- rules[rules$ruleiid == i.rid, ]
+      i.name.new <- sr$rulename
+      # copy rule reference ID
+      l$Children[[i]]$rule_refid <- i.rid
+    }
+    if(grepl('RuleEvaluation', i.name)) {
+      # get evaluation
+      i.eid <- i.contents[['RefId']]
+      re <- evals[evals$evaliid == i.eid, ]
+      i.name.new <- re$evalname
+      # copy rule reference ID
+      l$Children[[i]]$eval_refid <- i.eid
+    }
+    # otherwise use digest
+    if(! grepl('RuleRule|RuleEvaluation', i.name))
+      i.name.new <- paste0(i.name, '_', digest(i.contents, algo = 'xxhash32'))
+    
+    # if this is a terminal leaf then re-name and continue
+    if(is.null(i.contents$Children)) {
+      names(l$Children)[i] <- i.name.new
+    }
+    # otherwise re-name and then step into this element and apply this function recursively
+    else {
+      names(l$Children)[i] <- i.name.new
+      # fix this branch and splice back into tree
+      l$Children[[i]] <- makeNamesUnique3(i.contents)
+    }
+  }
+  
+  return(l)
+}
+
 
 
 # attempt to convert interpretation rule into data.tree representation
@@ -114,7 +247,7 @@ parseRule <- function(x) {
   l <- xmlChunkParse(x$rule)
   
   # node names must be made unique before data.tree object/methods are useful
-  l$RuleStart$Children$RuleOperator <- fixNodeNames(l$RuleStart$Children$RuleOperator)
+  l$RuleStart <- makeNamesUnique3(l$RuleStart)
   
   # convert XML list into data.tree object
   n <- FromListExplicit(l$RuleStart, nameName=NULL, childrenName='Children')
@@ -122,25 +255,25 @@ parseRule <- function(x) {
   # copy interp name to top of tree
   n$name <- x$rulename
   
-  # ideas: https://cran.r-project.org/web/packages/data.tree/vignettes/data.tree.html#introduction
-  
-  # enumerate duplicate elements
-  # http://stackoverflow.com/questions/33460954/adding-numbers-to-each-node-in-data-tree
-  # n$Set(name = paste0(n$Get("name"), "_", 1:n$totalCount))
-  
-  
-  # asked here: http://stackoverflow.com/questions/35278342/recursively-assign-unique-names-to-nodes-in-a-data-tree-object
-  
-#   # single operator, get type
-#   n$RuleOperator$Type
-#   
-#   # rule hedges
-#   n$RuleHedge$Type
-#   n$RuleHedge$Value
-  
-  # sub-rules aren't uniquely named, so they must be iterated over numerically
-  # print(sapply(n$RuleOperator$Children, function(i) i$RefId))
-  
   return(n)
 }
 
+
+## TODO: this won't always link all subrules in a single pass... why?
+linkSubRules <- function(node) {
+  # if this is a sub-rule
+  if(!is.null(node$rule_refid)) {
+    # get sub-rule
+    sr <- rules[rules$ruleiid == node$rule_refid, ]
+    # get sub-rule as a Node
+    sr.node <- parseRule(sr)
+    # recursively look-up any sub rules
+    sr.node$Do(linkSubRules)
+    # splice-in sub rule
+    node$parent$AddChildNode(sr.node)
+  }
+}
+
+linkEvaluationFunctions <- function(node) {
+  ## TODO: how can we splice-in evaluation functions?
+}
