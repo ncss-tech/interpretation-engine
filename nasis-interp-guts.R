@@ -1,3 +1,29 @@
+---
+  output:
+  html_vignette:
+  mathjax: null
+jquery: null
+smart: no
+---
+  
+  ```{r setup, echo=FALSE, results='hide', warning=FALSE}
+library(knitr, quietly = TRUE)
+library(printr, quietly = TRUE)
+opts_chunk$set(message=FALSE, warning=FALSE, out.width="100%", fig.retina = 2, fig.align='center', dev='png', dev.args=list(pointsize=10, antialias='cleartype'), tidy=FALSE)
+options(width=100, stringsAsFactors=FALSE)
+
+knit_hooks$set(htmlcap = function(before, options, envir) {
+  if(!before) {
+    paste('<p class="caption" style="font-size:85%; font-style: italic; font-weight: bold;">',options$htmlcap,"</p><hr>",sep="")
+  }
+})
+```
+
+
+Component Interpretation Summary via SDA
+========================================
+
+```{r}
 library(soilDB)
 library(RODBC)
 library(XML)
@@ -22,25 +48,37 @@ load('cached-NASIS-data.Rda')
 ### evaluation curves
 ###
 
-## arbitrary curve: example: Storie Index C factor 
-idx <- grep('storie factor c', evals$evalname, ignore.case = TRUE)
-res <- extractEvalCurve(evals[idx, ])
-plot(0:200, res(0:200), type='l', xlab='domain', ylab='fuzzy rating', main=evals$evaluationtype[idx])
+## TODO: someimes the property min/max values are crazy
 
-## sigmoid: "SAR, <.5, 0-100cm (0 to 40")"
-idx <- grep('SAR, <.5, 0-100cm (0 to 40")', evals$evalname, fixed = TRUE)
-res <- extractEvalCurve(evals[idx, ])
-plot(0:13, res(0:13), type='l', xlab='domain', ylab='fuzzy rating', main=evals$evaluationtype[idx])
+## arbitrary curve: example: Storie Index C factor 
+e <- evals[evals$evalname == '*Storie Factor C Slope 0 to 100%', ]
+res <- extractEvalCurve(e)
+s <- seq(e$propmin, e$propmax, length.out = 100)
+plot(s, res(s), type='l', xlab='domain', ylab='fuzzy rating', main=e$evaluationtype)
+
+## sigmoid:
+e <- evals[evals$evalname == 'SAR, <.5, 0-100cm (0 to 40")', ]
+res <- extractEvalCurve(e)
+s <- seq(e$propmin, e$propmax, length.out = 25)
+plot(s, res(s), type='l', xlab='domain', ylab='fuzzy rating', main=e$evaluationtype)
 
 ## arbitrary linear
-idx <- grep("GRL - EC maximum in depth 25 to 50 cm (NV)", evals$evalname, fixed = TRUE)
-res <- extractEvalCurve(evals[idx, ])
-plot(0:25, res(0:25), type='l', xlab='domain', ylab='fuzzy rating', main=evals$evaluationtype[idx])
+e <- evals[evals$evalname == 'GRL - EC maximum in depth 25 to 50 cm (NV)', ]
+res <- extractEvalCurve(e)
+s <- seq(e$propmin, e$propmax, length.out = 25)
+plot(s, res(s), type='l', xlab='domain', ylab='fuzzy rating', main=e$evaluationtype)
 
-## crisp: "Soil pH (water) >= 4.5 and <= 8.4, 0-100cm"
-idx <- grep('Soil pH (water) >= 4.5 and <= 8.4, 0-100cm', evals$evalname, fixed = TRUE)
-res <- extractEvalCurve(evals[idx, ])
-plot(0:14, res(0:14), type='l', xlab='domain', ylab='fuzzy rating', main=evals$evaluationtype[idx])
+## crisp:
+e <- evals[evals$evalname == 'Soil pH (water) >= 4.5 and <= 8.4, 0-100cm', ]
+res <- extractEvalCurve(e)
+s <- seq(e$propmin, e$propmax, length.out = 25)
+plot(s, res(s), type='l', xlab='domain', ylab='fuzzy rating', main=e$evaluationtype)
+
+e <- evals[evals$evalname == 'Available Water Capacity <10cm', ]
+res <- extractEvalCurve(e)
+s <- seq(e$propmin, e$propmax, length.out = 25)
+plot(s, res(s), type='l', xlab='domain', ylab='fuzzy rating', main=e$evaluationtype)
+
 
 
 ###
@@ -72,7 +110,16 @@ y <- rules[rules$rulename == 'AGR - California Revised Storie Index (CA)', ]
 dt <- parseRule(y)
 dt$Do(traversal='pre-order', fun=linkSubRules)
 dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
+print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limit=500)
+
+
+y <- rules[rules$rulename == 'Commodity Crop Productivity Index (Corn) (WI)', ]
+dt <- parseRule(y)
+dt$Do(traversal='pre-order', fun=linkSubRules)
+dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
 print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType')
+
+
 
 y <- rules[rules$rulename == 'DHS - Catastrophic Mortality, Large Animal Disposal, Pit', ]
 dt <- parseRule(y)
@@ -91,3 +138,4 @@ print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType')
 
 # check total number of nodes within data.tree object
 dt$totalCount
+```

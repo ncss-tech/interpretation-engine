@@ -10,9 +10,16 @@ FROM rule_View_0
 LEFT OUTER JOIN (SELECT * FROM MetadataDomainDetail WHERE DomainID = 2822) AS rd ON ruledesign = rd.ChoiceValue", stringsAsFactors=FALSE)
   
   # get all evaluation curves
-  evals <- sqlQuery(channel, "SELECT evaliid, evalname, evaldesc, eval, et.ChoiceName as evaluationtype, invertevaluationresults
+  evals <- sqlQuery(channel, "SELECT evaliid, evalname, evaldesc, eval, et.ChoiceName as evaluationtype, invertevaluationresults, propiidref AS propiid
 FROM evaluation_View_0 
 LEFT OUTER JOIN (SELECT * FROM MetadataDomainDetail WHERE DomainID = 4884) AS et ON evaluationtype = et.ChoiceValue", stringsAsFactors=FALSE)
+  
+  # get all properties
+  properties <- sqlQuery(channel, "SELECT propiid, propuom, propmin, propmax, propdefval FROM property_View_0", stringsAsFactors=FALSE)
+  
+  ## CHECK THIS
+  # there is onle 1 property / evaluation, so join them
+  evals <- join(evals, properties, by='propiid')
   
   # save tables for offline testing
   save(rules, evals, file='cached-NASIS-data.Rda')
@@ -37,6 +44,11 @@ extractEvalCurve <- function(x, res=25) {
   et <- x$evaluationtype
   invert.eval <- x$invertevaluationresults
   
+  ## TODO: what do we do with these?
+  # use the defined min / max values
+  domain.min <- x$propmin
+  domain.max <- x$propmax
+  
   # various types
   if(et %in% c('ArbitraryCurve','ArbitraryLinear')) {
     res <- extractArbitraryCurveEval(x$eval, invert=invert.eval)
@@ -49,7 +61,7 @@ extractEvalCurve <- function(x, res=25) {
   }
     
   if(et == 'Crisp') {
-    res <- extractCrispCurveEval(x$eval, invert=invert.eval, res)
+    res <- extractCrispCurveEval(x$eval, invert=invert.eval, res, dmin=domain.min, dmax=domain.max)
     return(res)
   }
     
@@ -114,7 +126,7 @@ extractSigmoidCurveEval <- function(x, invert, res) {
 ## TODO: this doesn't work with expressions like this "!= \"oxisols\" or \"gelisols\""
 # x: evalulation curve XML text
 # res: number of intermediate points
-extractCrispCurveEval <- function(x, invert, res) {
+extractCrispCurveEval <- function(x, invert, res, dmin, dmax) {
   l <- xmlChunkParse(x)
   # get expression
   crisp.expression <- l$CrispExpression
@@ -126,12 +138,9 @@ extractCrispCurveEval <- function(x, invert, res) {
   crisp.expression <- gsub('and', '& domain', crisp.expression)
   crisp.expression <- gsub('or', '| domain', crisp.expression)
   
-  # generate domain range
-  domain.range <- range(na.omit(as.numeric(unlist(strsplit(crisp.expression, "[^0-9.]+")))), na.rm = TRUE)
-  
-  # extend domain by some fuzz.. ?
-  fuzz <- mean(domain.range, na.omit=TRUE) / 2
-  domain <- seq(from=domain.range[1] - fuzz, to=domain.range[2] + fuzz, length.out = res)
+  ## TODO: check for valid min/max
+  # generate domain range using supplied range
+  domain <- seq(from=dmin, to=dmax, length.out = res)
   
   # apply evaluation, implicitly converts TRUE/FALSE -> 1/0
   rating <- as.numeric(eval(parse(text=crisp.expression)))

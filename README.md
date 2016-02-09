@@ -21,11 +21,16 @@ The [data.tree](https://cran.r-project.org/web/packages/data.tree/vignettes/data
  + what to do with these: `!= "oxisols" or "gelisols"`
  + need additional functions to handle other curve types
 2. convert property NASIS-report language into actual values
+3. link properties or insert new data
+4. apply logical / arith. operators to nodes
+5. 
 
 
 
 
 ## Examples
+The following blocks of test are a simple representation of the `data.tree` objects that describe the hierachy of rules that define an interpretation.
+
 ### Dust PM10 and PM2.5 Generation
 <pre style="font-size: 70%; font-family: monospace">
                                                                        levelName           Type Value RefId rule_refid eval_refid evalType
