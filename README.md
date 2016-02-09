@@ -23,7 +23,7 @@ The [data.tree](https://cran.r-project.org/web/packages/data.tree/vignettes/data
 2. convert property NASIS-report language into actual values
 3. link properties or insert new data
 4. apply logical / arith. operators to nodes
-5. 
+5. **are the parsed rule trees correct?**
 
 
 

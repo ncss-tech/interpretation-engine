@@ -1,16 +1,19 @@
+
 ---
-  output:
+output:
   html_vignette:
-  mathjax: null
-jquery: null
-smart: no
+    mathjax: null
+    jquery: null
+    smart: no
+    keep_md: TRUE
 ---
+
   
-  ```{r setup, echo=FALSE, results='hide', warning=FALSE}
+```{r setup, echo=FALSE, results='hide', warning=FALSE}
 library(knitr, quietly = TRUE)
 library(printr, quietly = TRUE)
-opts_chunk$set(message=FALSE, warning=FALSE, out.width="100%", fig.retina = 2, fig.align='center', dev='png', dev.args=list(pointsize=10, antialias='cleartype'), tidy=FALSE)
-options(width=100, stringsAsFactors=FALSE)
+opts_chunk$set(message=FALSE, warning=FALSE, out.width="100%", fig.retina = 1, fig.align='center', dev='png', dev.args=list(pointsize=10, antialias='cleartype'), tidy=FALSE)
+options(width=300, stringsAsFactors=FALSE)
 
 knit_hooks$set(htmlcap = function(before, options, envir) {
   if(!before) {
@@ -20,7 +23,7 @@ knit_hooks$set(htmlcap = function(before, options, envir) {
 ```
 
 
-Component Interpretation Summary via SDA
+Extracting NASIS Rules/Evaluations
 ========================================
 
 ```{r}
@@ -86,10 +89,12 @@ plot(s, res(s), type='l', xlab='domain', ylab='fuzzy rating', main=e$evaluationt
 ###
 
 
-# check a couple, RefId points to rows in rules table
+# check a couple, RefId points to rows in rules or evaluation tables
 # the dt$Do call links child sub-rules
 # recursion is used to traverse to the deepest nodes, seems to work
 # caution: don't run several times on the same object!
+
+# increase limit argument to see the entire tree
 
 
 ## example
@@ -97,12 +102,12 @@ plot(s, res(s), type='l', xlab='domain', ylab='fuzzy rating', main=e$evaluationt
 y <- rules[rules$rulename == 'Dust PM10 and PM2.5 Generation', ]
 dt <- parseRule(y)
 # print intermediate results
-print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid')
+print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', limit=25)
 # recusively splice-in sub-rules
 dt$Do(traversal='pre-order', fun=linkSubRules)
 # splice-in evaluation functions, if possible
 dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
-print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType')
+print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limit=25)
 
 
 ## more examples
@@ -110,14 +115,14 @@ y <- rules[rules$rulename == 'AGR - California Revised Storie Index (CA)', ]
 dt <- parseRule(y)
 dt$Do(traversal='pre-order', fun=linkSubRules)
 dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
-print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limit=500)
+print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limit=25)
 
 
 y <- rules[rules$rulename == 'Commodity Crop Productivity Index (Corn) (WI)', ]
 dt <- parseRule(y)
 dt$Do(traversal='pre-order', fun=linkSubRules)
 dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
-print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType')
+print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limit=25)
 
 
 
@@ -125,7 +130,7 @@ y <- rules[rules$rulename == 'DHS - Catastrophic Mortality, Large Animal Disposa
 dt <- parseRule(y)
 dt$Do(traversal='pre-order', fun=linkSubRules)
 dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
-print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType')
+print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limit=25)
 
 
 # this one has a single RuleEvaluation: RefId points to rows in evals table
@@ -133,7 +138,7 @@ y <- rules[rules$rulename == 'Clay %, in surface - MO2', ]
 dt <- parseRule(y)
 dt$Do(traversal='pre-order', fun=linkSubRules)
 dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
-print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType')
+print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limit=25)
 
 
 # check total number of nodes within data.tree object
