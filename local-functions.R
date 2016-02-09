@@ -33,20 +33,23 @@ xmlChunkParse <- function(x) {
 # x: evalulation record
 # res: number of intermediate points
 extractEvalCurve <- function(x, res=25) {
+  # get some metadata
   et <- x$evaluationtype
+  invert.eval <- x$invertevaluationresults
+  
   # various types
   if(et %in% c('ArbitraryCurve','ArbitraryLinear')) {
-    res <- extractArbitraryCurveEval(x$eval)
+    res <- extractArbitraryCurveEval(x$eval, invert=invert.eval)
     return(res)
   }
     
   if(et == 'Sigmoid') {
-    res <- extractSigmoidCurveEval(x$eval, res)
+    res <- extractSigmoidCurveEval(x$eval, invert=invert.eval, res)
     return(res)
   }
     
   if(et == 'Crisp') {
-    res <- extractCrispCurveEval(x$eval, res)
+    res <- extractCrispCurveEval(x$eval, invert=invert.eval, res)
     return(res)
   }
     
@@ -60,15 +63,19 @@ extractEvalCurve <- function(x, res=25) {
 #   Triangle
 #   PI
   warning("curve type not yet supported", call. = FALSE)
-  return(NULL)
+  return(function(x) {return(NULL)})
 }
 
 # x: evalulation curve XML text
-extractArbitraryCurveEval <- function(x) {
+extractArbitraryCurveEval <- function(x, invert) {
   l <- xmlChunkParse(x)
   # exract pieces
   domain <- as.numeric(as.vector(unlist(l$DomainPoints)))
   rating <- as.numeric(as.vector(unlist(l$RangePoints)))
+  
+  # invert?
+  if(invert == 1)
+    rating <- (1 - rating)
   
   # create interpolator
   af <- approxfun(domain, rating, method = 'linear', rule=2)
@@ -77,7 +84,7 @@ extractArbitraryCurveEval <- function(x) {
 
 # x: evalulation curve XML text
 # res: number of intermediate points
-extractSigmoidCurveEval <- function(x, res) {
+extractSigmoidCurveEval <- function(x, invert, res) {
   l <- xmlChunkParse(x)
   # get the lower and upper asymptotes
   dp <- as.numeric(as.vector(unlist(l$DomainPoints)))
@@ -88,9 +95,15 @@ extractSigmoidCurveEval <- function(x, res) {
   sig.loc <- (dp[1] + dp[2])/2 # location parameter is center of range
   sig.scale <- 1
   rating <- plogis(domain, location=sig.loc, scale=sig.scale)
-  # if the first value is > second, then swap direction
-  if(dp[2] < dp[1])
-    rating <- 1 - rating
+  
+  ## not sure about this, can it happen?
+#   # if the first value is > second, then swap direction
+#   if(dp[2] < dp[1])
+#     rating <- 1 - rating
+  
+  # invert?
+  if(invert == 1)
+    rating <- (1 - rating)
   
   # create interpolator
   af <- approxfun(domain, rating, method = 'linear', rule=2)
@@ -98,9 +111,10 @@ extractSigmoidCurveEval <- function(x, res) {
 }
 
 ## TODO: parsing expression must be generalized
+## TODO: this doesn't work with expressions like this "!= \"oxisols\" or \"gelisols\""
 # x: evalulation curve XML text
 # res: number of intermediate points
-extractCrispCurveEval <- function(x, res) {
+extractCrispCurveEval <- function(x, invert, res) {
   l <- xmlChunkParse(x)
   # get expression
   crisp.expression <- l$CrispExpression
@@ -113,13 +127,18 @@ extractCrispCurveEval <- function(x, res) {
   crisp.expression <- gsub('or', '| domain', crisp.expression)
   
   # generate domain range
-  domain.range <- range(na.omit(as.numeric(unlist(strsplit(crisp.expression, "[^0-9.]+")))))
+  domain.range <- range(na.omit(as.numeric(unlist(strsplit(crisp.expression, "[^0-9.]+")))), na.rm = TRUE)
+  
   # extend domain by some fuzz.. ?
-  fuzz <- mean(domain.range) / 2
+  fuzz <- mean(domain.range, na.omit=TRUE) / 2
   domain <- seq(from=domain.range[1] - fuzz, to=domain.range[2] + fuzz, length.out = res)
   
   # apply evaluation, implicitly converts TRUE/FALSE -> 1/0
   rating <- as.numeric(eval(parse(text=crisp.expression)))
+  
+  # invert?
+  if(invert == 1)
+    rating <- (1 - rating)
   
   # create interpolator
   af <- approxfun(domain, rating, method = 'linear', rule=2)
@@ -259,7 +278,8 @@ parseRule <- function(x) {
 }
 
 
-## TODO: this won't always link all subrules in a single pass... why?
+
+## TODO: splice/prune issues
 linkSubRules <- function(node) {
   # if this is a sub-rule
   if(!is.null(node$rule_refid)) {
@@ -267,13 +287,37 @@ linkSubRules <- function(node) {
     sr <- rules[rules$ruleiid == node$rule_refid, ]
     # get sub-rule as a Node
     sr.node <- parseRule(sr)
+    ## TEMP HACK: rename sub rule node
+    # sr.node$name <- paste0(sr.node$name, '_', digest(sr.node, 'xxhash32'))
     # recursively look-up any sub rules
     sr.node$Do(linkSubRules)
-    # splice-in sub rule
-    node$parent$AddChildNode(sr.node)
+    
+    ### still figuring this out:
+    
+    ### 1. splice into parent node, then prune current node
+    # node$parent$AddChildNode(sr.node)
+    ## TODO: prune the current node
+    
+    ### 2. splice the children of the sub-rule to the current node [seems better]
+    for(i in seq_along(sr.node$count)) node$AddChildNode(sr.node$children[[i]])
   }
 }
 
+# this will break if there are errors in extractEvalCurve
 linkEvaluationFunctions <- function(node) {
-  ## TODO: how can we splice-in evaluation functions?
+  # only operate on evaluations
+  if(!is.null(node$eval_refid)) {
+    # get eval record
+    ev <- evals[evals$evaliid == node$eval_refid, ]
+    # get evaluation function
+    # trap errors when an eval function fails
+    f <- try(extractEvalCurve(ev), silent = TRUE)
+    if(class(f) != 'try-error') {
+      node$evalFunction <- f
+      node$evalType <- ev$evaluationtype
+    }
+    ## come back and figure out what is wrong in evalXXX function
+    else
+      node$evalType <- 'ERROR'
+  }
 }

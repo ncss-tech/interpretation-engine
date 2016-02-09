@@ -3,10 +3,11 @@ library(RODBC)
 library(XML)
 library(plyr)
 library(data.tree)
-library(igraph)
 library(digest)
 
-## TODO: add support for inverted results
+
+## TODO: finish evaluation parsing functions
+
 
 # source local functions
 source('local-functions.R')
@@ -46,35 +47,47 @@ plot(0:14, res(0:14), type='l', xlab='domain', ylab='fuzzy rating', main=evals$e
 ### Rules
 ###
 
-## TODO: Rule RefId values are set to NA after splicing-in sub-rules, why?
 
 # check a couple, RefId points to rows in rules table
 # the dt$Do call links child sub-rules
 # recursion is used to traverse to the deepest nodes, seems to work
 # caution: don't run several times on the same object!
 
+
+## example
+# just some random rule
+y <- rules[rules$rulename == 'Dust PM10 and PM2.5 Generation', ]
+dt <- parseRule(y)
+# print intermediate results
+print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid')
+# recusively splice-in sub-rules
+dt$Do(traversal='pre-order', fun=linkSubRules)
+# splice-in evaluation functions, if possible
+dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
+print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType')
+
+
+## more examples
 y <- rules[rules$rulename == 'AGR - California Revised Storie Index (CA)', ]
 dt <- parseRule(y)
 dt$Do(traversal='pre-order', fun=linkSubRules)
-print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', limit=1000)
+dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
+print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType')
 
 y <- rules[rules$rulename == 'DHS - Catastrophic Mortality, Large Animal Disposal, Pit', ]
 dt <- parseRule(y)
 dt$Do(traversal='pre-order', fun=linkSubRules)
-print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', limit=1000)
+dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
+print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType')
+
 
 # this one has a single RuleEvaluation: RefId points to rows in evals table
 y <- rules[rules$rulename == 'Clay %, in surface - MO2', ]
 dt <- parseRule(y)
 dt$Do(traversal='pre-order', fun=linkSubRules)
-print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid')
+dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
+print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType')
 
-# just some random rule
-y <- rules[rules$rulename == 'Dust PM10 and PM2.5 Generation', ]
-dt <- parseRule(y)
-dt$Do(traversal='pre-order', fun=linkSubRules)
-print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid')
 
 # check total number of nodes within data.tree object
 dt$totalCount
-
