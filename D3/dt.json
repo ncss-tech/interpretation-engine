@@ -1,0 +1,57 @@
+{
+  "name": "Dust PM10 and PM2.5 Generation",
+  "Children": {
+    "RuleHedge_de473ab5": {
+      "Children": {
+        "RuleOperator_0a397761": {
+          "Children": {
+            "Dryness Index 0.5 to 3": {
+              "eval_refid": "18448",
+              "RefId": "18448"
+            },
+            "RuleOperator_7025ab26": {
+              "Children": {
+                "Dust Due to Gypsum": {
+                  "RefId": "23659",
+                  "rule_refid": "23659",
+                  "Children": {
+                    "RuleHedge_5c18cb73": {
+                      "Children": {
+                        "Dust from Gypsum Content 2 to 15 Percent": {
+                          "eval_refid": "18446",
+                          "RefId": "18446"
+                        }
+                      },
+                      "Type": "not_null_and",
+                      "Value": "0"
+                    }
+                  }
+                },
+                "Dust Due to Silt and Clay": {
+                  "RefId": "23661",
+                  "rule_refid": "23661",
+                  "Children": {
+                    "RuleHedge_caf7e2e0": {
+                      "Children": {
+                        "Dust from Silt and Clay Content 20 to 70 Percent Sand": {
+                          "eval_refid": "18447",
+                          "RefId": "18447"
+                        }
+                      },
+                      "Type": "null_not_rated",
+                      "Value": "0"
+                    }
+                  }
+                }
+              },
+              "Type": "sum"
+            }
+          },
+          "Type": "product"
+        }
+      },
+      "Type": "multiply",
+      "Value": "0.5"
+    }
+  }
+}
