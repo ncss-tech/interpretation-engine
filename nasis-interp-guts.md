@@ -75,19 +75,27 @@ plotEvaluation(e)
 <img src="nasis-interp-guts_files/figure-html/unnamed-chunk-2-3.png" title="" alt="" width="576" style="display: block; margin: auto;" />
 
 ```r
-## crisp:
-e <- evals[evals$evalname == 'Soil pH (water) >= 4.5 and <= 8.4, 0-100cm', ]
+## linear
+e <- evals[evals$evalname == 'Slope 0 to >15%', ]
 plotEvaluation(e)
 ```
 
 <img src="nasis-interp-guts_files/figure-html/unnamed-chunk-2-4.png" title="" alt="" width="576" style="display: block; margin: auto;" />
 
 ```r
-e <- evals[evals$evalname == 'Available Water Capacity <10cm', ]
+## crisp:
+e <- evals[evals$evalname == 'Soil pH (water) >= 4.5 and <= 8.4, 0-100cm', ]
 plotEvaluation(e)
 ```
 
 <img src="nasis-interp-guts_files/figure-html/unnamed-chunk-2-5.png" title="" alt="" width="576" style="display: block; margin: auto;" />
+
+```r
+e <- evals[evals$evalname == 'Available Water Capacity <10cm', ]
+plotEvaluation(e)
+```
+
+<img src="nasis-interp-guts_files/figure-html/unnamed-chunk-2-6.png" title="" alt="" width="576" style="display: block; margin: auto;" />
 
 
 
@@ -141,7 +149,24 @@ print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limi
 ## 11                      °--Dust from Silt and Clay Content 20 to 70 Percent Sand                      18447                 18447   Linear
 ```
 
+Get a table of evaluations and properties
+
+```r
+getPropertySet(dt)
+```
+
+
+
+evaluation                                              property                                               
+------------------------------------------------------  -------------------------------------------------------
+Dryness Index 0.5 to 3                                  DRYNESS INDEX                                          
+Dust from Gypsum Content 2 to 15 Percent                WTD_AVG GYPSUM 0-50cm OR ABOVE RESTRICTION             
+Dust from Silt and Clay Content 20 to 70 Percent Sand   WTD_AVG SAND CONTENT 0-50cm OR ABOVE RESTRICTION, NO O 
+
+
 ### More Examples
+
+**California Revised Storie Index**
 
 ```r
 y <- rules[rules$rulename == 'AGR - California Revised Storie Index (CA)', ]
@@ -157,7 +182,7 @@ print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limi
 ## 2   °--RuleOperator_31a1eb65                                                                product                                                 
 ## 3       ¦--*Storie Factor A Not Rated Soil Orders rev                                                     49446      49446                          
 ## 4       ¦   °--RuleHedge_1193d3c1                                                           null_or     0                                           
-## 5       ¦       °--*Storie Factor A Pedon Group not rated taxonomy rev                                    50481                 50481          ERROR
+## 5       ¦       °--*Storie Factor A Pedon Group not rated taxonomy rev                                    50481                 50481          Crisp
 ## 6       ¦--*Storie Factor A                                                                               15976      15976                          
 ## 7       ¦   °--RuleOperator_01948bb8                                                             or                                                 
 ## 8       ¦       ¦--*Storie Factor A Profile Group 1 rev                                                   49448      49448                          
@@ -169,11 +194,11 @@ print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limi
 ## 14      ¦       ¦       ¦   °--*Storie Factor A Profile Group 1 taxonomy rev                              49447      49447                          
 ## 15      ¦       ¦       ¦       °--RuleOperator_4d1fdd8f                                         or                                                 
 ## 16      ¦       ¦       ¦           ¦--RuleHedge_44b2d8f3                              not_null_and     0                                           
-## 17      ¦       ¦       ¦           ¦   °--*Storie Factor A Pedon Group 1 suborders                       12914                 12914          ERROR
+## 17      ¦       ¦       ¦           ¦   °--*Storie Factor A Pedon Group 1 suborders                       12914                 12914          Crisp
 ## 18      ¦       ¦       ¦           ¦--RuleHedge_f2a5b4ba                              not_null_and     0                                           
-## 19      ¦       ¦       ¦           ¦   °--*Storie Factor A Pedon Group 1 great groups                    12915                 12915          ERROR
+## 19      ¦       ¦       ¦           ¦   °--*Storie Factor A Pedon Group 1 great groups                    12915                 12915          Crisp
 ## 20      ¦       ¦       ¦           °--RuleHedge_25e606a5                              not_null_and     0                                           
-## 21      ¦       ¦       ¦               °--*Storie Factor A Pedon Group 1 subgroups                       13092                 13092          ERROR
+## 21      ¦       ¦       ¦               °--*Storie Factor A Pedon Group 1 subgroups                       13092                 13092          Crisp
 ## 22      ¦       ¦       °--RuleHedge_ea4b1839                                                   not     0                                           
 ## 23      ¦       ¦           °--*Storie Factor A Profile Group 7,8,9 landform                              15974      15974                          
 ## 24      ¦       ¦               °--RuleHedge_608f03c8                                  not_null_and     0                                           
@@ -181,6 +206,22 @@ print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limi
 ## 26      ¦       °--... 5 nodes w/ 78 sub                                                                                                            
 ## 27      °--... 5 nodes w/ 223 sub
 ```
+
+
+```r
+ps <- getPropertySet(dt)
+unique(ps$property)
+```
+
+```
+##  [1] "TAXONOMIC ORDER"                                              "*Storie depth to first restriction for Profile Group 1-3"     "TAXONOMIC SUBORDER"                                           "TAXONOMIC GREAT GROUP"                                        "TAXONOMIC SUBGROUP"                                           "*Storie landforms in hills and mountains of California"       "*Storie where at least one cdfkind = abrupt textural change" 
+##  [8] "Component restrictions"                                       "*Storie depth to pan for Profile Group 5"                     "*Storie depth to featknd abrupt tex change Profile Group 4/6" "*Storie depth to reskind abrupt tex change Profile Grp 4/6"   "*Storie depth to hard bedrock/petro* for Profile Grp 7/8/9"   "*Storie depth to soft bedrock or densics for Profile Grp 7-9" "*Storie texture score - first horizon below duff"            
+## [15] "ROCK FRAG VOLUME IN DEPTH 0-25 cm OR RESTRICTION"             "Slope, rv"                                                    "EC MAXIMUM IN DEPTH 0-25 CM BELOW DUFF"                       "SAR MAXIMUM IN DEPTH 0-25 CM BELOW DUFF"                      "pH MINIMUM IN DEPTH 0-25 CM BELOW DUFF"                       "pH MAXIMUM IN DEPTH 0-25 CM BELOW DUFF"                       "GRL-DRAINAGE CLASS"                                          
+## [22] "**Storie component local phase is drained"                    "**Storie component local phase is partially drained"          "*Storie ponding interaction max in growing season"            "FLOODING FREQUENCY (Maximum Frequency)"                       "*Storie flooding interaction max in growing season"           "Erosion Class in component table"                             "*Storie near surface wetness rv depth in growing season"     
+## [29] "*Storie temperature regime score"
+```
+
+
 
 ```r
 y <- rules[rules$rulename == 'Commodity Crop Productivity Index (Corn) (WI)', ]
@@ -235,23 +276,23 @@ print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limi
 ## 3       ¦--Permafrost                                                                       204        204                    
 ## 4       ¦   °--RuleOperator_dd37796c                                             or                                           
 ## 5       ¦       ¦--RuleHedge_ea3fa12b                                  not_null_and     0                                     
-## 6       ¦       ¦   °--Permafrost (Consolidated) InLieuOf                                   167                   167    ERROR
+## 6       ¦       ¦   °--Permafrost (Consolidated) InLieuOf                                   167                   167    Crisp
 ## 7       ¦       ¦--RuleHedge_296e9a0c                                  not_null_and     0                                     
-## 8       ¦       ¦   °--Texture Modifier (Permanently Frozen)                                351                   351    ERROR
+## 8       ¦       ¦   °--Texture Modifier (Permanently Frozen)                                351                   351    Crisp
 ## 9       ¦       °--RuleHedge_f6fc035d                                  not_null_and     0                                     
 ## 10      ¦           °--Shallow to Permafrost (50 to 100cm (20 to 40"))                    10356                 10356  Sigmoid
 ## 11      ¦--Ponded > 4 hours, Max                                                          19891      19891                    
 ## 12      ¦   °--RuleOperator_9fea508b                                            and                                           
 ## 13      ¦       ¦--RuleHedge_278a7dc1                                           not     0                                     
 ## 14      ¦       ¦   °--RuleHedge_1a7cc2f2                              not_null_and     0                                     
-## 15      ¦       ¦       °--Ponding Frequency None, Max                                    16087                 16087    ERROR
+## 15      ¦       ¦       °--Ponding Frequency None, Max                                    16087                 16087    Crisp
 ## 16      ¦       °--RuleHedge_a68678bf                                  not_null_and     0                                     
-## 17      ¦           °--Ponding Duration > Very Brief, Max                                 16088                 16088    ERROR
+## 17      ¦           °--Ponding Duration > Very Brief, Max                                 16088                 16088    Crisp
 ## 18      ¦--Flooding  Very Rare/Rare Freq.                                                 10909      10909                    
 ## 19      ¦   °--RuleOperator_1ead536d                                             or                                           
 ## 20      ¦       ¦--RuleHedge_4bc678de                                      multiply   0.4                                     
 ## 21      ¦       ¦   °--RuleHedge_82c14f91                              not_null_and     0                                     
-## 22      ¦       ¦       °--Flooding "RARE"                                                  198                   198    ERROR
+## 22      ¦       ¦       °--Flooding "RARE"                                                  198                   198    Crisp
 ## 23      ¦       ¦--RuleHedge_5856520a                                      multiply   0.2                                     
 ## 24      ¦       ¦   °--RuleHedge_d9736f1f                              not_null_and     0                                     
 ## 25      ¦       ¦       °--... 1 nodes w/ 0 sub                                                                               
@@ -275,11 +316,4 @@ print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limi
 ## 3      °--Clay % >=40% at the surface, crisp                    11393         NA      11393    Crisp
 ```
 
-```r
-# check total number of nodes within data.tree object
-dt$totalCount
-```
 
-```
-## [1] 3
-```

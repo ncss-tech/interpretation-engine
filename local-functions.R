@@ -1,4 +1,16 @@
 
+getPropertySet <- function(x) {
+  p <- x$Get('propname')
+  # remove NA and convert to data.frame
+  idx <- which(!is.na(p))
+  p <- p[idx]
+  as.list(p)
+  d <- ldply(p)
+  names(d) <- c('evaluation', 'property')
+  return(d)
+}
+
+
 plotEvaluation <- function(x) {
   res <- extractEvalCurve(x)
   s <- seq(x$propmin, x$propmax, length.out = 100)
@@ -72,10 +84,13 @@ extractEvalCurve <- function(x, res=25) {
     res <- extractCrispCurveEval(x$eval, invert=invert.eval, res, dmin=domain.min, dmax=domain.max)
     return(res)
   }
-    
+  
+  if(et == 'Linear') {
+    res <- extractLinearCurveEval(x$eval, invert=invert.eval, res)
+    return(res)
+  }
   
   ## ... there are many others
-#   Linear
 #   Trapezoid
 #   Beta
 #   IsNull
@@ -120,6 +135,24 @@ extractSigmoidCurveEval <- function(x, invert, res) {
 #   # if the first value is > second, then swap direction
 #   if(dp[2] < dp[1])
 #     rating <- 1 - rating
+  
+  # invert?
+  if(invert == 1)
+    rating <- (1 - rating)
+  
+  # create interpolator
+  af <- approxfun(domain, rating, method = 'linear', rule=2)
+  return(af)
+}
+
+# x: evalulation curve XML text
+# res: number of intermediate points
+extractLinearCurveEval <- function(x, invert, res) {
+  l <- xmlChunkParse(x)
+  # get the lower and upper end points
+  domain <- as.numeric(as.vector(unlist(l$DomainPoints)))
+  # rating is implied: {0,1}
+  rating <- c(0,1)
   
   # invert?
   if(invert == 1)
@@ -326,15 +359,17 @@ linkEvaluationFunctions <- function(node) {
   if(!is.null(node$eval_refid)) {
     # get eval record
     ev <- evals[evals$evaliid == node$eval_refid, ]
+    # assign eval metadata
+    node$evalType <- ev$evaluationtype
+    node$propname <- ev$propname
     # get evaluation function
     # trap errors when an eval function fails
     f <- try(extractEvalCurve(ev), silent = TRUE)
     if(class(f) != 'try-error') {
       node$evalFunction <- f
-      node$evalType <- ev$evaluationtype
     }
     ## come back and figure out what is wrong in evalXXX function
     else
-      node$evalType <- 'ERROR'
+      node$evalFunction <- function(x) return(NULL)
   }
 }

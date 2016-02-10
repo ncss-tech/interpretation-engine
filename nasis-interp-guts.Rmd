@@ -13,7 +13,7 @@ output:
 library(knitr, quietly = TRUE)
 library(printr, quietly = TRUE)
 opts_chunk$set(message=FALSE, warning=FALSE, fig.retina = 2, fig.align='center', dev='png', dev.args=list(pointsize=10, antialias='cleartype'), tidy=FALSE)
-options(width=300, stringsAsFactors=FALSE)
+options(width=500, stringsAsFactors=FALSE)
 
 knit_hooks$set(htmlcap = function(before, options, envir) {
   if(!before) {
@@ -65,6 +65,10 @@ plotEvaluation(e)
 e <- evals[evals$evalname == 'GRL - EC maximum in depth 25 to 50 cm (NV)', ]
 plotEvaluation(e)
 
+## linear
+e <- evals[evals$evalname == 'Slope 0 to >15%', ]
+plotEvaluation(e)
+
 ## crisp:
 e <- evals[evals$evalname == 'Soil pH (water) >= 4.5 and <= 8.4, 0-100cm', ]
 plotEvaluation(e)
@@ -95,15 +99,30 @@ dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
 print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limit=25)
 ```
 
+Get a table of evaluations and properties
+```{r, fig.width=6, fig.height=4}
+getPropertySet(dt)
+```
+
+
 ### More Examples
+
+**California Revised Storie Index**
 ```{r, fig.width=6, fig.height=4}
 y <- rules[rules$rulename == 'AGR - California Revised Storie Index (CA)', ]
 dt <- parseRule(y)
 dt$Do(traversal='pre-order', fun=linkSubRules)
 dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
 print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limit=25)
+```
+
+```{r, fig.width=6, fig.height=4}
+ps <- getPropertySet(dt)
+unique(ps$property)
+```
 
 
+```{r, fig.width=6, fig.height=4}
 y <- rules[rules$rulename == 'Commodity Crop Productivity Index (Corn) (WI)', ]
 dt <- parseRule(y)
 dt$Do(traversal='pre-order', fun=linkSubRules)
@@ -125,8 +144,6 @@ dt <- parseRule(y)
 dt$Do(traversal='pre-order', fun=linkSubRules)
 dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
 print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limit=25)
-
-
-# check total number of nodes within data.tree object
-dt$totalCount
 ```
+
+
