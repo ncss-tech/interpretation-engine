@@ -69,12 +69,19 @@ extractEvalCurve <- function(x, res=25) {
   domain.min <- x$propmin
   domain.max <- x$propmax
   
-  # various types
-  if(et %in% c('ArbitraryCurve','ArbitraryLinear')) {
+  ## TODO: this isn't finished, currently using linear interpolation
+  # shoudl be some kind of spline interpolation, splinefun() isn't working
+  if(et  == 'ArbitraryCurve') {
     res <- extractArbitraryCurveEval(x$eval, invert=invert.eval)
     return(res)
   }
-    
+  
+  # linear interpolation
+  if(et  == 'ArbitraryLinear') {
+    res <- extractArbitraryLinearCurveEval(x$eval, invert=invert.eval)
+    return(res)
+  }
+  
   if(et == 'Sigmoid') {
     res <- extractSigmoidCurveEval(x$eval, invert=invert.eval, res)
     return(res)
@@ -103,6 +110,23 @@ extractEvalCurve <- function(x, res=25) {
 
 # x: evalulation curve XML text
 extractArbitraryCurveEval <- function(x, invert) {
+  l <- xmlChunkParse(x)
+  # exract pieces
+  domain <- as.numeric(as.vector(unlist(l$DomainPoints)))
+  rating <- as.numeric(as.vector(unlist(l$RangePoints)))
+  
+  # invert?
+  if(invert == 1)
+    rating <- (1 - rating)
+  
+  ## TODO: this should be a spline-based interpolator (?)
+  # create interpolator
+  af <- approxfun(domain, rating, method = 'linear', rule=2)
+  return(af)
+}
+
+# x: evalulation curve XML text
+extractArbitraryLinearCurveEval <- function(x, invert) {
   l <- xmlChunkParse(x)
   # exract pieces
   domain <- as.numeric(as.vector(unlist(l$DomainPoints)))
