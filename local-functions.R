@@ -11,11 +11,18 @@ getPropertySet <- function(x) {
 }
 
 
-plotEvaluation <- function(x) {
+plotEvaluation <- function(x, xlim=NULL, ...) {
   res <- extractEvalCurve(x)
   s <- seq(x$propmin, x$propmax, length.out = 100)
+  s.range <- range(s)
+  if(is.null(xlim))
+    xlim <- s.range
   x.lab <- paste0(x$propname, ' (', x$propuom, ')')
-  plot(s, res(s), type='l', xlab=x.lab, cex.lab=0.85, ylab='fuzzy rating', main=x$evalname, sub=x$evaluationtype, cex.sub=0.85, las=1)
+  plot(0,0, type='n', xlab=x.lab, cex.lab=0.85, ylab='fuzzy rating', main=x$evalname, sub=x$evaluationtype, cex.sub=0.85, las=1, ylim=c(0, 1), xlim=xlim, ...)
+  grid()
+  abline(h=c(0,1), lty=2, col='red')
+  lines(s, res(s))
+  
 }
 
 

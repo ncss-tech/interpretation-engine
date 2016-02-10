@@ -33,6 +33,7 @@ library(XML)
 library(plyr)
 library(data.tree)
 library(digest)
+library(jsonlite)
 
 # source local functions
 source('local-functions.R')
@@ -46,11 +47,11 @@ load('cached-NASIS-data.Rda')
 
 
 ## Evaluation Curves
-Someimes the property min/max values are crazy.
+Someimes the property min/max values are crazy, you can manually set plot limits with `xlim` argument.
 ```{r, fig.width=6, fig.height=4}
-## arbitrary curve: example: Storie Index C factor 
+# arbitrary curve:
 e <- evals[evals$evalname == '*Storie Factor C Slope 0 to 100%', ]
-plotEvaluation(e)
+plotEvaluation(e, xlim=c(0, 200))
 
 # get a function to describe the evaluation
 s <- seq(0, 100, length.out = 10)
@@ -58,18 +59,18 @@ f <- extractEvalCurve(e)
 cbind(domain=s, fuzzy.rating=f(s))
 
 ## sigmoid:
-e <- evals[evals$evalname == 'SAR, <.5, 0-100cm (0 to 40")', ]
-plotEvaluation(e)
+e <- evals[evals$evalname == 'SAR, WTD_AVG 0 to 100cm', ]
+plotEvaluation(e, xlim=c(0,25))
 
-## arbitrary linear
+# arbitrary linear
 e <- evals[evals$evalname == 'GRL - EC maximum in depth 25 to 50 cm (NV)', ]
-plotEvaluation(e)
+plotEvaluation(e, xlim=c(0, 1000))
 
-## linear
+# linear
 e <- evals[evals$evalname == 'Slope 0 to >15%', ]
 plotEvaluation(e)
 
-## crisp:
+# crisp:
 e <- evals[evals$evalname == 'Soil pH (water) >= 4.5 and <= 8.4, 0-100cm', ]
 plotEvaluation(e)
 
@@ -144,6 +145,29 @@ dt <- parseRule(y)
 dt$Do(traversal='pre-order', fun=linkSubRules)
 dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
 print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limit=25)
+```
+
+## Conversion to JSON and D3 Vizualization
+The objects can't have evaluation functions attached
+```{r, eval=FALSE}
+library(networkD3)
+library(jsonlite)
+
+y <- rules[rules$rulename == 'Dust PM10 and PM2.5 Generation', ]
+dt <- parseRule(y)
+dt$Do(traversal='pre-order', fun=linkSubRules)
+
+# convert to list
+dt.list <- ToListExplicit(dt, unmame=TRUE, childrenName = 'Children')
+
+# convert to JSON
+dt.json <- toJSON(dt.list, pretty = TRUE, auto_unbox = TRUE, null='null')
+
+net <- ToDataFrameNetwork(dt)
+simpleNetwork(net, fontSize = 12)
+
+# doesn't work
+# radialNetwork(dt.list)
 ```
 
 

@@ -11,6 +11,9 @@ The [data.tree](https://cran.r-project.org/web/packages/data.tree/vignettes/data
 5. create wrapper function to send properties to evaluation functions
 6. combine fuzzy values via operators and hedges to generate a final fuzzy rating
 
+## Resources
+1. MO-6: INTERP-Rule Tree Diagram Chart (Interactive) v1.1+
+
 
 ## Things to Figure Out
 * finish evaluation parsing code:
@@ -31,9 +34,17 @@ The [data.tree](https://cran.r-project.org/web/packages/data.tree/vignettes/data
 
 
 ## Examples
-The following blocks of test are a simple representation of the `data.tree` objects that describe the hierachy of rules that define an interpretation.
 
-### Dust PM10 and PM2.5 Generation
+### Evaluation Curves
+The following image was generated from a evaluation curve data from NASIS.
+
+![alt text](static-figures/ca-storie-index-slope-eval.png)
+
+
+### Rule Trees
+The following blocks of text are a simple representation of the `data.tree` objects that describe the hierachy of rules and evaluations that define an interpretation.
+
+**Dust PM10 and PM2.5 Generation**
 <pre style="font-size: 70%; font-family: monospace">
                                                                        levelName           Type Value RefId rule_refid eval_refid evalType
 1  Dust PM10 and PM2.5 Generation                                                                                                         
@@ -49,7 +60,8 @@ The following blocks of test are a simple representation of the `data.tree` obje
 11                      °--Dust from Silt and Clay Content 20 to 70 Percent Sand                      18447                 18447   Linear
 </pre>
 
-### CA Storie Index
+
+**CA Storie Index**
 
 Using the `data.tree` representation of the CA Storie Index Primary Rule, we can extract the entire set of evaluations and required properties:
 

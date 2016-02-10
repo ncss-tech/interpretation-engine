@@ -15,6 +15,7 @@ library(XML)
 library(plyr)
 library(data.tree)
 library(digest)
+library(jsonlite)
 
 # source local functions
 source('local-functions.R')
@@ -28,12 +29,12 @@ load('cached-NASIS-data.Rda')
 
 
 ## Evaluation Curves
-Someimes the property min/max values are crazy.
+Someimes the property min/max values are crazy, you can manually set plot limits with `xlim` argument.
 
 ```r
-## arbitrary curve: example: Storie Index C factor 
+# arbitrary curve:
 e <- evals[evals$evalname == '*Storie Factor C Slope 0 to 100%', ]
-plotEvaluation(e)
+plotEvaluation(e, xlim=c(0, 200))
 ```
 
 <img src="nasis-interp-guts_files/figure-html/unnamed-chunk-2-1.png" title="" alt="" width="576" style="display: block; margin: auto;" />
@@ -60,22 +61,22 @@ cbind(domain=s, fuzzy.rating=f(s))
 
 ```r
 ## sigmoid:
-e <- evals[evals$evalname == 'SAR, <.5, 0-100cm (0 to 40")', ]
-plotEvaluation(e)
+e <- evals[evals$evalname == 'SAR, WTD_AVG 0 to 100cm', ]
+plotEvaluation(e, xlim=c(0,25))
 ```
 
 <img src="nasis-interp-guts_files/figure-html/unnamed-chunk-2-2.png" title="" alt="" width="576" style="display: block; margin: auto;" />
 
 ```r
-## arbitrary linear
+# arbitrary linear
 e <- evals[evals$evalname == 'GRL - EC maximum in depth 25 to 50 cm (NV)', ]
-plotEvaluation(e)
+plotEvaluation(e, xlim=c(0, 1000))
 ```
 
 <img src="nasis-interp-guts_files/figure-html/unnamed-chunk-2-3.png" title="" alt="" width="576" style="display: block; margin: auto;" />
 
 ```r
-## linear
+# linear
 e <- evals[evals$evalname == 'Slope 0 to >15%', ]
 plotEvaluation(e)
 ```
@@ -83,7 +84,7 @@ plotEvaluation(e)
 <img src="nasis-interp-guts_files/figure-html/unnamed-chunk-2-4.png" title="" alt="" width="576" style="display: block; margin: auto;" />
 
 ```r
-## crisp:
+# crisp:
 e <- evals[evals$evalname == 'Soil pH (water) >= 4.5 and <= 8.4, 0-100cm', ]
 plotEvaluation(e)
 ```
@@ -314,6 +315,30 @@ print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limi
 ## 1 Clay %, in surface - MO2                                                    NA                    
 ## 2  °--RuleHedge_85c74e0f                     not_null_and     0               NA                    
 ## 3      °--Clay % >=40% at the surface, crisp                    11393         NA      11393    Crisp
+```
+
+## Conversion to JSON and D3 Vizualization
+The objects can't have evaluation functions attached
+
+```r
+library(networkD3)
+library(jsonlite)
+
+y <- rules[rules$rulename == 'Dust PM10 and PM2.5 Generation', ]
+dt <- parseRule(y)
+dt$Do(traversal='pre-order', fun=linkSubRules)
+
+# convert to list
+dt.list <- ToListExplicit(dt, unmame=TRUE, childrenName = 'Children')
+
+# convert to JSON
+dt.json <- toJSON(dt.list, pretty = TRUE, auto_unbox = TRUE, null='null')
+
+net <- ToDataFrameNetwork(dt)
+simpleNetwork(net, fontSize = 12)
+
+# doesn't work
+# radialNetwork(dt.list)
 ```
 
 
