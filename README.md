@@ -28,7 +28,6 @@ The [data.tree](https://cran.r-project.org/web/packages/data.tree/vignettes/data
 * convert property NASIS-report language into actual values
 * link properties or insert new data
 * apply logical / arith. operators to nodes
-* **are the parsed rule trees correct?**
 * how can we get required properties from SDA?
 * some properties return an RV, some {low,RV,high}: all functions must be vectorized
 
