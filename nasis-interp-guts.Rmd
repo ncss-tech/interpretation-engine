@@ -1,30 +1,23 @@
-
 ---
+title: "Extracting NASIS Rules/Evaluations"
+author: "D.E. Beaudette"
+date: "`r Sys.Date()`"
 output:
-  html_vignette:
+  html_document:
     mathjax: null
     jquery: null
     smart: no
-    keep_md: TRUE
+    keep_md: FALSE
 ---
 
   
 ```{r setup, echo=FALSE, results='hide', warning=FALSE}
 library(knitr, quietly = TRUE)
-library(printr, quietly = TRUE)
 opts_chunk$set(message=FALSE, warning=FALSE, fig.retina = 2, fig.align='center', dev='png', dev.args=list(pointsize=10, antialias='cleartype'), tidy=FALSE)
 options(width=500, stringsAsFactors=FALSE)
-
-knit_hooks$set(htmlcap = function(before, options, envir) {
-  if(!before) {
-    paste('<p class="caption" style="font-size:85%; font-style: italic; font-weight: bold;">',options$htmlcap,"</p><hr>",sep="")
-  }
-})
 ```
 
 
-Extracting NASIS Rules/Evaluations
-========================================
 
 ```{r, fig.width=6, fig.height=4}
 library(soilDB)
@@ -158,7 +151,7 @@ dt <- parseRule(y)
 dt$Do(traversal='pre-order', fun=linkSubRules)
 
 # convert to list
-dt.list <- ToListExplicit(dt, unmame=TRUE, childrenName = 'Children')
+dt.list <- ToListExplicit(dt, unname=TRUE, childrenName = 'Children')
 
 # convert to JSON
 dt.json <- toJSON(dt.list, pretty = TRUE, auto_unbox = TRUE, null='null')
