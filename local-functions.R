@@ -1,13 +1,26 @@
 
-getPropertySet <- function(x) {
-  p <- x$Get('propname')
+
+getAttributeByEval <- function(x, a) {
+  p <- x$Get(a)
   # remove NA and convert to data.frame
   idx <- which(!is.na(p))
   p <- p[idx]
   as.list(p)
   d <- ldply(p)
-  names(d) <- c('evaluation', 'property')
+  names(d) <- c('evaluation', a)
   return(d)
+}
+
+
+# this requires several calls to getAttributeByEval(), one for each attribute
+# why?
+getPropertySet <- function(x) {
+  p.1 <- getAttributeByEval(x, 'propname')
+  p.2 <- getAttributeByEval(x, 'propiid')
+  
+  # splice together with left join
+  p <- join(p.1, p.2, by='evaluation', type='left')
+  return(p)
 }
 
 
@@ -332,6 +345,7 @@ makeNamesUnique3 <- function(l) {
       names(l$Children)[i] <- i.name.new
       # fix this branch and splice back into tree
       l$Children[[i]] <- makeNamesUnique3(i.contents)
+      
     }
   }
   
@@ -390,15 +404,20 @@ linkEvaluationFunctions <- function(node) {
   if(!is.null(node$eval_refid)) {
     # get eval record
     ev <- evals[evals$evaliid == node$eval_refid, ]
+    
     # assign eval metadata
     node$evalType <- ev$evaluationtype
     node$propname <- ev$propname
+    node$propiid  <- as.character(ev$propiid)
+    node$propuom  <- ev$propuom
+    
     # get evaluation function
     # trap errors when an eval function fails
     f <- try(extractEvalCurve(ev), silent = TRUE)
     if(class(f) != 'try-error') {
       node$evalFunction <- f
     }
+    
     ## come back and figure out what is wrong in evalXXX function
     else
       node$evalFunction <- function(x) return(NULL)

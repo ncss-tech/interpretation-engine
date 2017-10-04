@@ -1,171 +1,142 @@
-
-<!DOCTYPE html>
+<html xmlns:xlink="http://www.w3.org/1999/xlink">
 <meta charset="utf-8">
 <style>
 
-.node {
-  cursor: pointer;
-}
-
 .node circle {
-  fill: #fff;
-  stroke: steelblue;
-  stroke-width: 1.5px;
+  fill: #999;
 }
 
 .node text {
   font: 10px sans-serif;
 }
 
+.node--internal circle {
+  fill: #555;
+}
+
+.node--internal text {
+  text-shadow: 0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff;
+}
+
 .link {
   fill: none;
-  stroke: #ccc;
+  stroke: #555;
+  stroke-opacity: 0.4;
   stroke-width: 1.5px;
 }
 
+div.tooltip {	
+    position: absolute;			
+    text-align: left;			
+    width: 450px;					
+    height: 15px;					
+    padding: 2px;		
+	background: lightsteelblue;
+    font: 10px sans-serif;
+    border: 0px;		
+    pointer-events: none;			
+}
 </style>
-<body>
-<script src="d3/d3.v3.min.js"></script>
+<svg width="2500" height="900"></svg>
+<script src="d3/d3.v4.min.js"></script>
 <script>
 
-var margin = {top: 20, right: 120, bottom: 20, left: 120},
-    width = 960 - margin.right - margin.left,
-    height = 800 - margin.top - margin.bottom;
+// string width calculation
+// http://stackoverflow.com/questions/118241/calculate-text-width-with-javascript
+String.prototype.width = function (fontSize) {
+    var el,
+        f = fontSize + " px sans-serif" || '10px sans-serif';
+    el = document.createElement('div');
+    el.style.position = 'absolute';
+    el.style.float = "left";
+    el.style.whiteSpace = 'nowrap';
+    el.style.visibility = 'hidden';
+    el.style.font = f;
+    el.innerHTML = this;
+    el = document.body.appendChild(el);
+    w = el.offsetWidth;
+    el.parentNode.removeChild(el);
+    return w;
+}
 
-var i = 0,
-    duration = 750,
-    root;
+var svg = d3.select("svg"),
+    width = +svg.attr("width"),
+    height = +svg.attr("height"),
+    g = svg.append("g").attr("transform", "translate(150,0)"); // slide tree to the right
 
-var tree = d3.layout.tree()
-    .size([height, width]);
+// cut into right-margin of tree to allow space for tip labels
+var tree = d3.tree()
+    .size([height, width - 600]);
 
-var diagonal = d3.svg.diagonal()
-    .projection(function(d) { return [d.y, d.x]; });
-
-var svg = d3.select("body").append("svg")
-    .attr("width", width + margin.right + margin.left)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-d3.json("dt.json", function(error, flare) {
+// Define the div for the tooltip
+// http://bl.ocks.org/d3noob/a22c42db65eb00d4e369
+var div = d3.select("body").append("div")	
+    .attr("class", "tooltip")				
+    .style("opacity", 0);
+	
+d3.json("dt.json", function(error, data) {
   if (error) throw error;
+  
+  // hack from http://bl.ocks.org/mattgiguere/339843b4622a965048fc9f61598f2d47
+  var root = d3.hierarchy(data);
+  tree(root);
 
-  root = flare;
-  root.x0 = height / 2;
-  root.y0 = 0;
-
-  function collapse(d) {
-    if (d.children) {
-      d._children = d.children;
-      d._children.forEach(collapse);
-      d.children = null;
-    }
-  }
-
-  root.children.forEach(collapse);
-  update(root);
-});
-
-d3.select(self.frameElement).style("height", "800px");
-
-function update(source) {
-
-  // Compute the new tree layout.
-  var nodes = tree.nodes(root).reverse(),
-      links = tree.links(nodes);
-
-  // Normalize for fixed-depth.
-  nodes.forEach(function(d) { d.y = d.depth * 180; });
-
-  // Update the nodes…
-  var node = svg.selectAll("g.node")
-      .data(nodes, function(d) { return d.id || (d.id = ++i); });
-
-  // Enter any new nodes at the parent's previous position.
-  var nodeEnter = node.enter().append("g")
-      .attr("class", "node")
-      .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
-      .on("click", click);
-
-  nodeEnter.append("circle")
-      .attr("r", 1e-6)
-      .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
-
-  nodeEnter.append("text")
-      .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
-      .attr("dy", ".35em")
-      .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
-      .text(function(d) { return d.name; })
-      .style("fill-opacity", 1e-6);
-
-  // Transition nodes to their new position.
-  var nodeUpdate = node.transition()
-      .duration(duration)
-      .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
-
-  nodeUpdate.select("circle")
-      .attr("r", 4.5)
-      .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
-
-  nodeUpdate.select("text")
-      .style("fill-opacity", 1);
-
-  // Transition exiting nodes to the parent's new position.
-  var nodeExit = node.exit().transition()
-      .duration(duration)
-      .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
-      .remove();
-
-  nodeExit.select("circle")
-      .attr("r", 1e-6);
-
-  nodeExit.select("text")
-      .style("fill-opacity", 1e-6);
-
-  // Update the links…
-  var link = svg.selectAll("path.link")
-      .data(links, function(d) { return d.target.id; });
-
-  // Enter any new links at the parent's previous position.
-  link.enter().insert("path", "g")
+  var link = g.selectAll(".link")
+      .data(root.descendants().slice(1))
+    .enter().append("path")
       .attr("class", "link")
       .attr("d", function(d) {
-        var o = {x: source.x0, y: source.y0};
-        return diagonal({source: o, target: o});
+        return "M" + d.y + "," + d.x
+            + "C" + (d.parent.y + 100) + "," + d.x
+            + " " + (d.parent.y + 100) + "," + d.parent.x
+            + " " + d.parent.y + "," + d.parent.x;
       });
 
-  // Transition links to their new position.
-  link.transition()
-      .duration(duration)
-      .attr("d", diagonal);
-
-  // Transition exiting nodes to the parent's new position.
-  link.exit().transition()
-      .duration(duration)
-      .attr("d", function(d) {
-        var o = {x: source.x, y: source.y};
-        return diagonal({source: o, target: o});
+  var node = g.selectAll(".node")
+      .data(root.descendants())
+    .enter().append("g")
+      .attr("class", function(d) { return "node" + (d.children ? " node--internal" : " node--leaf"); })
+      .attr("transform", function(d) { 
+        return "translate(" + d.y + "," + d.x + ")"; 
       })
-      .remove();
 
-  // Stash the old positions for transition.
-  nodes.forEach(function(d) {
-    d.x0 = d.x;
-    d.y0 = d.y;
-  });
-}
+  node.append("circle")
+	.style("r", function(d) { if(d.data.name == 'xxx') return 4 ; else return 2.5; })
+	.style("fill", function(d) { if(d.data.name == 'xxx') return 'red'})
+	.style("stroke", "black")
+	.style("stroke-width", 0.5);
 
-// Toggle children on click.
-function click(d) {
-  if (d.children) {
-    d._children = d.children;
-    d.children = null;
-  } else {
-    d.children = d._children;
-    d._children = null;
-  }
-  update(d);
-}
+  node.append("text")
+      .attr("dy", 3)
+      .attr("x", function(d) { return d.children ? -8 : 8; })
+      .style("text-anchor", function(d) { return d.children ? "end" : "start"; })
+	  .style("font-weight", function(d) { if(d.data.name == 'xxx') return 'bold'; })
+      .text(function(d) { 
+		// append the MLRA if this is the terminal node
+        return d.children ? d.data.name : d.data.name + " [" + d.data.propname + "]" ;
+      });
+
+ 	// trying to add links to nodes:
+	// http://stackoverflow.com/questions/13104681/hyperlinks-in-d3-js-objects
+	// http://stackoverflow.com/questions/14951392/add-hyperlink-to-node-text-on-a-collapsible-tree 
+	node.append("a")
+     .attr("xlink:href", function (d) { return d.data.url; })
+		.append("rect")
+		.attr("class", "clickable")
+		.attr("y", -6)
+		// justify box according to branch vs. terminal node
+		.attr("x", function (d) { return d.children || d._children ? -60 : 10; })
+		.attr("width", function (d) { return d.data.name.width('10px sans-serif'); }) //2*4.5)
+		.attr("height", 12)
+		.style("fill", "lightsteelblue")
+		.style("fill-opacity", 1e-6)        // set to 1e-6 to make transparent          
+	;
+	
+
+
+});
+
+
 
 </script>
+</html>

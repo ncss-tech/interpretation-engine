@@ -1,59 +1,575 @@
 {
-  "name": "Dust PM10 and PM2.5 Generation",
-  "Children": [
+  "name": "Commodity Crop Productivity Index (Corn) (WI)",
+  "children": [
     {
-      "name": "RuleHedge_de473ab5",
-      "Type": "multiply",
-      "Value": "0.5",
-      "Children": [
+      "name": "WICCPI - Wisconsin Commodity Corn Production",
+      "RefId": "54884",
+      "rule_refid": "54884",
+      "children": [
         {
-          "name": "RuleOperator_0a397761",
-          "Type": "product",
-          "Children": [
+          "name": "RuleOperator_e43a1351",
+          "Type": "sum",
+          "children": [
             {
-              "name": "Dryness Index 0.5 to 3",
-              "eval_refid": "18448",
-              "RefId": "18448"
-            },
-            {
-              "name": "RuleOperator_7025ab26",
-              "Type": "sum",
-              "Children": [
+              "name": "WICCPI - OM Subrule",
+              "RefId": "54888",
+              "rule_refid": "54888",
+              "children": [
                 {
-                  "name": "Dust Due to Gypsum",
-                  "RefId": "23659",
-                  "rule_refid": "23659",
-                  "Children": [
+                  "name": "RuleOperator_75d1fcc3",
+                  "Type": "sum",
+                  "children": [
                     {
-                      "name": "RuleHedge_5c18cb73",
-                      "Type": "not_null_and",
-                      "Value": "0",
-                      "Children": [
+                      "name": "RuleHedge_2771d4a5",
+                      "Type": "multiply",
+                      "Value": "0.07",
+                      "children": [
                         {
-                          "name": "Dust from Gypsum Content 2 to 15 Percent",
-                          "eval_refid": "18446",
-                          "RefId": "18446"
+                          "name": "RuleHedge_f100a187",
+                          "Type": "not_null_and",
+                          "Value": "0",
+                          "children": [
+                            {
+                              "name": "WICCPI - OM 0-20cm",
+                              "eval_refid": "58969",
+                              "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                              "evalType": "ArbitraryCurve",
+                              "propiid": "17047",
+                              "propname": "ORGANIC MATTER IN DEPTH 0-20CM, WTD AVE",
+                              "propuom": "percent",
+                              "RefId": "58969"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "RuleHedge_d16882a6",
+                      "Type": "multiply",
+                      "Value": "0.015",
+                      "children": [
+                        {
+                          "name": "RuleHedge_6927e4f4",
+                          "Type": "not_null_and",
+                          "Value": "0",
+                          "children": [
+                            {
+                              "name": "WICCPI - OM 20-100cm",
+                              "eval_refid": "58970",
+                              "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                              "evalType": "ArbitraryCurve",
+                              "propiid": "27537",
+                              "propname": "ORGANIC MATTER PERCENT 20-100 CM WGT AVG",
+                              "propuom": "PERCENT",
+                              "RefId": "58970"
+                            }
+                          ]
                         }
                       ]
                     }
                   ]
-                },
+                }
+              ]
+            },
+            {
+              "name": "WICCPI - CEC Subrule",
+              "RefId": "54889",
+              "rule_refid": "54889",
+              "children": [
                 {
-                  "name": "Dust Due to Silt and Clay",
-                  "RefId": "23661",
-                  "rule_refid": "23661",
-                  "Children": [
+                  "name": "RuleOperator_f347e267",
+                  "Type": "sum",
+                  "children": [
                     {
-                      "name": "RuleHedge_caf7e2e0",
-                      "Type": "null_not_rated",
-                      "Value": "0",
-                      "Children": [
+                      "name": "RuleHedge_758fdaa5",
+                      "Type": "multiply",
+                      "Value": "0.04",
+                      "children": [
                         {
-                          "name": "Dust from Silt and Clay Content 20 to 70 Percent Sand",
-                          "eval_refid": "18447",
-                          "RefId": "18447"
+                          "name": "RuleHedge_5e8c4018",
+                          "Type": "not_null_and",
+                          "Value": "0",
+                          "children": [
+                            {
+                              "name": "WICCPI - CEC 0-20cm or Restriction",
+                              "eval_refid": "58971",
+                              "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                              "evalType": "ArbitraryCurve",
+                              "propiid": "27539",
+                              "propname": "CEC WEIGHTED AVG 0-20 CM ABOVE RESTRICTION",
+                              "propuom": "PCT",
+                              "RefId": "58971"
+                            }
+                          ]
                         }
                       ]
+                    },
+                    {
+                      "name": "RuleHedge_bb05559f",
+                      "Type": "multiply",
+                      "Value": "0.02",
+                      "children": [
+                        {
+                          "name": "RuleHedge_510a2838",
+                          "Type": "not_null_and",
+                          "Value": "0",
+                          "children": [
+                            {
+                              "name": "WICCPI - CEC 20-100cm or Restriction",
+                              "eval_refid": "58972",
+                              "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                              "evalType": "ArbitraryCurve",
+                              "propiid": "27540",
+                              "propname": "CEC WEIGHTED AVG 20-100 CM ABOVE RESTRICTION",
+                              "propuom": "PCT",
+                              "RefId": "58972"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "WICCPI - pH 20-100cm  Subrule",
+              "RefId": "54890",
+              "rule_refid": "54890",
+              "children": [
+                {
+                  "name": "RuleHedge_316bfec1",
+                  "Type": "multiply",
+                  "Value": "0.015",
+                  "children": [
+                    {
+                      "name": "RuleHedge_ccaae7c6",
+                      "Type": "not_null_and",
+                      "Value": "0",
+                      "children": [
+                        {
+                          "name": "WICCPI - pH 20-100cm",
+                          "eval_refid": "58973",
+                          "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                          "evalType": "ArbitraryCurve",
+                          "propiid": "27541",
+                          "propname": "pH IN DEPTH 20-100CM, WTD AVG",
+                          "propuom": "pH",
+                          "RefId": "58973"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "WICCPI - Depth to Restrictive feature",
+              "RefId": "54893",
+              "rule_refid": "54893",
+              "children": [
+                {
+                  "name": "RuleHedge_13fa2d00",
+                  "Type": "multiply",
+                  "Value": "0.02",
+                  "children": [
+                    {
+                      "name": "RuleHedge_b1153b77",
+                      "Type": "not_null_and",
+                      "Value": "0",
+                      "children": [
+                        {
+                          "name": "WICCPI - Depth to Restrictive Layer (Subrule)",
+                          "eval_refid": "58979",
+                          "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                          "evalType": "ArbitraryCurve",
+                          "propiid": "27563",
+                          "propname": "DEPTH TO FIRST RESTRICTION BELOW ORGANIC LAYER, 200  DEFAULT",
+                          "propuom": "CM",
+                          "RefId": "58979"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "WICCPI - First Depth to KSAT >42 or <1.41 Subrule",
+              "RefId": "54891",
+              "rule_refid": "54891",
+              "children": [
+                {
+                  "name": "RuleHedge_e8a4a821",
+                  "Type": "multiply",
+                  "Value": "0.09",
+                  "children": [
+                    {
+                      "name": "RuleHedge_a16648fe",
+                      "Type": "null_or",
+                      "Value": "0",
+                      "children": [
+                        {
+                          "name": "WICCPI - First Depth to KSAT >42 or <1.39",
+                          "eval_refid": "58974",
+                          "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                          "evalType": "ArbitraryCurve",
+                          "propiid": "27542",
+                          "propname": "LAYER THICKNESS, KSAT >42 or <1.39",
+                          "propuom": "UM/S",
+                          "RefId": "58974"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "WICCPI - AWC Subrule",
+              "RefId": "54892",
+              "rule_refid": "54892",
+              "children": [
+                {
+                  "name": "RuleOperator_4eee132f",
+                  "Type": "product",
+                  "children": [
+                    {
+                      "name": "RuleOperator_1ef2892c",
+                      "Type": "sum",
+                      "children": [
+                        {
+                          "name": "RuleHedge_01777d2d",
+                          "Type": "multiply",
+                          "Value": "0.11",
+                          "children": [
+                            {
+                              "name": "RuleHedge_e80000b4",
+                              "Type": "not_null_and",
+                              "Value": "0",
+                              "children": [
+                                {
+                                  "name": "WICCPI - AWC 0-20cm",
+                                  "eval_refid": "58978",
+                                  "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                                  "evalType": "ArbitraryCurve",
+                                  "propiid": "27546",
+                                  "propname": "AWC 0-20 cm",
+                                  "propuom": "CM",
+                                  "RefId": "58978"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "name": "RuleHedge_229c154f",
+                          "Type": "multiply",
+                          "Value": "0.14",
+                          "children": [
+                            {
+                              "name": "RuleHedge_33ac6944",
+                              "Type": "not_null_and",
+                              "Value": "0",
+                              "children": [
+                                {
+                                  "name": "WICCPI - AWC 20-60cm",
+                                  "eval_refid": "58975",
+                                  "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                                  "evalType": "ArbitraryCurve",
+                                  "propiid": "27543",
+                                  "propname": "AWC, 20-60 cm",
+                                  "propuom": "CM",
+                                  "RefId": "58975"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "name": "RuleHedge_20f42d8f",
+                          "Type": "multiply",
+                          "Value": "0.06",
+                          "children": [
+                            {
+                              "name": "RuleHedge_0036049a",
+                              "Type": "not_null_and",
+                              "Value": "0",
+                              "children": [
+                                {
+                                  "name": "WICCPI - AWC 60-100cm",
+                                  "eval_refid": "58976",
+                                  "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                                  "evalType": "ArbitraryCurve",
+                                  "propiid": "27544",
+                                  "propname": "AWC, 60-100 cm",
+                                  "propuom": "CM",
+                                  "RefId": "58976"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "name": "RuleHedge_ef59abbf",
+                          "Type": "multiply",
+                          "Value": "0.02",
+                          "children": [
+                            {
+                              "name": "RuleHedge_3541c422",
+                              "Type": "not_null_and",
+                              "Value": "0",
+                              "children": [
+                                {
+                                  "name": "WICCPI - AWC 100-150cm",
+                                  "eval_refid": "58977",
+                                  "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                                  "evalType": "ArbitraryCurve",
+                                  "propiid": "27545",
+                                  "propname": "AWC, 100-150 cm",
+                                  "propuom": "CM",
+                                  "RefId": "58977"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "RuleOperator_f803a3d5",
+                      "Type": "and",
+                      "children": [
+                        {
+                          "name": "WICCPI - INTERPRETABLE COMPONENT - WATER",
+                          "eval_refid": "58989",
+                          "evalFunction": ["function (x) ", "return(NULL)"],
+                          "evalType": "Crisp",
+                          "propiid": "47023",
+                          "propname": "WICCPI - INTERPRETABLE COMPONENT - WATER",
+                          "propuom": null,
+                          "RefId": "58989"
+                        },
+                        {
+                          "name": "WICCPI - INTERPRETABLE COMPONENT - SLOPE",
+                          "eval_refid": "58988",
+                          "evalFunction": ["function (x) ", "return(NULL)"],
+                          "evalType": "Crisp",
+                          "propiid": "47022",
+                          "propname": "WICCPI - INTERPRETABLE COMPONENT - SLOPE",
+                          "propuom": null,
+                          "RefId": "58988"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "WICCPI - Wetness May",
+              "RefId": "54895",
+              "rule_refid": "54895",
+              "children": [
+                {
+                  "name": "RuleOperator_9fbf095e",
+                  "Type": "sum",
+                  "children": [
+                    {
+                      "name": "RuleHedge_e8d36109",
+                      "Type": "multiply",
+                      "Value": "0.01",
+                      "children": [
+                        {
+                          "name": "RuleHedge_b49047d5",
+                          "Type": "null_or",
+                          "Value": "0",
+                          "children": [
+                            {
+                              "name": "WICCPI - Wetness May",
+                              "eval_refid": "58980",
+                              "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                              "evalType": "ArbitraryCurve",
+                              "propiid": "27547",
+                              "propname": "WATER TABLE DEPTH MIN DURING MAY",
+                              "propuom": "cm",
+                              "RefId": "58980"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "RuleHedge_07cb7cdf",
+                      "Type": "multiply",
+                      "Value": "0.01",
+                      "children": [
+                        {
+                          "name": "RuleHedge_9f7c2689",
+                          "Type": "null_or",
+                          "Value": "0.01",
+                          "children": [
+                            {
+                              "name": "WICCPI - Wetness Apr",
+                              "eval_refid": "58986",
+                              "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                              "evalType": "ArbitraryCurve",
+                              "propiid": "30309",
+                              "propname": "WATER TABLE DEPTH MIN DURING APR",
+                              "propuom": "cm",
+                              "RefId": "58986"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "WICCPI - Effective Slope Subrule",
+              "RefId": "54896",
+              "rule_refid": "54896",
+              "children": [
+                {
+                  "name": "RuleHedge_82729659",
+                  "Type": "multiply",
+                  "Value": "0.2",
+                  "children": [
+                    {
+                      "name": "RuleHedge_73307803",
+                      "Type": "not_null_and",
+                      "Value": "0",
+                      "children": [
+                        {
+                          "name": "WICCPI - Effective Slope",
+                          "eval_refid": "58982",
+                          "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                          "evalType": "ArbitraryCurve",
+                          "propiid": "27557",
+                          "propname": "SLOPE PERCENT AND BEDROCK NOT <50",
+                          "propuom": "PCT",
+                          "RefId": "58982"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "WICCPI - Ponding & Flooding Frequency",
+              "RefId": "54897",
+              "rule_refid": "54897",
+              "children": [
+                {
+                  "name": "RuleHedge_d28cac15",
+                  "Type": "multiply",
+                  "Value": "0.02",
+                  "children": [
+                    {
+                      "name": "RuleHedge_dab82b27",
+                      "Type": "null_or",
+                      "Value": "0",
+                      "children": [
+                        {
+                          "name": "WICCPI - MONTHS W/ FLOODING (FREQ),  APRIL-MAY",
+                          "eval_refid": "58983",
+                          "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                          "evalType": "ArbitraryLinear",
+                          "propiid": "27550",
+                          "propname": "MONTHS W/ FLOODING (FREQ),  APRIL-MAY, RATING",
+                          "propuom": "MONTHS",
+                          "RefId": "58983"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "WICCPI - Ponding & Flooding Duration",
+              "RefId": "54898",
+              "rule_refid": "54898",
+              "children": [
+                {
+                  "name": "RuleHedge_41e9f651",
+                  "Type": "multiply",
+                  "Value": "0.03",
+                  "children": [
+                    {
+                      "name": "RuleHedge_87ac2e19",
+                      "Type": "null_or",
+                      "Value": "0",
+                      "children": [
+                        {
+                          "name": "WICCPI - MONTHS W/ FLOODING (DUR),  APRIL-MAY",
+                          "eval_refid": "58984",
+                          "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                          "evalType": "ArbitraryLinear",
+                          "propiid": "27552",
+                          "propname": "MONTHS W/ FLOODING (DUR),  APRIL-MAY, RATING",
+                          "propuom": "MONTHS",
+                          "RefId": "58984"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "WICCPI - Water Balance",
+              "RefId": "54899",
+              "rule_refid": "54899",
+              "children": [
+                {
+                  "name": "RuleHedge_812e0eab",
+                  "Type": "multiply",
+                  "Value": "0.13",
+                  "children": [
+                    {
+                      "name": "RuleHedge_382ba0dc",
+                      "Type": "null_or",
+                      "Value": "0",
+                      "children": [
+                        {
+                          "name": "WICCPI - Water Balance by MLRA",
+                          "eval_refid": "58985",
+                          "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                          "evalType": "ArbitraryLinear",
+                          "propiid": "47017",
+                          "propname": "MLRA Ranking",
+                          "propuom": "ranking",
+                          "RefId": "58985"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "WICCPI - Interpretable Component",
+              "RefId": "54894",
+              "rule_refid": "54894",
+              "children": [
+                {
+                  "name": "RuleHedge_f342e93d",
+                  "Type": "null_not_rated",
+                  "Value": "0",
+                  "children": [
+                    {
+                      "name": "WICCPI - Interpretable Component",
+                      "eval_refid": "58981",
+                      "evalFunction": ["function (x) ", "return(NULL)"],
+                      "evalType": "Crisp",
+                      "propiid": "15327",
+                      "propname": "INTERPRETABLE COMPONENT",
+                      "propuom": null,
+                      "RefId": "58981"
                     }
                   ]
                 }
