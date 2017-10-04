@@ -83,17 +83,25 @@ plotEvaluation(e)
 ```{r, fig.width=6, fig.height=4}
 # just some random rule
 y <- rules[rules$rulename == 'Dust PM10 and PM2.5 Generation', ]
+
 dt <- parseRule(y)
+
 # print intermediate results
 print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', limit=25)
+
 # recusively splice-in sub-rules
 dt$Do(traversal='pre-order', fun=linkSubRules)
 # splice-in evaluation functions, if possible
 dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
+
+# print more attributes
+options(width=300)
 print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limit=25)
+
+print(dt, 'Type', 'Value', 'evalType', 'propname', 'propiid', 'propuom', limit=25)
 ```
 
-Get a table of evaluations and properties
+Get a table of evaluations, properties, and property IDs
 ```{r, fig.width=6, fig.height=4}
 getPropertySet(dt)
 ```
@@ -111,9 +119,58 @@ print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limi
 ```
 
 ```{r, fig.width=6, fig.height=4}
+options(width=80)
 ps <- getPropertySet(dt)
-unique(ps$property)
+unique(ps$propname)
 ```
+
+
+**NCCPI Version 3.0**
+```{r, fig.width=6, fig.height=4, eval=FALSE}
+y <- rules[rules$rulename == 'NCCPI - National Commodity Crop Productivity Index (Ver 3.0)', ]
+dt <- parseRule(y)
+dt$Do(traversal='pre-order', fun=linkSubRules)
+dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
+
+options(width=500, max.print = 1e6)
+sink(file = 'nccpi-full-tree.txt')
+print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', 'propname', 'propiid', limit=NULL)
+sink()
+
+options(max.print=1000, width=80)
+
+# save properties and IDs to CSV
+ps <- getPropertySet(dt)
+write.csv(unique(ps), file='nccpi-properties.csv', row.names = FALSE)
+
+# flatten tree to data.frame and save to CSV
+d <- ToDataFrameTable(dt, 'name', 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', 'propname', 'propiid')
+write.csv(unique(d), file='nccpi-table-representation.csv', row.names = FALSE)
+```
+
+
+**Commodity Crop Productivity Index (Corn) (WI)**
+```{r, eval=FALSE}
+y <- rules[rules$rulename == 'Commodity Crop Productivity Index (Corn) (WI)', ]
+dt <- parseRule(y)
+dt$Do(traversal='pre-order', fun=linkSubRules)
+dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
+
+options(width=500, max.print = 1e6)
+sink(file = 'CCPI-WI-full-tree.txt')
+print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', 'propname', 'propiid', limit=NULL)
+sink()
+
+options(max.print=1000, width=200)
+
+ps <- getPropertySet(dt)
+write.csv(unique(ps), file='CCPI-WI-properties.csv', row.names = FALSE)
+
+d <- ToDataFrameTable(dt, 'name', 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', 'propname', 'propiid')
+write.csv(unique(d), file='CCPI-WI-table-representation.csv', row.names = FALSE)
+
+```
+
 
 
 ```{r, fig.width=6, fig.height=4}
@@ -143,26 +200,20 @@ print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limi
 ## Conversion to JSON and D3 Vizualization
 The objects can't have evaluation functions attached
 ```{r, eval=FALSE}
-library(networkD3)
-library(jsonlite)
 
-y <- rules[rules$rulename == 'Dust PM10 and PM2.5 Generation', ]
+y <- rules[rules$rulename == 'Commodity Crop Productivity Index (Corn) (WI)', ]
 dt <- parseRule(y)
 dt$Do(traversal='pre-order', fun=linkSubRules)
+dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
 
-# convert to list
-dt.list <- ToListExplicit(dt, unname=TRUE, childrenName = 'Children')
+# prep for use in D3
+# note arguments for D3 JSON compatibility
+dt.list <- ToListExplicit(dt, unname = TRUE, nameName = "name", childrenName = "children")
+dt.json <- toJSON(dt.list, pretty = TRUE, auto_unbox = TRUE, force=TRUE)
 
-# convert to JSON
-dt.json <- toJSON(dt.list, pretty = TRUE, auto_unbox = TRUE, null='null')
+# save local copy of JSON
 cat(dt.json, file='D3/dt.json')
 
-
-net <- ToDataFrameNetwork(dt)
-simpleNetwork(net, fontSize = 12)
-
-# doesn't work
-# radialNetwork(dt.list)
 
 # test with:
 # "C:\Program Files (x86)\PYTHON27\ArcGIS10.1\python.exe" -m SimpleHTTPServer
