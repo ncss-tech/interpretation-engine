@@ -133,7 +133,7 @@ dt$Do(traversal='pre-order', fun=linkSubRules)
 dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
 
 options(width=500, max.print = 1e6)
-sink(file = 'nccpi-full-tree.txt')
+sink(file = 'examples/nccpi-full-tree.txt')
 print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', 'propname', 'propiid', limit=NULL)
 sink()
 
@@ -141,11 +141,11 @@ options(max.print=1000, width=80)
 
 # save properties and IDs to CSV
 ps <- getPropertySet(dt)
-write.csv(unique(ps), file='nccpi-properties.csv', row.names = FALSE)
+write.csv(unique(ps), file='examples/nccpi-properties.csv', row.names = FALSE)
 
 # flatten tree to data.frame and save to CSV
 d <- ToDataFrameTable(dt, 'name', 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', 'propname', 'propiid')
-write.csv(unique(d), file='nccpi-table-representation.csv', row.names = FALSE)
+write.csv(unique(d), file='examples/nccpi-table-representation.csv', row.names = FALSE)
 ```
 
 
@@ -157,17 +157,17 @@ dt$Do(traversal='pre-order', fun=linkSubRules)
 dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
 
 options(width=500, max.print = 1e6)
-sink(file = 'CCPI-WI-full-tree.txt')
+sink(file = 'examples/CCPI-WI-full-tree.txt')
 print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', 'propname', 'propiid', limit=NULL)
 sink()
 
 options(max.print=1000, width=200)
 
 ps <- getPropertySet(dt)
-write.csv(unique(ps), file='CCPI-WI-properties.csv', row.names = FALSE)
+write.csv(unique(ps), file='examples/CCPI-WI-properties.csv', row.names = FALSE)
 
 d <- ToDataFrameTable(dt, 'name', 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', 'propname', 'propiid')
-write.csv(unique(d), file='CCPI-WI-table-representation.csv', row.names = FALSE)
+write.csv(unique(d), file='examples/CCPI-WI-table-representation.csv', row.names = FALSE)
 
 ```
 
