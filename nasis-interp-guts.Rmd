@@ -27,6 +27,7 @@ library(plyr)
 library(data.tree)
 library(digest)
 library(jsonlite)
+library(sharpshootR)
 
 # source local functions
 source('local-functions.R')
@@ -71,6 +72,19 @@ e <- evals[evals$evalname == 'Available Water Capacity <10cm', ]
 plotEvaluation(e)
 ```
 
+## Properties via NASIS WebReport
+This is a work in progress, some properties don't work (?).
+```{r}
+url <- 'https://nasis.sc.egov.usda.gov/NasisReportsWebSite/limsreport.aspx?report_name=WEB-PROPERY-COMPONENT_property'
+
+# prop_name: full property name
+# cokey: component record ID, can be a comma-delim list
+args <- list(prop_name='AWC, 0-50CM OR FIRST RESTRICTIVE LAYER', cokey='1842387')
+
+
+res <- parseWebReport(url, args, index=1)
+kable(res)
+```
 
 
 ## Rule Trees
