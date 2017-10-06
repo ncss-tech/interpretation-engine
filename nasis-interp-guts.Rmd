@@ -118,9 +118,9 @@ Experimental and subject to change. Can specify multiple componet records but on
 ```{r}
 url <- 'https://nasis.sc.egov.usda.gov/NasisReportsWebSite/limsreport.aspx?report_name=WEB-PROPERY-COMPONENT_property'
 
-# prop_name: full property name
+# prop_id: property ID (10244 = AWC, 0-50CM OR FIRST RESTRICTIVE LAYER)
 # cokey: component record ID, can be a comma-delim list
-args <- list(prop_name='AWC, 0-50CM OR FIRST RESTRICTIVE LAYER', cokey='1842387')
+args <- list(prop_id='10244', cokey='1842387')
 
 res <- parseWebReport(url, args, index=1)
 kable(res)
@@ -128,10 +128,10 @@ kable(res)
 
 More useful, connect the property back to the name of the property.
 ```{r}
-(props <- lookupProperties(unique(ps$propname), coiid='1842387'))
+(props <- lookupProperties(unique(ps$propiid), coiid='1842387'))
 
 # join with properties
-z <- join(ps, props, by='propname', type='left')
+z <- join(ps, props, by='propiid', type='left')
 ```
 
 
@@ -177,15 +177,6 @@ d <- ToDataFrameTable(dt, 'name', 'Type', 'Value', 'RefId', 'rule_refid', 'eval_
 write.csv(unique(d), file='examples/nccpi-table-representation.csv', row.names = FALSE)
 ```
 
-Get all properties that this interpretation requires, for a given component.
-Lookup is done by property name. This doesn't work for properties with special characters in the name (>).
-This takes about 2 minutes.
-```{r, eval=FALSE}
-(props <- lookupProperties(unique(ps$propname), coiid='1842387'))
-
-# join with properties
-z <- join(ps, props, by='propname', type='left')
-```
 
 **Commodity Crop Productivity Index (Corn) (WI)**
 ```{r, eval=FALSE}
@@ -209,6 +200,14 @@ write.csv(unique(d), file='examples/CCPI-WI-table-representation.csv', row.names
 
 ```
 
+
+Get all properties that this interpretation requires, for a given component. Runtime: 1 minute. Some requests result in an error, due to request time-out or SSL errors--why? Only happens some times.
+```{r, eval=FALSE}
+(props <- lookupProperties(unique(ps$propiid), coiid='1842387'))
+
+# join with properties
+z <- join(ps, props, by='propiid', type='left')
+```
 
 
 ```{r, fig.width=6, fig.height=4}
