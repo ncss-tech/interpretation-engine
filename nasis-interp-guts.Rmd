@@ -72,18 +72,11 @@ e <- evals[evals$evalname == 'Available Water Capacity <10cm', ]
 plotEvaluation(e)
 ```
 
-## Properties via NASIS WebReport
-This is a work in progress, some properties don't work (?).
+Evaluate an arbitrary rule, with an arbitrary value.
+*NCCPI - pH 0-20cm (Corn and Soybeans)* and pH = 6.5
 ```{r}
-url <- 'https://nasis.sc.egov.usda.gov/NasisReportsWebSite/limsreport.aspx?report_name=WEB-PROPERY-COMPONENT_property'
-
-# prop_name: full property name
-# cokey: component record ID, can be a comma-delim list
-args <- list(prop_name='AWC, 0-50CM OR FIRST RESTRICTIVE LAYER', cokey='1842387')
-
-
-res <- parseWebReport(url, args, index=1)
-kable(res)
+e <- evals[evals$evalname == 'NCCPI - pH 0-20cm (Corn and Soybeans)', ]
+extractEvalCurve(e)(6.5)
 ```
 
 
@@ -115,10 +108,32 @@ print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limi
 print(dt, 'Type', 'Value', 'evalType', 'propname', 'propiid', 'propuom', limit=25)
 ```
 
-Get a table of evaluations, properties, and property IDs
+Get a table of unique evaluations, properties, and property IDs
 ```{r, fig.width=6, fig.height=4}
-getPropertySet(dt)
+(ps <- getPropertySet(dt))
 ```
+
+### Properties via NASIS WebReport
+Experimental and subject to change. Can specify multiple componet records but only a single property.
+```{r}
+url <- 'https://nasis.sc.egov.usda.gov/NasisReportsWebSite/limsreport.aspx?report_name=WEB-PROPERY-COMPONENT_property'
+
+# prop_name: full property name
+# cokey: component record ID, can be a comma-delim list
+args <- list(prop_name='AWC, 0-50CM OR FIRST RESTRICTIVE LAYER', cokey='1842387')
+
+res <- parseWebReport(url, args, index=1)
+kable(res)
+```
+
+More useful, connect the property back to the name of the property.
+```{r}
+(props <- lookupProperties(unique(ps$propname), coiid='1842387'))
+
+# join with properties
+z <- join(ps, props, by='propname', type='left')
+```
+
 
 
 ### More Examples
@@ -155,13 +170,22 @@ options(max.print=1000, width=80)
 
 # save properties and IDs to CSV
 ps <- getPropertySet(dt)
-write.csv(unique(ps), file='examples/nccpi-properties.csv', row.names = FALSE)
+write.csv(ps, file='examples/nccpi-properties.csv', row.names = FALSE)
 
 # flatten tree to data.frame and save to CSV
 d <- ToDataFrameTable(dt, 'name', 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', 'propname', 'propiid')
 write.csv(unique(d), file='examples/nccpi-table-representation.csv', row.names = FALSE)
 ```
 
+Get all properties that this interpretation requires, for a given component.
+Lookup is done by property name. This doesn't work for properties with special characters in the name (>).
+This takes about 2 minutes.
+```{r, eval=FALSE}
+(props <- lookupProperties(unique(ps$propname), coiid='1842387'))
+
+# join with properties
+z <- join(ps, props, by='propname', type='left')
+```
 
 **Commodity Crop Productivity Index (Corn) (WI)**
 ```{r, eval=FALSE}

@@ -1,4 +1,28 @@
 
+# get all properties for single coiid
+# TODO: vectorize over both arguments
+# this web report undestands multiple component rec. ids
+lookupProperties <- function(coiid, propNameVect) {
+  
+  # get a single property for a single component
+  .getSingleProperty <- function(coiid, i) {
+    url <- 'https://nasis.sc.egov.usda.gov/NasisReportsWebSite/limsreport.aspx?report_name=WEB-PROPERY-COMPONENT_property'
+    args <- list(prop_name=i, cokey=coiid)
+    res <- parseWebReport(url, args, index=1)
+    
+    # HTTP errors will result in NULL
+    if(is.null(res))
+      return(NULL)
+    
+    # otherwise, add property name back to the results for joining
+    res <- cbind(propname=i, res)
+    return(res)
+  }
+  
+  # convert back to DF and return
+  res <- ldply(propNameVect, .getSingleProperty, coiid=coiid, .progress='text')
+  return(res)
+}
 
 getAttributeByEval <- function(x, a) {
   p <- x$Get(a)
@@ -12,6 +36,7 @@ getAttributeByEval <- function(x, a) {
 }
 
 
+# get the unique set of properties for all evaluations
 # this requires several calls to getAttributeByEval(), one for each attribute
 # why?
 getPropertySet <- function(x) {
@@ -20,7 +45,7 @@ getPropertySet <- function(x) {
   
   # splice together with left join
   p <- join(p.1, p.2, by='evaluation', type='left')
-  return(p)
+  return(unique(p))
 }
 
 
