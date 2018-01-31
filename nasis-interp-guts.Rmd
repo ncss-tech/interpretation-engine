@@ -1,6 +1,6 @@
 ---
 title: "Extracting NASIS Rules/Evaluations"
-author: "D.E. Beaudette"
+author: "D.E. Beaudette and J. Nemecek"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -127,16 +127,51 @@ kable(res)
 ```
 
 More useful, connect the property back to the name of the property.
-```{r}
-(props <- lookupProperties(unique(ps$propiid), coiid='1842387'))
+```{r results='hide'}
+props <- lookupProperties(unique(ps$propiid), coiid='1842387')
+```
 
+```{r}
 # join with properties
 z <- join(ps, props, by='propiid', type='left')
+
+kable(z)
 ```
 
 
 
 ### More Examples
+
+**WLF-Soil Suitability - Karner Blue Butterfly**
+```{r, fig.width=6, fig.height=4}
+y <- rules[rules$rulename == 'WLF-Soil Suitability - Karner Blue Butterfly', ]
+dt <- parseRule(y)
+dt$Do(traversal='pre-order', fun=linkSubRules)
+dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
+print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limit=25)
+```
+
+```{r, fig.width=6, fig.height=4}
+ps <- getPropertySet(dt)
+kable(ps)
+```
+
+
+```{r, fig.width=6, fig.height=4}
+e <- evals[evals$evalname == 'KSAT MINIMUM IN DEPTH TO 50 cm  or above restriction', ]
+plotEvaluation(e, xlim=c(0, 200))
+
+e <- evals[evals$evalname == 'KARNER-DEPTH TO HIGH WATER TABLE, Growing Season MIN', ]
+plotEvaluation(e, xlim=c(0, 200))
+
+e <- evals[evals$evalname == 'KARNER-AWS, 0-50CM OR FIRST RESTRICTIVE LAYER', ]
+plotEvaluation(e, xlim=c(0, 200))
+
+## dangit, haven't implemented this kind of evaluation yet
+# e <- evals[evals$evalname == 'WICCPI - Interpretable Component', ]
+# plotEvaluation(e, xlim=c(0, 200))
+```
+
 
 **California Revised Storie Index**
 ```{r, fig.width=6, fig.height=4}
