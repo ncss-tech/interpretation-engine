@@ -70,6 +70,10 @@ plotEvaluation(e)
 
 e <- evals[evals$evalname == 'Available Water Capacity <10cm', ]
 plotEvaluation(e)
+
+# # doesn't work due to NA in min/max
+# e <- evals[evals$evalname == 'GRL-Frost Action = moderate', ]
+# plotEvaluation(e)
 ```
 
 Evaluate an arbitrary rule, with an arbitrary value.
@@ -90,6 +94,30 @@ extractEvalCurve(e)(6.5)
 ```{r, fig.width=6, fig.height=4}
 # just some random rule
 y <- rules[rules$rulename == 'Dust PM10 and PM2.5 Generation', ]
+
+dt <- parseRule(y)
+
+# print intermediate results
+print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', limit=25)
+
+# recusively splice-in sub-rules
+dt$Do(traversal='pre-order', fun=linkSubRules)
+# splice-in evaluation functions, if possible
+dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
+
+# print more attributes
+options(width=300)
+print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limit=25)
+
+print(dt, 'Type', 'Value', 'evalType', 'propname', 'propiid', 'propuom', limit=25)
+```
+
+Frost Action.
+```{r}
+# idx <- grep('frost action', rules$rulename, ignore.case = TRUE)
+# rules[idx, ]$rulename
+
+y <- rules[rules$rulename == 'GRL-Frost Action = moderate', ]
 
 dt <- parseRule(y)
 

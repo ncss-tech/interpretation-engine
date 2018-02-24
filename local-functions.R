@@ -235,6 +235,7 @@ extractLinearCurveEval <- function(x, invert, res) {
   return(af)
 }
 
+## TODO: breaks on eval "GRL-Frost Action = moderate"
 ## TODO: parsing expression must be generalized
 ## TODO: this doesn't work with expressions like this "!= \"oxisols\" or \"gelisols\""
 # x: evalulation curve XML text
