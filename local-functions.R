@@ -69,7 +69,7 @@ plotEvaluation <- function(x, xlim=NULL, ...) {
 
 getAndCacheData <- function() {
   # init connection
-  channel <- odbcDriverConnect(connection = "DSN=nasis_local;UID=NasisSqlRO;PWD=nasisRe@d0n1y")
+  channel <- odbcDriverConnect(connection = "DSN=nasis_local;UID=NasisSqlRO;PWD=nasisRe@d0n1y365")
   
   # get rules, note that "rule" is a reserved word, use [] to protect
   # load ALL rules, even those not ready for use

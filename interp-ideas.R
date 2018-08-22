@@ -3,7 +3,7 @@ library(scales)
 library(plyr)
 library(reshape)
 library(mgcv)
-
+library(viridis)
 
 # develop a rating ~ property relationship
 poperty.rating <- function(min, max, location=0, scale=1, shape='peak', res=100) {
@@ -52,19 +52,19 @@ useOuterStrips(pp)
 
 
 # generate some ratings
-pH <- poperty.rating(min=4, max=10, location=6.8, shape='sigmoid', res=30)
-clay <- poperty.rating(min=4, max=50, location=15, scale=8, shape='peak', res=30)
+A <- poperty.rating(min=4, max=10, location=6.8, shape='sigmoid', res=30)
+B <- poperty.rating(min=4, max=50, location=15, scale=8, shape='peak', res=30)
 
 # stack-up and plot ratings vs. propertiems
-xyplot(i ~ p | which , data=make.groups(pH, clay), type=c('l', 'g'), scales=list(x=list(relation='free')), col='black', lwd=2)
+xyplot(i ~ p | which , data=make.groups(A, B), type=c('l', 'g'), scales=list(x=list(relation='free')), col='black', lwd=2)
 
 
 # interaction
-cols <- colorRampPalette(brewer.pal(8, 'Spectral'))
+m <- A$i %o% B$i
 
-m <- pH$i %o% clay$i
-levelplot(m, row.values=pH$p, column.values=clay$p, aspect='fill', xlab='Soil Property A', ylab='Soil Property B', col.regions=cols)
+levelplot(m, row.values=pH$p, column.values=clay$p, aspect='fill', xlab='Soil Property A', ylab='Soil Property B', breaks=19, col.regions=viridis(n=20, direction = -1))
 
+  
 
 
 ###
