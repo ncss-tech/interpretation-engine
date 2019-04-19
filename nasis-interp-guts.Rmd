@@ -7,13 +7,12 @@ output:
     mathjax: null
     jquery: null
     smart: no
-    keep_md: FALSE
 ---
 
   
 ```{r setup, echo=FALSE, results='hide', warning=FALSE}
 library(knitr, quietly = TRUE)
-opts_chunk$set(message=FALSE, warning=FALSE, fig.retina = 2, fig.align='center', dev='png', dev.args=list(pointsize=10, antialias='cleartype'), tidy=FALSE)
+opts_chunk$set(message=FALSE, warning=FALSE, fig.retina = 2, fig.align='center', dev='png', dev.args=list(pointsize=10, antialias='cleartype'), tidy=FALSE, cache=FALSE)
 options(width=500, stringsAsFactors=FALSE)
 ```
 
@@ -71,7 +70,8 @@ plotEvaluation(e)
 e <- evals[evals$evalname == 'Available Water Capacity <10cm', ]
 plotEvaluation(e)
 
-# # doesn't work due to NA in min/max
+## doesn't work due to NA in min/max
+## consider defaults of 0,1 ?
 # e <- evals[evals$evalname == 'GRL-Frost Action = moderate', ]
 # plotEvaluation(e)
 ```
@@ -141,6 +141,43 @@ Get a table of unique evaluations, properties, and property IDs
 (ps <- getPropertySet(dt))
 ```
 
+
+SVI (?)
+```{r}
+# idx <- grep('SVI', rules$rulename, ignore.case = TRUE)
+# rules[idx, ]$rulename
+
+y <- rules[rules$rulename == 'SVI - Leaching', ]
+
+dt <- parseRule(y)
+
+# print intermediate results
+print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', limit=25)
+
+# recusively splice-in sub-rules
+dt$Do(traversal='pre-order', fun=linkSubRules)
+# splice-in evaluation functions, if possible
+dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
+
+# print more attributes
+options(width=300)
+print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limit=25)
+
+print(dt, 'Type', 'Value', 'evalType', 'propname', 'propiid', 'propuom', limit=25)
+```
+
+Get a table of unique evaluations, properties, and property IDs
+```{r, fig.width=6, fig.height=4}
+(ps <- getPropertySet(dt))
+```
+
+
+```{r}
+e <- evals[evals$evalname == 'SVI - Leaching', ]
+plotEvaluation(e)
+```
+
+
 ### Properties via NASIS WebReport
 Experimental and subject to change. Can specify multiple componet records but only a single property.
 ```{r}
@@ -172,7 +209,7 @@ kable(z)
 
 **WLF-Soil Suitability - Karner Blue Butterfly**
 ```{r, fig.width=6, fig.height=4}
-y <- rules[rules$rulename == 'WLF-Soil Suitability - Karner Blue Butterfly', ]
+y <- rules[rules$rulename == 'WLF-Soil Suitability - Karner Blue Butterfly (WI)', ]
 dt <- parseRule(y)
 dt$Do(traversal='pre-order', fun=linkSubRules)
 dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
