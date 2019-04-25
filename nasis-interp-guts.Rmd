@@ -27,6 +27,7 @@ library(data.tree)
 library(digest)
 library(jsonlite)
 library(sharpshootR)
+library(knitr)
 
 # source local functions
 source('local-functions.R')
