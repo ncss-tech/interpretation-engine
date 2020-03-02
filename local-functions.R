@@ -67,30 +67,42 @@ plotEvaluation <- function(x, xlim=NULL, ...) {
 }
 
 
+# soilDB::uncode() used to convert coded -> uncoded values
 getAndCacheData <- function() {
   # init connection
   channel <- odbcDriverConnect(connection = "DSN=nasis_local;UID=NasisSqlRO;PWD=nasisRe@d0n1y365")
   
   # get rules, note that "rule" is a reserved word, use [] to protect
   # load ALL rules, even those not ready for use
-  rules <- sqlQuery(channel, "SELECT rulename, rd.ChoiceName as ruledesign, primaryinterp, notratedphrase, ruledbiidref, ruleiid, [rule]
-FROM rule_View_0 
-LEFT OUTER JOIN (SELECT * FROM MetadataDomainDetail WHERE DomainID = 2822) AS rd ON ruledesign = rd.ChoiceValue", stringsAsFactors=FALSE)
+  rules <- sqlQuery(channel, "SELECT rulename, ruledesign, primaryinterp, notratedphrase, ruledbiidref, ruleiid, [rule]
+FROM rule_View_0 ;", stringsAsFactors=FALSE)
   
   # get all evaluation curves
-  evals <- sqlQuery(channel, "SELECT evaliid, evalname, evaldesc, eval, et.ChoiceName as evaluationtype, invertevaluationresults, propiidref AS propiid
-FROM evaluation_View_0 
-LEFT OUTER JOIN (SELECT * FROM MetadataDomainDetail WHERE DomainID = 4884) AS et ON evaluationtype = et.ChoiceValue", stringsAsFactors=FALSE)
+  evals <- sqlQuery(channel, "SELECT evaliid, evalname, evaldesc, eval, evaluationtype, invertevaluationresults, propiidref AS propiid
+FROM evaluation_View_0 ;", stringsAsFactors=FALSE)
   
-  # get all properties
-  properties <- sqlQuery(channel, "SELECT propiid, propuom, propmin, propmax, propdefval, propname FROM property_View_0", stringsAsFactors=FALSE)
+  # get basic property parameters, but not the property definition
+  properties <- sqlQuery(channel, "SELECT propiid, propuom, propmin, propmax, propmod, propdefval, propname FROM property_View_0", stringsAsFactors=FALSE)
   
-  ## CHECK THIS
+  # property descriptions and CVIR code
+  property_def <- sqlQuery(channel, "SELECT propiid, propdesc, prop FROM property_View_0", stringsAsFactors=FALSE)
+  
+  # uncode
+  rules <- soilDB::uncode(rules, stringsAsFactors = FALSE)
+  evals <- soilDB::uncode(evals, stringsAsFactors = FALSE)
+  properties <- soilDB::uncode(properties, stringsAsFactors = FALSE)
+  
+  # treat property IDs as characters
+  evals$propiid <- as.character(evals$propiid)
+  properties$propiid <- as.character(properties$propiid)
+  property_def$propiid <- as.character(property_def$propiid)
+  
+  ## TODO: maybe useful to keep the split?
   # there is onle 1 property / evaluation, so join them
   evals <- join(evals, properties, by='propiid')
   
   # save tables for offline testing
-  save(rules, evals, file='cached-NASIS-data.Rda')
+  save(rules, evals, properties, property_def, file='cached-NASIS-data.Rda')
 }
 
 
