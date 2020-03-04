@@ -25,6 +25,26 @@ properties[which(properties$propname == 'AWC, 0-50CM OR FIRST RESTRICTIVE LAYER'
 cat(property_def$prop[which(property_def$propiid == '10244')])
 
 
+# properties that accept arguments
+# find all cases of DERIVE ... using (folder):(property)
+z <- str_match_all(property_def$prop, 'accept')
+
+# index properties that accept arguments
+args.idx <- which(sapply(z, function(i) length(i) > 0))
+property_def$propiid[args.idx]
+
+# mostly variations on a theme: find a thickness within a range
+properties$propname[properties$propiid %in% property_def$propiid[args.idx]]
+
+# how would this be implemented in R ??
+
+## example: 
+# "AASHTO GROUP INDEX NUMBER THICKEST LAYER IN DEPTH 10-40 in."
+# DERIVE layer_thickness from rv using "NSSC Pangaea":"LAYER THICKNESS IN RANGE; ABOVE A RESTRICTIVE LAYER" (25,100).
+#
+
+
+
 # find all cases of DERIVE ... using (folder):(property)
 z <- str_match_all(property_def$prop, 'DERIVE.*using.*?(["a-zA-Z0-9 ]+):(["a-zA-Z0-9 ]+)')
 

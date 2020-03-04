@@ -52,12 +52,22 @@ getPropertySet <- function(x) {
 }
 
 
-plotEvaluation <- function(x, xlim=NULL, ...) {
+## TODO: add critical points
+plotEvaluation <- function(x, xlim=NULL, resolution=100, ...) {
   res <- extractEvalCurve(x)
-  s <- seq(x$propmin, x$propmax, length.out = 100)
-  s.range <- range(s)
-  if(is.null(xlim))
+  
+  # default sequence attempts to use min/max range from eval
+  # this isn't always useful, as min/max might be way too wide
+  if(is.null(xlim)) {
+    s <- seq(x$propmin, x$propmax, length.out = resolution)
+    s.range <- range(s)
     xlim <- s.range
+  } else {
+    s <- seq(xlim[1], xlim[2], length.out = resolution)
+    s.range <- range(s)
+  }
+    
+  
   x.lab <- paste0(x$propname, ' (', x$propuom, ')')
   plot(0,0, type='n', xlab=x.lab, cex.lab=0.85, ylab='fuzzy rating', main=x$evalname, sub=x$evaluationtype, cex.sub=0.85, las=1, ylim=c(0, 1), xlim=xlim, ...)
   grid()
@@ -116,10 +126,12 @@ xmlChunkParse <- function(x) {
   return(l)
 }
 
+
+## TODO: return function and critical points as a list
 # dispatch specialized functions based on eval type
 # x: evalulation record
 # res: number of intermediate points
-extractEvalCurve <- function(x, res=25) {
+extractEvalCurve <- function(x, resolution=25) {
   # get some metadata
   et <- x$evaluationtype
   invert.eval <- x$invertevaluationresults
@@ -143,22 +155,26 @@ extractEvalCurve <- function(x, res=25) {
   }
   
   if(et == 'Sigmoid') {
-    res <- extractSigmoidCurveEval(x$eval, invert=invert.eval, res)
+    res <- extractSigmoidCurveEval(x$eval, invert=invert.eval, resolution)
     return(res)
   }
     
   if(et == 'Crisp') {
-    res <- extractCrispCurveEval(x$eval, invert=invert.eval, res, dmin=domain.min, dmax=domain.max)
+    res <- extractCrispCurveEval(x$eval, invert=invert.eval, resolution, dmin=domain.min, dmax=domain.max)
     return(res)
   }
   
   if(et == 'Linear') {
-    res <- extractLinearCurveEval(x$eval, invert=invert.eval, res)
+    res <- extractLinearCurveEval(x$eval, invert=invert.eval, resolution)
+    return(res)
+  }
+  
+  if(et == 'Trapezoid') {
+    res <- extractTrapezoidEval(x$eval, invert=invert.eval)
     return(res)
   }
   
   ## ... there are many others
-#   Trapezoid
 #   Beta
 #   IsNull
 #   Gauss
@@ -167,6 +183,25 @@ extractEvalCurve <- function(x, res=25) {
   warning("curve type not yet supported", call. = FALSE)
   return(function(x) {return(NULL)})
 }
+
+
+# x: evalulation curve XML text
+extractTrapezoidEval <- function(x, invert) {
+  l <- xmlChunkParse(x)
+  # exract pieces
+  domain <- as.numeric(as.vector(unlist(l$DomainPoints)))
+  # rating is fixed at 0 -> 1 -> 1 -> 0 along trapezoid from left to right
+  rating <- c(0, 1, 1, 0)
+  
+  # invert?
+  if(invert == 1)
+    rating <- (1 - rating)
+  
+  # create interpolator
+  af <- approxfun(domain, rating, method = 'linear', rule=2)
+  return(af)
+}
+
 
 # x: evalulation curve XML text
 extractArbitraryCurveEval <- function(x, invert) {

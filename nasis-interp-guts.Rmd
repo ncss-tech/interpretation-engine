@@ -40,8 +40,19 @@ load('cached-NASIS-data.Rda')
 ```
 
 
-## Evaluation Curves
-Someimes the property min/max values are crazy, you can manually set plot limits with `xlim` argument.
+## Evaluations
+
+### Evaluation Types
+```{r}
+kable(sort(table(evals$evaluationtype), decreasing = TRUE))
+```
+
+
+
+### Evaluation Curves
+
+
+Sometimes the property min/max values are crazy, you can manually set plot limits with `xlim` argument.
 ```{r, fig.width=6, fig.height=4}
 # arbitrary curve:
 e <- evals[evals$evalname == '*Storie Factor C Slope 0 to 100%', ]
@@ -70,6 +81,13 @@ plotEvaluation(e)
 
 e <- evals[evals$evalname == 'Available Water Capacity <10cm', ]
 plotEvaluation(e)
+
+
+## trapezoid
+e <- evals[evals$evalname == 'American Optimum Average pH (1:1 H2O) 0-150 cm', ]
+plotEvaluation(e)
+plotEvaluation(e, xlim = c(3, 9))
+
 
 ## doesn't work due to NA in min/max
 ## consider defaults of 0,1 ?
