@@ -203,9 +203,69 @@ source('local-functions.R')
 
 # load cached data
 load('cached-NASIS-data.Rda')</code></pre>
-<div id="evaluation-curves" class="section level2">
-<h2>Evaluation Curves</h2>
-<p>Someimes the property min/max values are crazy, you can manually set plot limits with <code>xlim</code> argument.</p>
+<div id="evaluations" class="section level2">
+<h2>Evaluations</h2>
+<div id="evaluation-types" class="section level3">
+<h3>Evaluation Types</h3>
+<pre class="r"><code>kable(sort(table(evals$evaluationtype), decreasing = TRUE))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Var1</th>
+<th align="right">Freq</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Crisp</td>
+<td align="right">4306</td>
+</tr>
+<tr class="even">
+<td align="left">Sigmoid</td>
+<td align="right">2317</td>
+</tr>
+<tr class="odd">
+<td align="left">ArbitraryLinear</td>
+<td align="right">1386</td>
+</tr>
+<tr class="even">
+<td align="left">ArbitraryCurve</td>
+<td align="right">1330</td>
+</tr>
+<tr class="odd">
+<td align="left">Linear</td>
+<td align="right">587</td>
+</tr>
+<tr class="even">
+<td align="left">Beta</td>
+<td align="right">96</td>
+</tr>
+<tr class="odd">
+<td align="left">Trapezoid</td>
+<td align="right">43</td>
+</tr>
+<tr class="even">
+<td align="left">IsNull</td>
+<td align="right">36</td>
+</tr>
+<tr class="odd">
+<td align="left">PI</td>
+<td align="right">14</td>
+</tr>
+<tr class="even">
+<td align="left">Gauss</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">Triangle</td>
+<td align="right">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="evaluation-curves" class="section level3">
+<h3>Evaluation Curves</h3>
+<p>Sometimes the property min/max values are crazy, you can manually set plot limits with <code>xlim</code> argument.</p>
 <pre class="r"><code># arbitrary curve:
 e &lt;- evals[evals$evalname == '*Storie Factor C Slope 0 to 100%', ]
 plotEvaluation(e, xlim=c(0, 200))</code></pre>
@@ -258,6 +318,7 @@ plotEvaluation(e)</code></pre>
 <pre class="r"><code>e &lt;- evals[evals$evalname == 'NCCPI - pH 0-20cm (Corn and Soybeans)', ]
 extractEvalCurve(e)(6.5)</code></pre>
 <pre><code>## [1] 0.9609756</code></pre>
+</div>
 </div>
 <div id="rule-trees" class="section level2">
 <h2>Rule Trees</h2>

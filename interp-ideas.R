@@ -62,7 +62,7 @@ xyplot(i ~ p | which , data=make.groups(A, B), type=c('l', 'g'), scales=list(x=l
 # interaction
 m <- A$i %o% B$i
 
-levelplot(m, row.values=pH$p, column.values=clay$p, aspect='fill', xlab='Soil Property A', ylab='Soil Property B', breaks=19, col.regions=viridis(n=20, direction = -1))
+levelplot(m, row.values=A$p, column.values=B$p, aspect='fill', xlab='Soil Property A', ylab='Soil Property B', breaks=19, col.regions=viridis(n=20, direction = -1))
 
   
 
