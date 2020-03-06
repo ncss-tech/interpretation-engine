@@ -1,4 +1,25 @@
 
+initRuleset <- function(rulename) {
+  
+  ## rules has to be loaded from somewhere
+  
+  y <- rules[rules$rulename == rulename, ]
+  
+  dt <- parseRule(y)
+  
+  # recusively splice-in sub-rules
+  dt$Do(traversal='pre-order', fun=linkSubRules)
+  
+  ## TODO: is this working?
+  # splice-in evaluation functions, if possible
+  dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
+  
+  return(dt)
+  
+}
+
+
+
 # get all properties for single coiid and vector of property IDs
 # TODO: vectorize over both arguments
 # TODO: parallel requests?
@@ -54,6 +75,8 @@ getPropertySet <- function(x) {
 
 ## TODO: add critical points
 plotEvaluation <- function(x, xlim=NULL, resolution=100, ...) {
+  
+  ## TODO: need higher-level checking: crisp expressions require a very different interface
   res <- extractEvalCurve(x)
   
   # default sequence attempts to use min/max range from eval
@@ -132,14 +155,12 @@ xmlChunkParse <- function(x) {
 # x: evalulation record
 # res: number of intermediate points
 extractEvalCurve <- function(x, resolution=25) {
-  # get some metadata
+  
+  # type
   et <- x$evaluationtype
+  # invert
   invert.eval <- x$invertevaluationresults
   
-  ## TODO: what do we do with these?
-  # use the defined min / max values
-  domain.min <- x$propmin
-  domain.max <- x$propmax
   
   ## TODO: this isn't finished, currently using linear interpolation
   # shoudl be some kind of spline interpolation, splinefun() isn't working
@@ -160,6 +181,18 @@ extractEvalCurve <- function(x, resolution=25) {
   }
     
   if(et == 'Crisp') {
+    
+    ## need a reliable characteristic to use another approach
+    # some crisp evaluations are logical expressions that don't utilize thresholds
+    if(is.na(x$propmin) & is.na(x$propmax)) {
+      warning("curve type not yet supported", call. = FALSE)
+      return(function(x) {return(NULL)})
+    }
+    
+    # use the defined min / max values
+    domain.min <- x$propmin
+    domain.max <- x$propmax
+    
     res <- extractCrispCurveEval(x$eval, invert=invert.eval, resolution, dmin=domain.min, dmax=domain.max)
     return(res)
   }

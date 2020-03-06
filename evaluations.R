@@ -18,6 +18,10 @@ source('local-functions.R')
 load('cached-NASIS-data.Rda')
 
 
+# how many of each
+knitr::kable(t(sort(prop.table(table(evals$evaluationtype)), decreasing = TRUE)), digits = 3)
+
+
 # trapezoid
 e <- evals[evals$evalname == 'American Optimum Average pH (1:1 H2O) 0-150 cm', ]
 plotEvaluation(e)
@@ -30,8 +34,12 @@ plotEvaluation(e, xlim = c(3, 9))
 # dbeta(36:66, 50, 5)
 e <- evals[evals$evalname == 'GRL-Elevation 1,840m (beta)', ]
 
-
-# crisp based on logical expression... extractCrispCurveEval() can't handle this
-e <- evals[evals$evalname == 'GRL-Frost Action = moderate', ]
+# crisp based on threshold
+e <- evals[evals$evalname == 'Soil pH (water) >= 4.5 and <= 8.4, 0-100cm', ]
 plotEvaluation(e)
 
+## TODO: figure this out
+# crisp based on logical expression... extractCrispCurveEval() can't handle this
+e <- evals[evals$evalname == 'GRL-Frost Action = moderate', ]
+# plotEvaluation(e)
+extractEvalCurve(e)

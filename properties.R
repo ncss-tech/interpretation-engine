@@ -21,8 +21,8 @@ source('local-functions.R')
 load('cached-NASIS-data.Rda')
 
 # quick check
-properties[which(properties$propname == 'AWC, 0-50CM OR FIRST RESTRICTIVE LAYER'), ]
-cat(property_def$prop[which(property_def$propiid == '10244')])
+properties[which(properties$propname == 'GYPSUM MAXIMUM, 0-50CM OR FIRST RESTRICTION'), ]
+cat(property_def$prop[which(property_def$propiid == '49342')])
 
 
 # properties that accept arguments
