@@ -21,8 +21,8 @@ source('local-functions.R')
 load('cached-NASIS-data.Rda')
 
 # quick check
-properties[which(properties$propname == 'GYPSUM MAXIMUM, 0-50CM OR FIRST RESTRICTION'), ]
-cat(property_def$prop[which(property_def$propiid == '49342')])
+properties[which(properties$propname == 'UNIFIED BOTTOM LAYER'), ]
+cat(property_def$prop[which(property_def$propiid == '16681')])
 
 
 # properties that accept arguments
@@ -75,4 +75,11 @@ sort(table(unlist(prop)), decreasing = TRUE)
 prop[[477]]
 
 
+## TODO: 
 # determine nth-degree dependence structure
+
+
+# determin all field utilized by a property
+
+
+
