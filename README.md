@@ -1,6 +1,11 @@
 # Interpretations Outside of NASIS
 There are many reasons for wanting to develop, test, and apply interpretations to soil data outside the context of NASIS. This project aims to create a prototype from existing interpretation rules, evaluations, and properties as managed in NASIS. Once the prototype is complete it should be possible to generate fuzzy ratings from arbitrary sources of soil and environmental data sources.
 
+# Examples
+ * http://ncss-tech.github.io/interpretation-engine/nasis-interp-guts.html
+ * http://ncss-tech.github.io/interpretation-engine/D3/tree.html
+ 
+
 # How
 The [data.tree](https://cran.r-project.org/web/packages/data.tree/vignettes/data.tree.html) package defines objects and methods that are well suited to the task of describing the hierachy of rules and evaluations. The mapping between domain vaules and fuzzy membership can be accomplished with `approxfun`.
 
