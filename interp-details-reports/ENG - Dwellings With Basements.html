@@ -1,0 +1,1600 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><META content="IE=5.0000" http-equiv="X-UA-Compatible">
+
+<META http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<STYLE type="text/css"> <!-- body
+{
+	font-family:Verdana, Arial, Helv, Sans-Serif;
+	font-size: 10pt;
+}
+.soilprop
+{
+    FONT: 10pt Verdana, Helvetica, Arial, sans-serif;
+    COLOR: #000000;
+    TEXT-ALIGN: left;
+    LINE-HEIGHT: 12pt;   
+    MARGIN-LEFT: 12pt;
+    TEXT-INDENT: -12pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+div.SoilReport h1
+{
+	font-size: 16px;
+}
+div.SoilReport h2
+{
+	font-size: 14px;
+}
+div.SoilReport h3, div.SoilReport h4, div.SoilReport h5, div.SoilReport h6
+{
+	font-size: 12px;
+}
+div.menu table td
+{
+	font-size: 11px;
+}
+ul.noimage li
+{
+	list-style-type: none;
+	list-style-image: none;
+}
+ul.noimage li p
+{
+	margin-left: 4ex;
+}
+ul.noimage li h1, ul.noimage li h2, ul.noimage li h3, 
+ul.noimage li h4, ul.noimage li h5, ul.noimage li h6 
+{
+	margin-bottom: 0px;
+}
+.first
+{
+	margin-top: 0px !important;
+}
+.numeric, .number
+{
+	text-align: right;
+}
+.bold
+{
+	font-weight: bold;
+	margin-right: 1ex;
+}
+.italic
+{
+	font-style: italic;
+}
+.super
+{
+	vertical-align: super;
+	font-size: smaller;
+}
+.sub
+{
+	vertical-align: sub;
+	font-size: smaller;
+}
+.padded
+{
+	padding: 5px !important;
+}
+.unpadded
+{
+	padding: 0px !important;
+}
+.scrollable
+{
+	overflow-y: auto !important;
+}
+.nowrap
+{
+	white-space: nowrap;
+}
+table
+{
+    border-collapse: collapse;
+}
+table.data th, table.data td 
+{
+	border-width: 1px;
+	border-style: solid;
+	padding: 4px;
+}
+table.data td.begindatagroup
+{
+	border-left-width: 2px;
+	border-left-style: solid;
+}
+table.data td.enddatagroup
+{
+	border-right-width: 2px;
+	border-right-style: solid;
+}
+table.data td.label
+{
+	text-align: right;
+	padding: 5px;
+}
+table.data th
+{
+}
+table.data th.title
+{
+	width: 100%;
+	padding: 2px !important;
+}
+table.data th.title div.title
+{
+	font-weight: bold;
+	padding-left: 1.25em;
+	text-indent: -1em;
+	text-align: left;
+}
+table.data th.control
+{
+	vertical-align: middle;
+	text-align: right;
+}
+table.data td
+{
+	text-align: left;
+	vertical-align: top;
+}
+table.data td.columnhead, table.data tr.columnhead td
+{
+	padding: 2px;
+	font-weight: bold;
+	text-align: center;
+}
+table.data tr.units td
+{
+	font-style: italic;
+	text-align: center;
+}
+table.data td p.mu-name
+{
+	padding-left: 0.5em;
+	text-indent: -0.5em;
+}
+table.data td p.comp-name
+{
+	padding-left: 1em;
+	text-indent: -0.5em;
+}
+table.data td p.class-name
+{
+	text-align: center;
+}
+table.data td p.reason0
+{
+	text-align: left;
+	padding-left: 0.5em;
+	text-indent: -0.5em;
+}
+table.data td p.reason1
+{
+	text-align: left;
+	padding-left: 1em;
+	text-indent: -0.5em;
+}
+table.data td p.reason2
+{
+	text-align: left;
+	padding-left: 1.5em;
+	text-indent: -0.5em;
+}
+table.data td p.hang-list
+{
+	text-align: left;
+	padding-left: 0.5em;
+	text-indent: -0.5em;
+	vertical-align: middle;
+}
+table.data tfoot td
+{
+	font-weight: bold;
+	padding-top: 5px;
+}
+table.data tr.even td
+{
+	background-color: #FDFDEE;
+}
+table.data tr.odd td
+{
+	background-color: #F8F8D8;
+}
+div.menu table
+{
+	color: #000000;
+	background-color: #FBFBE8; 
+}
+div.menu table td
+{
+	border-color: #000000;
+}
+div.menu table td.over
+{
+	background-color: #E5DEBC !important;
+}
+.title, .muname
+{
+    FONT: 14pt bold Helvetica, Arial, sans-serif;
+    COLOR: #000000;
+    TEXT-ALIGN: left;
+    LINE-HEIGHT: 16pt;   
+    MARGIN-TOP: 18pt;
+    MARGIN-BOTTOM: 3pt;
+}
+
+.subtitle
+{
+    FONT: 12pt bold Helvetica, Arial, sans-serif;
+    COLOR: #000000;
+    TEXT-ALIGN: left;
+    LINE-HEIGHT: 14pt;   
+    MARGIN-TOP: 6pt;
+    MARGIN-BOTTOM: 3pt;
+}
+
+.headnote
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;
+    TEXT-ALIGN: center;
+    LINE-HEIGHT: 10pt;   
+    MARGIN: 6pt 8pt 6pt 8pt;
+}
+
+.footnote
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;
+    TEXT-ALIGN: left;
+    LINE-HEIGHT: 10pt;   
+    MARGIN: 6pt 0pt 0pt 0pt;
+}
+
+.reportdesc
+{
+    FONT: 10pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 12pt;   
+    TEXT-ALIGN: left; 
+    TEXT-INDENT: 12pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+P.at4
+{
+    FONT: 10pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;
+    TEXT-ALIGN: left;
+    LINE-HEIGHT: 12pt;   
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+P.at5
+{
+    FONT: 30pt bold Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    TEXT-ALIGN: left;   
+    LINE-HEIGHT: 32pt;   
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+P.at9
+{
+    FONT: 12pt bold Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    TEXT-ALIGN: left;
+    LINE-HEIGHT: 14pt;   
+    MARGIN-TOP: 12pt;
+    MARGIN-BOTTOM: 6pt;
+}
+
+P.at21
+{
+    FONT: 24pt bold Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    TEXT-ALIGN: left;   
+    LINE-HEIGHT: 26pt;   
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+P.at23
+{
+    FONT: 10pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    TEXT-ALIGN: left; 
+    LINE-HEIGHT: 12pt;   
+    MARGIN-LEFT: 18pt;
+    TEXT-INDENT: -18pt;  
+    MARGIN-TOP: 6pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+P.at30
+{
+    FONT: 10pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;
+    TEXT-ALIGN: left;   
+    LINE-HEIGHT: 12pt;   
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+P.at32
+{
+    FONT: 10pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 12pt;   
+    TEXT-ALIGN: left; 
+    TEXT-INDENT: 12pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+P.at33
+{
+    FONT: 10pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    TEXT-ALIGN: left; 
+    LINE-HEIGHT: 12pt;   
+    MARGIN-LEFT: 18pt;
+    TEXT-INDENT: -18pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+P.at41
+{
+    FONT: 10pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    TEXT-ALIGN: left; 
+    LINE-HEIGHT: 12pt;   
+    MARGIN-LEFT: 18pt;
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+P.at53
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    TEXT-ALIGN: left; 
+    LINE-HEIGHT: 10pt;   
+    MARGIN-LEFT: 42pt;
+    MARGIN-RIGHT: 24pt;
+    TEXT-INDENT: -12pt;  
+    MARGIN-TOP: 6pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+P.at54
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    TEXT-ALIGN: left; 
+    LINE-HEIGHT: 10pt;   
+    MARGIN-LEFT: 42pt;
+    MARGIN-RIGHT: 24pt;
+    TEXT-INDENT: -12pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+TD
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    MARGIN: 0pt 0pt 0pt 0pt;
+    PADDING: 0pt 2pt 0pt 2pt;
+}
+
+THEAD TR TD
+{
+    FONT: bold 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    TEXT-ALIGN: center; 
+    MARGIN: 0pt 0pt 0pt 0pt;
+    PADDING: 0pt 0pt 0pt 0pt;
+    BACKGROUND-COLOR: #E8E8E8;
+    /* BORDER: thin solid black */
+}
+
+.mu-name
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    TEXT-ALIGN: left; 
+    MARGIN-LEFT: 6pt;
+    TEXT-INDENT: -6pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+.comp-name
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    TEXT-ALIGN: left; 
+    MARGIN-LEFT: 12pt;
+    TEXT-INDENT: -6pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+.units
+{
+    FONT: italic 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    TEXT-ALIGN: center; 
+    MARGIN-LEFT: 0pt;
+    TEXT-INDENT: 0pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+.class-name
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    TEXT-ALIGN: center; 
+    MARGIN-LEFT: 0pt;
+    TEXT-INDENT: 0pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+.hang-list
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    TEXT-ALIGN: left; 
+    MARGIN-LEFT: 6pt;
+    TEXT-INDENT: -6pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+.reason0
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    TEXT-ALIGN: left; 
+    MARGIN-LEFT: 6pt;
+    TEXT-INDENT: -6pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+.reason1
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    TEXT-ALIGN: left; 
+    MARGIN-LEFT: 12pt;
+    TEXT-INDENT: -6pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+.reason2
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    TEXT-ALIGN: left; 
+    MARGIN-LEFT: 18pt;
+    TEXT-INDENT: -6pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+.reason3
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    TEXT-ALIGN: left; 
+    MARGIN-LEFT:24pt;
+    TEXT-INDENT: -6pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+.ratingvalue
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    TEXT-ALIGN: right; 
+    MARGIN-LEFT: 0pt;
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+.number
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    TEXT-ALIGN: right; 
+    MARGIN-LEFT: 0pt;
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+.total-line
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    PADDING: 6pt 2pt 0pt 2pt;
+    BORDER-TOP: 1px solid black;
+}
+
+.shade0
+{
+	background-color: #FFEEDD;
+}
+
+.shade1
+{
+	background-color: white;
+}
+
+.descrip-mu
+{
+    FONT: 10pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    TEXT-ALIGN: left; 
+    LINE-HEIGHT: 12pt;   
+    MARGIN-LEFT: 0pt;
+    MARGIN-TOP: 12pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+.descrip-text
+{
+    FONT: 10pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    TEXT-ALIGN: left; 
+    LINE-HEIGHT: 12pt;   
+    MARGIN-LEFT: 18pt;
+    MARGIN-TOP: 12pt;
+    MARGIN-BOTTOM: 0pt;
+}
+.center
+{
+	text-align: center;
+}
+.right
+{
+	text-align: right;
+}
+.bold
+{
+	font-weight: bold;
+} --> </STYLE>
+ 
+<META name="GENERATOR" content="MSHTML 11.00.9600.18838"></HEAD> 
+<BODY>
+<DIV class="section">
+<TABLE class="data">
+  <TBODY>
+  <TR 
+style="border: currentColor; border-image: none; background-color: white;">
+    <TD width="0" style="border: currentColor; border-image: none; background-color: white;" 
+    rowspan="1"><FONT color="white">0</FONT> </TD></TR>
+  <TR>
+    <TD style="border-width: 0px 0px 4px; border-style: solid; border-color: gold; border-image: none; width: 2000px; text-align: center; color: gold; font-style: italic; font-weight: bold; background-color: rgb(89, 89, 89);">
+      Rule: ENG - Dwellings With Basements (393)</TD></TR></TBODY></TABLE>
+<DIV class="section">
+<TABLE class="data">
+  <TBODY>
+  <TR 
+style="border: currentColor; border-image: none; background-color: white;">
+    <TD width="0" style="border: currentColor; border-image: none; background-color: white;" 
+    rowspan="1"><FONT color="white">0</FONT> </TD></TR>
+  <TR>
+    <TD style="border-width: 0px 0px 3px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(128, 128, 128);">
+      Sub-rule: Depth to Hard Bedrock &lt; 150cm (60") (revised) 
+  (23808)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Depth to Hard Bedrock 100 to 150cm (40 to 60") (revised) 
+      (18503)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      DEPTH TO BEDROCK HARD, BELOW O HORIZON</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      15170</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      resdept_h, resdept_l, resdept_r, reskind, </TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      THICKNESS OF SURFACE ORGANIC HORIZON</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      10346</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      hzdept_h, hzdept_l, hzdept_r, lieutex, taxorder, texcl, texture, 
+  </TD></TR></TBODY></TABLE></DIV>
+<DIV class="section">
+<TABLE class="data">
+  <TBODY>
+  <TR 
+style="border: currentColor; border-image: none; background-color: white;">
+    <TD width="0" style="border: currentColor; border-image: none; background-color: white;" 
+    rowspan="1"><FONT color="white">0</FONT> </TD></TR>
+  <TR>
+    <TD style="border-width: 0px 0px 3px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(128, 128, 128);">
+      Sub-rule: Flooding (Maximum Frequency) (213)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Flooding "FREQUENT" (201)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      FLOODING FREQUENCY (Maximum Frequency)</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      28</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      flodfreqcl, month, </TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Flooding "OCCASIONAL" (199)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      FLOODING FREQUENCY (Maximum Frequency)</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      28</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      flodfreqcl, month, </TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Flooding "RARE" (198)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      FLOODING FREQUENCY (Maximum Frequency)</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      28</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      flodfreqcl, month, </TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Flooding "VERY FREQUENT" (202)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      FLOODING FREQUENCY (Maximum Frequency)</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      28</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      flodfreqcl, month, </TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Flooding "VERY RARE" (200)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      FLOODING FREQUENCY (Maximum Frequency)</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      28</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      flodfreqcl, month, </TD></TR></TBODY></TABLE></DIV>
+<DIV class="section">
+<TABLE class="data">
+  <TBODY>
+  <TR 
+style="border: currentColor; border-image: none; background-color: white;">
+    <TD width="0" style="border: currentColor; border-image: none; background-color: white;" 
+    rowspan="1"><FONT color="white">0</FONT> </TD></TR>
+  <TR>
+    <TD style="border-width: 0px 0px 3px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(128, 128, 128);">
+      Sub-rule: Humus Bottom Layer (394)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Unified (Organic in the bottom layer) 
+(341)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      UNIFIED BOTTOM LAYER</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      123</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      hzdepb_r, hzdept_r, unifiedcl, </TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      DEPTH TO BEDROCK</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      15</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      resdept_h, resdept_l, resdept_r, reskind, </TD></TR></TBODY></TABLE></DIV>
+<DIV class="section">
+<TABLE class="data">
+  <TBODY>
+  <TR 
+style="border: currentColor; border-image: none; background-color: white;">
+    <TD width="0" style="border: currentColor; border-image: none; background-color: white;" 
+    rowspan="1"><FONT color="white">0</FONT> </TD></TR>
+  <TR>
+    <TD style="border-width: 0px 0px 3px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(128, 128, 128);">
+      Sub-rule: Impacted soil (46238)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Impacted soil (46164)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      COMPONENT LOCAL PHASE IMPACTED</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      37734</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      local_phase, </TD></TR></TBODY></TABLE></DIV>
+<DIV class="section">
+<TABLE class="data">
+  <TBODY>
+  <TR 
+style="border: currentColor; border-image: none; background-color: white;">
+    <TD width="0" style="border: currentColor; border-image: none; background-color: white;" 
+    rowspan="1"><FONT color="white">0</FONT> </TD></TR>
+  <TR>
+    <TD style="border-width: 0px 0px 3px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(128, 128, 128);">
+      Sub-rule: Large Stones - Fract. &gt;3in, 24.9 to &gt;50%, Wght. Av. 0-40 
+      (284)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Fragments &gt; 75mm, 25 to 50%, Wght. Av. 0 to 100cm (0-40in) 
+      (267)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      FRAGMENTS &gt; 75MM WEIGHTED AVE. IN DEPTH 0-100CM</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      33</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      frag3to10_h, frag3to10_l, frag3to10_r, fraggt10_h, fraggt10_l, fraggt10_r, 
+      hzdepb_r, hzdept_r, </TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      LAYER THICKNESS IN RANGE; ABOVE A RESTRICTIVE LAYER</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      10181</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      hzdepb_r, hzdept_r, </TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(230, 255, 230);">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(230, 255, 230);">
+      DEPTH TO FIRST RESTRICTIVE LAYER</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(230, 255, 230);">
+      116</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(230, 255, 230);">
+      resdept_h, resdept_l, resdept_r, reshard, reskind, 
+</TD></TR></TBODY></TABLE></DIV>
+<DIV class="section">
+<TABLE class="data">
+  <TBODY>
+  <TR 
+style="border: currentColor; border-image: none; background-color: white;">
+    <TD width="0" style="border: currentColor; border-image: none; background-color: white;" 
+    rowspan="1"><FONT color="white">0</FONT> </TD></TR>
+  <TR>
+    <TD style="border-width: 0px 0px 3px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(128, 128, 128);">
+      Sub-rule: Permafrost (204)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Permafrost (Consolidated) InLieuOf (167)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      USDA TEXTURE (IN-LIEU-OF)</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      109</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      lieutex, texture, </TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Shallow to Permafrost (50 to 100cm (20 to 40")) 
+  (10356)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      DEPTH TO PERMAFROST</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      1336</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      resdept_h, resdept_l, resdept_r, reskind, </TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Texture Modifier (Permanently Frozen) 
+(351)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      USDA TEXTURE MODIFIER</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      1059</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      texmod, texture, </TD></TR></TBODY></TABLE></DIV>
+<DIV class="section">
+<TABLE class="data">
+  <TBODY>
+  <TR 
+style="border: currentColor; border-image: none; background-color: white;">
+    <TD width="0" style="border: currentColor; border-image: none; background-color: white;" 
+    rowspan="1"><FONT color="white">0</FONT> </TD></TR>
+  <TR>
+    <TD style="border-width: 0px 0px 3px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(128, 128, 128);">
+      Sub-rule: Ponded &gt; 4 hours (201)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Ponding Duration &gt; Very Brief (170)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      PONDING DURATION</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      1005</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      month, ponddurcl, </TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Ponding Frequency None (12054)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      PONDING FREQUENCY</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      11539</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      month, pondfreqcl, </TD></TR></TBODY></TABLE></DIV>
+<DIV class="section">
+<TABLE class="data">
+  <TBODY>
+  <TR 
+style="border: currentColor; border-image: none; background-color: white;">
+    <TD width="0" style="border: currentColor; border-image: none; background-color: white;" 
+    rowspan="1"><FONT color="white">0</FONT> </TD></TR>
+  <TR>
+    <TD style="border-width: 0px 0px 3px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(128, 128, 128);">
+      Sub-rule: Shallow to Soft Bedrock &lt; 100cm (40") (revised) 
+  (23809)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Depth to Soft Bedrock 50 to 100cm (20 to 40") (revised) 
+    (18504)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Data</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      DEPTH TO BEDROCK SOFT, BELOW O HORIZON</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      15171</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      resdept_h, resdept_l, resdept_r, reskind, </TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      THICKNESS OF SURFACE ORGANIC HORIZON</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      10346</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      hzdept_h, hzdept_l, hzdept_r, lieutex, taxorder, texcl, texture, 
+  </TD></TR></TBODY></TABLE></DIV>
+<DIV class="section">
+<TABLE class="data">
+  <TBODY>
+  <TR 
+style="border: currentColor; border-image: none; background-color: white;">
+    <TD width="0" style="border: currentColor; border-image: none; background-color: white;" 
+    rowspan="1"><FONT color="white">0</FONT> </TD></TR>
+  <TR>
+    <TD style="border-width: 0px 0px 3px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(128, 128, 128);">
+      Sub-rule: Shrink-Swell (LEP WTD_AVG Above Bedrock or 60") (revised) 
+    (23807)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Shrink-swell of Thickest Layer 25-150cm or Bedrock (revised) 
+      (18502)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Data</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      LEP WTD_AVG 25-150cm OR ABOVE RESTRICTION, BELOW O HORIZON</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      15178</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      hzdepb_r, hzdept_r, lep_h, lep_l, lep_r, taxorder, </TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      THICKNESS OF SURFACE ORGANIC HORIZON</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      10346</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      hzdept_h, hzdept_l, hzdept_r, lieutex, taxorder, texcl, texture, </TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      NSSC Data</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      DEPTH TO FIRST STR/VSTR CEMENTED BELOW ORGANIC LAYER</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      13834</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      resdept_h, resdept_l, resdept_r, reskind, </TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      NSSC Data</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      LAYER THICKNESS IN RANGE; ABOVE VSTR RESTRICT BELOW O</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      13835</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      hzdepb_r, hzdept_r, </TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(230, 255, 230);">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(230, 255, 230);">
+      THICKNESS OF SURFACE ORGANIC HORIZON</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(230, 255, 230);">
+      10346</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(230, 255, 230);">
+      hzdept_h, hzdept_l, hzdept_r, lieutex, taxorder, texcl, texture, </TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(230, 255, 230);">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(230, 255, 230);">
+      SOIL DEPTH TO FIRST CEMENTED RESTRICTION BELOW O HORIZON</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(230, 255, 230);">
+      13791</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(230, 255, 230);">
+      resdept_h, resdept_l, resdept_r, reskind, </TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(211, 237, 248);">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(211, 237, 248);">
+      THICKNESS OF SURFACE ORGANIC HORIZON</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(211, 237, 248);">
+      10346</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(211, 237, 248);">
+      hzdept_h, hzdept_l, hzdept_r, lieutex, taxorder, texcl, texture, 
+  </TD></TR></TBODY></TABLE></DIV>
+<DIV class="section">
+<TABLE class="data">
+  <TBODY>
+  <TR 
+style="border: currentColor; border-image: none; background-color: white;">
+    <TD width="0" style="border: currentColor; border-image: none; background-color: white;" 
+    rowspan="1"><FONT color="white">0</FONT> </TD></TR>
+  <TR>
+    <TD style="border-width: 0px 0px 3px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(128, 128, 128);">
+      Sub-rule: Slope 8 to &gt; 15% (10192)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Slopes &lt;8 to &gt;15% (10125)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      SLOPE</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      70</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      slope_h, slope_l, slope_r, </TD></TR></TBODY></TABLE></DIV>
+<DIV class="section">
+<TABLE class="data">
+  <TBODY>
+  <TR 
+style="border: currentColor; border-image: none; background-color: white;">
+    <TD width="0" style="border: currentColor; border-image: none; background-color: white;" 
+    rowspan="1"><FONT color="white">0</FONT> </TD></TR>
+  <TR>
+    <TD style="border-width: 0px 0px 3px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(128, 128, 128);">
+      Sub-rule: Subsidence Due to Gypsum, 3 to 18cm (20298)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Subsidence Due to Gypsum, 3 to 18 cm 
+(16254)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Data</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      SUBSIDENCE DUE TO GYPSUM, REV</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      14600</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      dbthirdbar_r, desgnmaster, fragkind, fragsize_h, fragsize_l, fragsize_r, 
+      fragvol_r, gypsum_r, hzdepb_r, hzdept_r, lieutex, om_r, texture, 
+  </TD></TR></TBODY></TABLE></DIV>
+<DIV class="section">
+<TABLE class="data">
+  <TBODY>
+  <TR 
+style="border: currentColor; border-image: none; background-color: white;">
+    <TD width="0" style="border: currentColor; border-image: none; background-color: white;" 
+    rowspan="1"><FONT color="white">0</FONT> </TD></TR>
+  <TR>
+    <TD style="border-width: 0px 0px 3px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(128, 128, 128);">
+      Sub-rule: Thick Cemented Pan 100 to 150cm (40 to 60")(revised) 
+  (23810)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Restrictive Feature Hardness Noncemented 
+(12852)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      RESTRICTIVE FEATURE HARDNESS</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      12111</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      reshard, reskind, </TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Shallow to Thick Cemented Pan 100 to 150cm (revised) 
+  (18505)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Data</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      DEPTH TO CEMENTED PAN THICK, BELOW O HORIZON</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      15175</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      resdept_h, resdept_l, resdept_r, reskind, resthk_r, </TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      THICKNESS OF SURFACE ORGANIC HORIZON</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      10346</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      hzdept_h, hzdept_l, hzdept_r, lieutex, taxorder, texcl, texture, 
+  </TD></TR></TBODY></TABLE></DIV>
+<DIV class="section">
+<TABLE class="data">
+  <TBODY>
+  <TR 
+style="border: currentColor; border-image: none; background-color: white;">
+    <TD width="0" style="border: currentColor; border-image: none; background-color: white;" 
+    rowspan="1"><FONT color="white">0</FONT> </TD></TR>
+  <TR>
+    <TD style="border-width: 0px 0px 3px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(128, 128, 128);">
+      Sub-rule: Thin Cemented Pan 50 to 100cm (20 to 40") (revised) 
+  (23804)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Restrictive Feature Hardness Noncemented 
+(12852)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      RESTRICTIVE FEATURE HARDNESS</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      12111</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      reshard, reskind, </TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Shallow to Thin Cemented Pan 50 to 100cm (20 to 40)(revised) 
+      (18501)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Data</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      DEPTH TO CEMENTED PAN THIN, BELOW O HORIZON</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      15176</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      resdept_h, resdept_l, resdept_r, reskind, resthk_r, </TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      THICKNESS OF SURFACE ORGANIC HORIZON</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      10346</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: rgb(255, 255, 204);">
+      hzdept_h, hzdept_l, hzdept_r, lieutex, taxorder, texcl, texture, 
+  </TD></TR></TBODY></TABLE></DIV>
+<DIV class="section">
+<TABLE class="data">
+  <TBODY>
+  <TR 
+style="border: currentColor; border-image: none; background-color: white;">
+    <TD width="0" style="border: currentColor; border-image: none; background-color: white;" 
+    rowspan="1"><FONT color="white">0</FONT> </TD></TR>
+  <TR>
+    <TD style="border-width: 0px 0px 3px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(128, 128, 128);">
+      Sub-rule: Total Subsidence &gt; 30cm (12") (342)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Total Subsidence &gt; 30cm (12") (323)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      SUBSIDENCE TOTAL</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      1066</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      totalsub_h, totalsub_l, totalsub_r, </TD></TR></TBODY></TABLE></DIV>
+<DIV class="section">
+<TABLE class="data">
+  <TBODY>
+  <TR 
+style="border: currentColor; border-image: none; background-color: white;">
+    <TD width="0" style="border: currentColor; border-image: none; background-color: white;" 
+    rowspan="1"><FONT color="white">0</FONT> </TD></TR>
+  <TR>
+    <TD style="border-width: 0px 0px 3px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(128, 128, 128);">
+      Sub-rule: Unstable Fill (18120)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Reclaimed Land (14877)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      COMPONENT LOCAL PHASE UNSTABLE FILL</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      37735</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      local_phase, </TD></TR></TBODY></TABLE></DIV>
+<DIV class="section">
+<TABLE class="data">
+  <TBODY>
+  <TR 
+style="border: currentColor; border-image: none; background-color: white;">
+    <TD width="0" style="border: currentColor; border-image: none; background-color: white;" 
+    rowspan="1"><FONT color="white">0</FONT> </TD></TR>
+  <TR>
+    <TD style="border-width: 0px 0px 3px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(128, 128, 128);">
+      Sub-rule: Wet, Ground Water Near the Surface (75 - 180cm) 
+  (304)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 2px; border-style: solid; border-color: black; border-image: none; width: 2000px; text-align: center; color: black; font-style: italic; font-weight: bold; background-color: rgb(191, 191, 191);">
+      Evaluation: Wet, Ground Water Near Surface (75 - 180cm) 
+(299)</TD></TR></TBODY></TABLE>
+<TABLE class="data">
+  <TBODY>
+  <TR>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      NASIS Site</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Property</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      ID</TD>
+    <TD style="border-width: 0px 0px 1px; border-style: solid; border-color: black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: bold; background-color: gainsboro;">
+      Data Elements</TD></TR>
+  <TR>
+    <TD style="border: 0px solid black; border-image: none; width: 160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      NSSC Pangaea</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 615px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      HIGH WATER TABLE DEPTH MINIMUM</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 40px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      23</TD>
+    <TD style="border: 0px solid black; border-image: none; width: 1160px; text-align: center; color: black; font-size: 10px; font-style: italic; font-weight: normal; background-color: ghostwhite;">
+      month, soimoistdept_h, soimoistdept_l, soimoistdept_r, soimoiststat, 
+  </TD></TR></TBODY></TABLE></DIV><BR><BR>
+<P style="width: 100%; text-align: left; color: blue; font-size: 12px; font-style: italic; font-weight: normal;">
+This report locates 1,249 items (data elements using either physical or logical 
+name) in the parent property and in up to 16 properties called in derive 
+statements. The data elements are in the area, area type, chorizon, chorizon 
+aashto, chorizon consistence, chorizon desgn suffix, chorizon fragments, 
+chorizon human artifacts, chorizon pores, chorizon structure, chorizon structure 
+group, chorizon texture, chorizon texture group, chorizon texture modifier, 
+chorizon unified, component, component canopy cover, component crop yield, 
+component diagnostic features, component erosion accelerated, component existing 
+plants, component forest prod, component forest prod other, component geomorph 
+desc, component hydric criteria, component month, component parent material, 
+component parent material grp, component potential windbreak, component 
+restrictions, component soil moisture, component soil temperature, component 
+surface fragments, component surface morph gc, component surface morph hpp, 
+component surface morph mr, component surface morph ss, component tax fam 
+mineralogy, component tax fam other, component tax moisture class, component 
+usfs ground cover, component usfs interpretation, correlation, data mapunit, 
+geomorph feature, geomorph feature type, legend, legend mapunit, and mapunit 
+tables. It does not search for data elements ending in "iid", "iidref", 
+rvindicators, sequence numbers, or object and record when last updated items. 
+</P>
+<P style="width: 100%; text-align: left; color: blue; font-size: 12px; font-style: italic; font-weight: normal;">
+Main properties occur first and are in grey. 1st-level derive properties are in 
+yellow, 2nd-level in green, 3rd-level in blue, 4th-level in purple, and 
+5th-level in orange. </P>
+<P style="width: 100%; text-align: left; color: blue; font-size: 12px; font-style: italic; font-weight: normal;">
+The report works by isolating the word DERIVE and a line feed at the end of the 
+derive statement. It must do this for every derive statement and this report can 
+process up to 16 of them. It then isolates the NASIS site and property name 
+using the first double quote, the colon, and the last double quote. In cases 
+where the NASIS site is omitted, it is assigned from the parent property. With 
+carefully constructed case statements, the code can accommodate either scenario. 
+Derive statements preceeded by either a space or a hashtag are not included. 
+</P>
+<P style="width: 100%; text-align: left; color: blue; font-size: 12px; font-style: italic; font-weight: normal;">
+This report has no method to distinguish between data elements being used and 
+those that have been hashed out with #. This unresolved issue remains 
+significant. </P><BR><BR>
+<P style="width: 100%; text-align: left; color: black; font-size: 12px; font-style: italic; font-weight: normal;">
+Questions, suggestions, or errors with this report <A href="mailto:mark.vanlear@va.usda.gov?Subject=INTERP%20-%201Rule%20Data%20Elements%20Comments:">
+Send E-Mail </A> <php> to: Mark Van Lear </php> </P></DIV></BODY></HTML>
