@@ -1,0 +1,1359 @@
+
+<!-- saved from url=(0107)file:///C:/ProgramData/USDA/NASIS/Temp/INTERP%20-%20x1Rule%20Data%20Elements%20and%20Properties%20only.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<style type="text/css"> <!-- body
+{
+	font-family:Verdana, Arial, Helv, Sans-Serif;
+	font-size: 10pt;
+}
+.soilprop
+{
+    FONT: 10pt Verdana, Helvetica, Arial, sans-serif;
+    COLOR: #000000;
+    TEXT-ALIGN: left;
+    LINE-HEIGHT: 12pt;   
+    MARGIN-LEFT: 12pt;
+    TEXT-INDENT: -12pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+div.SoilReport h1
+{
+	font-size: 16px;
+}
+div.SoilReport h2
+{
+	font-size: 14px;
+}
+div.SoilReport h3, div.SoilReport h4, div.SoilReport h5, div.SoilReport h6
+{
+	font-size: 12px;
+}
+div.menu table td
+{
+	font-size: 11px;
+}
+ul.noimage li
+{
+	list-style-type: none;
+	list-style-image: none;
+}
+ul.noimage li p
+{
+	margin-left: 4ex;
+}
+ul.noimage li h1, ul.noimage li h2, ul.noimage li h3, 
+ul.noimage li h4, ul.noimage li h5, ul.noimage li h6 
+{
+	margin-bottom: 0px;
+}
+.first
+{
+	margin-top: 0px !important;
+}
+.numeric, .number
+{
+	text-align: right;
+}
+.bold
+{
+	font-weight: bold;
+	margin-right: 1ex;
+}
+.italic
+{
+	font-style: italic;
+}
+.super
+{
+	vertical-align: super;
+	font-size: smaller;
+}
+.sub
+{
+	vertical-align: sub;
+	font-size: smaller;
+}
+.padded
+{
+	padding: 5px !important;
+}
+.unpadded
+{
+	padding: 0px !important;
+}
+.scrollable
+{
+	overflow-y: auto !important;
+}
+.nowrap
+{
+	white-space: nowrap;
+}
+table
+{
+    border-collapse: collapse;
+}
+table.data th, table.data td 
+{
+	border-width: 1px;
+	border-style: solid;
+	padding: 4px;
+}
+table.data td.begindatagroup
+{
+	border-left-width: 2px;
+	border-left-style: solid;
+}
+table.data td.enddatagroup
+{
+	border-right-width: 2px;
+	border-right-style: solid;
+}
+table.data td.label
+{
+	text-align: right;
+	padding: 5px;
+}
+table.data th
+{
+}
+table.data th.title
+{
+	width: 100%;
+	padding: 2px !important;
+}
+table.data th.title div.title
+{
+	font-weight: bold;
+	padding-left: 1.25em;
+	text-indent: -1em;
+	text-align: left;
+}
+table.data th.control
+{
+	vertical-align: middle;
+	text-align: right;
+}
+table.data td
+{
+	text-align: left;
+	vertical-align: top;
+}
+table.data td.columnhead, table.data tr.columnhead td
+{
+	padding: 2px;
+	font-weight: bold;
+	text-align: center;
+}
+table.data tr.units td
+{
+	font-style: italic;
+	text-align: center;
+}
+table.data td p.mu-name
+{
+	padding-left: 0.5em;
+	text-indent: -0.5em;
+}
+table.data td p.comp-name
+{
+	padding-left: 1em;
+	text-indent: -0.5em;
+}
+table.data td p.class-name
+{
+	text-align: center;
+}
+table.data td p.reason0
+{
+	text-align: left;
+	padding-left: 0.5em;
+	text-indent: -0.5em;
+}
+table.data td p.reason1
+{
+	text-align: left;
+	padding-left: 1em;
+	text-indent: -0.5em;
+}
+table.data td p.reason2
+{
+	text-align: left;
+	padding-left: 1.5em;
+	text-indent: -0.5em;
+}
+table.data td p.hang-list
+{
+	text-align: left;
+	padding-left: 0.5em;
+	text-indent: -0.5em;
+	vertical-align: middle;
+}
+table.data tfoot td
+{
+	font-weight: bold;
+	padding-top: 5px;
+}
+table.data tr.even td
+{
+	background-color: #FDFDEE;
+}
+table.data tr.odd td
+{
+	background-color: #F8F8D8;
+}
+div.menu table
+{
+	color: #000000;
+	background-color: #FBFBE8; 
+}
+div.menu table td
+{
+	border-color: #000000;
+}
+div.menu table td.over
+{
+	background-color: #E5DEBC !important;
+}
+.title, .muname
+{
+    FONT: 14pt bold Helvetica, Arial, sans-serif;
+    COLOR: #000000;
+    TEXT-ALIGN: left;
+    LINE-HEIGHT: 16pt;   
+    MARGIN-TOP: 18pt;
+    MARGIN-BOTTOM: 3pt;
+}
+
+.subtitle
+{
+    FONT: 12pt bold Helvetica, Arial, sans-serif;
+    COLOR: #000000;
+    TEXT-ALIGN: left;
+    LINE-HEIGHT: 14pt;   
+    MARGIN-TOP: 6pt;
+    MARGIN-BOTTOM: 3pt;
+}
+
+.headnote
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;
+    TEXT-ALIGN: center;
+    LINE-HEIGHT: 10pt;   
+    MARGIN: 6pt 8pt 6pt 8pt;
+}
+
+.footnote
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;
+    TEXT-ALIGN: left;
+    LINE-HEIGHT: 10pt;   
+    MARGIN: 6pt 0pt 0pt 0pt;
+}
+
+.reportdesc
+{
+    FONT: 10pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 12pt;   
+    TEXT-ALIGN: left; 
+    TEXT-INDENT: 12pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+P.at4
+{
+    FONT: 10pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;
+    TEXT-ALIGN: left;
+    LINE-HEIGHT: 12pt;   
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+P.at5
+{
+    FONT: 30pt bold Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    TEXT-ALIGN: left;   
+    LINE-HEIGHT: 32pt;   
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+P.at9
+{
+    FONT: 12pt bold Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    TEXT-ALIGN: left;
+    LINE-HEIGHT: 14pt;   
+    MARGIN-TOP: 12pt;
+    MARGIN-BOTTOM: 6pt;
+}
+
+P.at21
+{
+    FONT: 24pt bold Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    TEXT-ALIGN: left;   
+    LINE-HEIGHT: 26pt;   
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+P.at23
+{
+    FONT: 10pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    TEXT-ALIGN: left; 
+    LINE-HEIGHT: 12pt;   
+    MARGIN-LEFT: 18pt;
+    TEXT-INDENT: -18pt;  
+    MARGIN-TOP: 6pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+P.at30
+{
+    FONT: 10pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;
+    TEXT-ALIGN: left;   
+    LINE-HEIGHT: 12pt;   
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+P.at32
+{
+    FONT: 10pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 12pt;   
+    TEXT-ALIGN: left; 
+    TEXT-INDENT: 12pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+P.at33
+{
+    FONT: 10pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    TEXT-ALIGN: left; 
+    LINE-HEIGHT: 12pt;   
+    MARGIN-LEFT: 18pt;
+    TEXT-INDENT: -18pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+P.at41
+{
+    FONT: 10pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    TEXT-ALIGN: left; 
+    LINE-HEIGHT: 12pt;   
+    MARGIN-LEFT: 18pt;
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+P.at53
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    TEXT-ALIGN: left; 
+    LINE-HEIGHT: 10pt;   
+    MARGIN-LEFT: 42pt;
+    MARGIN-RIGHT: 24pt;
+    TEXT-INDENT: -12pt;  
+    MARGIN-TOP: 6pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+P.at54
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    TEXT-ALIGN: left; 
+    LINE-HEIGHT: 10pt;   
+    MARGIN-LEFT: 42pt;
+    MARGIN-RIGHT: 24pt;
+    TEXT-INDENT: -12pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+TD
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    MARGIN: 0pt 0pt 0pt 0pt;
+    PADDING: 0pt 2pt 0pt 2pt;
+}
+
+THEAD TR TD
+{
+    FONT: bold 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    TEXT-ALIGN: center; 
+    MARGIN: 0pt 0pt 0pt 0pt;
+    PADDING: 0pt 0pt 0pt 0pt;
+    BACKGROUND-COLOR: #E8E8E8;
+    /* BORDER: thin solid black */
+}
+
+.mu-name
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    TEXT-ALIGN: left; 
+    MARGIN-LEFT: 6pt;
+    TEXT-INDENT: -6pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+.comp-name
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    TEXT-ALIGN: left; 
+    MARGIN-LEFT: 12pt;
+    TEXT-INDENT: -6pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+.units
+{
+    FONT: italic 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    TEXT-ALIGN: center; 
+    MARGIN-LEFT: 0pt;
+    TEXT-INDENT: 0pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+.class-name
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    TEXT-ALIGN: center; 
+    MARGIN-LEFT: 0pt;
+    TEXT-INDENT: 0pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+.hang-list
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    TEXT-ALIGN: left; 
+    MARGIN-LEFT: 6pt;
+    TEXT-INDENT: -6pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+.reason0
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    TEXT-ALIGN: left; 
+    MARGIN-LEFT: 6pt;
+    TEXT-INDENT: -6pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+.reason1
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    TEXT-ALIGN: left; 
+    MARGIN-LEFT: 12pt;
+    TEXT-INDENT: -6pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+.reason2
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    TEXT-ALIGN: left; 
+    MARGIN-LEFT: 18pt;
+    TEXT-INDENT: -6pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+.reason3
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    TEXT-ALIGN: left; 
+    MARGIN-LEFT:24pt;
+    TEXT-INDENT: -6pt;  
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+.ratingvalue
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    TEXT-ALIGN: right; 
+    MARGIN-LEFT: 0pt;
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+.number
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    TEXT-ALIGN: right; 
+    MARGIN-LEFT: 0pt;
+    MARGIN-TOP: 0pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+.total-line
+{
+    FONT: 8pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    LINE-HEIGHT: 10pt;   
+    PADDING: 6pt 2pt 0pt 2pt;
+    BORDER-TOP: 1px solid black;
+}
+
+.shade0
+{
+	background-color: #FFEEDD;
+}
+
+.shade1
+{
+	background-color: white;
+}
+
+.descrip-mu
+{
+    FONT: 10pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    TEXT-ALIGN: left; 
+    LINE-HEIGHT: 12pt;   
+    MARGIN-LEFT: 0pt;
+    MARGIN-TOP: 12pt;
+    MARGIN-BOTTOM: 0pt;
+}
+
+.descrip-text
+{
+    FONT: 10pt Helvetica, Arial, sans-serif;
+    COLOR: #000000;    
+    TEXT-ALIGN: left; 
+    LINE-HEIGHT: 12pt;   
+    MARGIN-LEFT: 18pt;
+    MARGIN-TOP: 12pt;
+    MARGIN-BOTTOM: 0pt;
+}
+.center
+{
+	text-align: center;
+}
+.right
+{
+	text-align: right;
+}
+.bold
+{
+	font-weight: bold;
+} --> </style>
+</head>
+<body>
+
+<div class="section">
+<table class="data">
+<tbody><tr style="border:none;background-color:white">
+<td width="0" rowspan="1" style="border:none;background-color:white">
+<font color="white">
+0</font>
+</td>
+</tr>
+<tr>
+<td colspan="4" style="width:2000px;border:0px solid black;border-color:gold;border-bottom-width:4px;background-color:#595959;color:gold;text-align:center;font-weight:bold;font-style:italic">
+Rule: Valley Fever (62818)</td>
+</tr>
+<tr>
+<td style="width:160px;border:0px solid black;border-bottom-width:1px;background-color:gainsboro;color:black;text-align:center;font-size:10px;font-weight:bold;font-style:italic">
+NASIS Site</td>
+<td style="width:615px;border:0px solid black;border-bottom-width:1px;background-color:gainsboro;color:black;text-align:center;font-size:10px;font-weight:bold;font-style:italic">
+Property</td>
+<td style="width:40px;border:0px solid black;border-bottom-width:1px;background-color:gainsboro;color:black;text-align:center;font-size:10px;font-weight:bold;font-style:italic">
+ID</td>
+<td style="width:1160px;border:0px solid black;border-bottom-width:1px;background-color:gainsboro;color:black;text-align:center;font-size:10px;font-weight:bold;font-style:italic">
+Data Elements</td>
+</tr>
+</tbody></table>
+
+<div class="section">
+
+<div class="section">
+
+<div class="section">
+
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+GYPSUM MAXIMUM, 0-50CM OR FIRST RESTRICTION</td>
+<td style="width:40px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+30181</td>
+<td style="width:1160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+desgnmaster, gypsum_h, gypsum_l, gypsum_r, hzdepb_r, hzdept_r, </td>
+</tr>
+</tbody></table>
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+DEPTH TO FIRST RESTRICTION BELOW ORGANIC LAYER</td>
+<td style="width:40px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+1190</td>
+<td style="width:1160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+resdept_h, resdept_l, resdept_r, </td>
+</tr>
+<tr>
+<td style="width:160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+SURFACE ORGANIC HORIZON THICKNESS</td>
+<td style="width:40px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+11866</td>
+<td style="width:1160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+desgnmaster, hzdepb_h, hzdepb_l, hzdepb_r, hzname, lieutex, taxorder, taxsubgrp, </td>
+</tr>
+</tbody></table>
+
+
+
+</div>
+
+
+<div class="section">
+
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+WTD_AVG SAR 0-30cm OR ABOVE RESTRICTION</td>
+<td style="width:40px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+13850</td>
+<td style="width:1160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+hzdepb_r, hzdept_r, sar_h, sar_l, sar_r, </td>
+</tr>
+</tbody></table>
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+THICKNESS OF SURFACE ORGANIC HORIZON</td>
+<td style="width:40px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+10346</td>
+<td style="width:1160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+hzdept_h, hzdept_l, hzdept_r, lieutex, taxorder, texcl, </td>
+</tr>
+<tr>
+<td style="width:160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Data</td>
+<td style="width:615px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+DEPTH TO FIRST STR/VSTR CEMENTED BELOW ORGANIC LAYER</td>
+<td style="width:40px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+13834</td>
+<td style="width:1160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+resdept_h, resdept_l, resdept_r, reskind, </td>
+</tr>
+<tr>
+<td style="width:160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Data</td>
+<td style="width:615px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+LAYER THICKNESS IN RANGE; ABOVE VSTR RESTRICT BELOW O</td>
+<td style="width:40px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+13835</td>
+<td style="width:1160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+hzdepb_r, hzdept_r, </td>
+</tr>
+</tbody></table>
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:#e6ffe6;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:#e6ffe6;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+THICKNESS OF SURFACE ORGANIC HORIZON</td>
+<td style="width:40px;border:0px solid black;background-color:#e6ffe6;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+10346</td>
+<td style="width:1160px;border:0px solid black;background-color:#e6ffe6;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+hzdept_h, hzdept_l, hzdept_r, lieutex, taxorder, texcl, </td>
+</tr>
+<tr>
+<td style="width:160px;border:0px solid black;background-color:#e6ffe6;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:#e6ffe6;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+SOIL DEPTH TO FIRST CEMENTED RESTRICTION BELOW O HORIZON</td>
+<td style="width:40px;border:0px solid black;background-color:#e6ffe6;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+13791</td>
+<td style="width:1160px;border:0px solid black;background-color:#e6ffe6;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+resdept_h, resdept_l, resdept_r, reskind, </td>
+</tr>
+</tbody></table>
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:#d3edf8;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:#d3edf8;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+THICKNESS OF SURFACE ORGANIC HORIZON</td>
+<td style="width:40px;border:0px solid black;background-color:#d3edf8;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+10346</td>
+<td style="width:1160px;border:0px solid black;background-color:#d3edf8;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+hzdept_h, hzdept_l, hzdept_r, lieutex, taxorder, texcl, </td>
+</tr>
+</tbody></table>
+
+
+
+
+
+</div>
+
+
+<div class="section">
+
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+SOIL REACTION 1-1 WATER MINIMUM IN DEPTH 0-30CM</td>
+<td style="width:40px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+1228</td>
+<td style="width:1160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+hzdept_r, ph01mcacl2_h, ph01mcacl2_l, ph01mcacl2_r, ph1to1h2o_h, ph1to1h2o_l, ph1to1h2o_r, </td>
+</tr>
+</tbody></table>
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+SURFACE ORGANIC HORIZON THICKNESS</td>
+<td style="width:40px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+11866</td>
+<td style="width:1160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+desgnmaster, hzdepb_h, hzdepb_l, hzdepb_r, hzname, lieutex, taxorder, taxsubgrp, </td>
+</tr>
+</tbody></table>
+
+
+
+</div>
+
+
+<div class="section">
+
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+WTD_AVG EC 0-30cm OR ABOVE RESTRICTION</td>
+<td style="width:40px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+13844</td>
+<td style="width:1160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+ec_h, ec_l, ec_r, hzdepb_r, hzdept_r, </td>
+</tr>
+</tbody></table>
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+THICKNESS OF SURFACE ORGANIC HORIZON</td>
+<td style="width:40px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+10346</td>
+<td style="width:1160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+hzdept_h, hzdept_l, hzdept_r, lieutex, taxorder, texcl, </td>
+</tr>
+<tr>
+<td style="width:160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Data</td>
+<td style="width:615px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+DEPTH TO FIRST STR/VSTR CEMENTED BELOW ORGANIC LAYER</td>
+<td style="width:40px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+13834</td>
+<td style="width:1160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+resdept_h, resdept_l, resdept_r, reskind, </td>
+</tr>
+<tr>
+<td style="width:160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Data</td>
+<td style="width:615px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+LAYER THICKNESS IN RANGE; ABOVE VSTR RESTRICT BELOW O</td>
+<td style="width:40px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+13835</td>
+<td style="width:1160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+hzdepb_r, hzdept_r, </td>
+</tr>
+</tbody></table>
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:#e6ffe6;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:#e6ffe6;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+THICKNESS OF SURFACE ORGANIC HORIZON</td>
+<td style="width:40px;border:0px solid black;background-color:#e6ffe6;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+10346</td>
+<td style="width:1160px;border:0px solid black;background-color:#e6ffe6;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+hzdept_h, hzdept_l, hzdept_r, lieutex, taxorder, texcl, </td>
+</tr>
+<tr>
+<td style="width:160px;border:0px solid black;background-color:#e6ffe6;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:#e6ffe6;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+SOIL DEPTH TO FIRST CEMENTED RESTRICTION BELOW O HORIZON</td>
+<td style="width:40px;border:0px solid black;background-color:#e6ffe6;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+13791</td>
+<td style="width:1160px;border:0px solid black;background-color:#e6ffe6;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+resdept_h, resdept_l, resdept_r, reskind, </td>
+</tr>
+</tbody></table>
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:#d3edf8;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:#d3edf8;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+THICKNESS OF SURFACE ORGANIC HORIZON</td>
+<td style="width:40px;border:0px solid black;background-color:#d3edf8;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+10346</td>
+<td style="width:1160px;border:0px solid black;background-color:#d3edf8;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+hzdept_h, hzdept_l, hzdept_r, lieutex, taxorder, texcl, </td>
+</tr>
+</tbody></table>
+
+
+
+
+
+</div>
+
+</div>
+
+
+<div class="section">
+
+<div class="section">
+
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NON-XERIC AIR TEMPERATURE CHOPPER, FROM H&amp;L</td>
+<td style="width:40px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+35989</td>
+<td style="width:1160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+mean_annual_air_temperature_h, mean_annual_air_temperature_l, mean_annual_air_temperature_r, </td>
+</tr>
+</tbody></table>
+
+
+</div>
+
+
+<div class="section">
+
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+MEAN ANNUAL AIR TEMPERATURE, FROM H&amp;L</td>
+<td style="width:40px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+35984</td>
+<td style="width:1160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+mean_annual_air_temperature_h, mean_annual_air_temperature_l, mean_annual_air_temperature_r, </td>
+</tr>
+</tbody></table>
+
+
+</div>
+
+
+<div class="section">
+
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+MEAN ANNUAL PRECIPITATION FROM H&amp;L</td>
+<td style="width:40px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+35985</td>
+<td style="width:1160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+map_h, map_l, map_r, </td>
+</tr>
+</tbody></table>
+
+
+</div>
+
+
+<div class="section">
+
+<div class="section">
+
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+ALBEDO</td>
+<td style="width:40px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+35986</td>
+<td style="width:1160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+albedodry_r, </td>
+</tr>
+</tbody></table>
+
+
+</div>
+
+
+<div class="section">
+
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+VALLEY FEVER ASPECT FACTOR</td>
+<td style="width:40px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+35987</td>
+<td style="width:1160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+aspectrep, ffd_r, slope_r, </td>
+</tr>
+</tbody></table>
+
+
+</div>
+
+
+<div class="section">
+
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+SLOPE</td>
+<td style="width:40px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+70</td>
+<td style="width:1160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+slope_h, slope_l, slope_r, </td>
+</tr>
+</tbody></table>
+
+
+</div>
+
+</div>
+
+
+<div class="section">
+
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+MEAN ANNUAL AIR TEMPERATURE, FROM H&amp;L</td>
+<td style="width:40px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+35984</td>
+<td style="width:1160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+mean_annual_air_temperature_h, mean_annual_air_temperature_l, mean_annual_air_temperature_r, </td>
+</tr>
+</tbody></table>
+
+
+</div>
+
+
+<div class="section">
+
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+MEAN ANNUAL PRECIPITATION FROM H&amp;L</td>
+<td style="width:40px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+35985</td>
+<td style="width:1160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+map_h, map_l, map_r, </td>
+</tr>
+</tbody></table>
+
+
+</div>
+
+
+<div class="section">
+
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+XERIC AIR TEMPERATURE CHOPPER, FROM H&amp;L</td>
+<td style="width:40px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+35988</td>
+<td style="width:1160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+mean_annual_air_temperature_h, mean_annual_air_temperature_l, mean_annual_air_temperature_r, </td>
+</tr>
+</tbody></table>
+
+
+</div>
+
+
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+XERIC BIOLOGIC CLIMATE</td>
+<td style="width:40px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+35953</td>
+<td style="width:1160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+taxsubgrp, taxsuborder, </td>
+</tr>
+</tbody></table>
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Data</td>
+<td style="width:615px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+XERIC MLRA</td>
+<td style="width:40px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+15380</td>
+<td style="width:1160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+area_symbol, area_type_name, </td>
+</tr>
+</tbody></table>
+
+
+
+
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+XERIC BIOLOGIC CLIMATE</td>
+<td style="width:40px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+35953</td>
+<td style="width:1160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+taxsubgrp, taxsuborder, </td>
+</tr>
+</tbody></table>
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Data</td>
+<td style="width:615px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+XERIC MLRA</td>
+<td style="width:40px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+15380</td>
+<td style="width:1160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+area_symbol, area_type_name, </td>
+</tr>
+</tbody></table>
+
+
+
+</div>
+
+
+<div class="section">
+
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+ORGANIC CARBON IN KG/M2 TO 30CM</td>
+<td style="width:40px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+35955</td>
+<td style="width:1160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+dbtenthbar_r, dbthirdbar_r, hzdepb_r, hzdept_r, </td>
+</tr>
+</tbody></table>
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+LAYER THICKNESS IN RANGE; ABOVE A RESTRICTIVE LAYER</td>
+<td style="width:40px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+10181</td>
+<td style="width:1160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+hzdepb_r, hzdept_r, </td>
+</tr>
+<tr>
+<td style="width:160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+FINE EARTH % BY VOLUME</td>
+<td style="width:40px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+10313</td>
+<td style="width:1160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+dbtenthbar_r, dbthirdbar_r, frag3to10_h, frag3to10_l, frag3to10_r, fraggt10_h, fraggt10_l, fraggt10_r, hzdepb_r, hzdept_r, sieveno10_h, sieveno10_l, sieveno10_r, </td>
+</tr>
+</tbody></table>
+
+
+
+</div>
+
+
+<div class="section">
+
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Data</td>
+<td style="width:615px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+MONTHS WITH FREQUENT OR OCCASIONAL LONG PONDING</td>
+<td style="width:40px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+49342</td>
+<td style="width:1160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+ponddurcl, pondfreqcl, </td>
+</tr>
+</tbody></table>
+
+
+
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Data</td>
+<td style="width:615px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+CUMULATIVE NEAR SURFACE SATURATION</td>
+<td style="width:40px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+49341</td>
+<td style="width:1160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+soimoistdept_r, soimoiststat, </td>
+</tr>
+</tbody></table>
+
+
+</div>
+
+
+<div class="section">
+
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+WATER GATHERING SURFACE SIMPLE</td>
+<td style="width:40px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+35954</td>
+<td style="width:1160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+shapeacross, shapedown, slope_r, taxorder, </td>
+</tr>
+</tbody></table>
+
+
+</div>
+
+
+<div class="section">
+
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+WTD_AVG WRD 0-30cm OR ABOVE RESTRICTION</td>
+<td style="width:40px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+35959</td>
+<td style="width:1160px;border:0px solid black;background-color:ghostwhite;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+awc_h, awc_l, awc_r, compname, dbthirdbar_r, hzdepb_r, hzdept_r, wfifteenbar_h, wfifteenbar_l, wfifteenbar_r, wthirdbar_h, wthirdbar_l, wthirdbar_r, </td>
+</tr>
+</tbody></table>
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+THICKNESS OF SURFACE ORGANIC HORIZON</td>
+<td style="width:40px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+10346</td>
+<td style="width:1160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+hzdept_h, hzdept_l, hzdept_r, lieutex, taxorder, texcl, </td>
+</tr>
+<tr>
+<td style="width:160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Data</td>
+<td style="width:615px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+DEPTH TO FIRST STR/VSTR CEMENTED BELOW ORGANIC LAYER</td>
+<td style="width:40px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+13834</td>
+<td style="width:1160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+resdept_h, resdept_l, resdept_r, reskind, </td>
+</tr>
+<tr>
+<td style="width:160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Data</td>
+<td style="width:615px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+LAYER THICKNESS IN RANGE; ABOVE VSTR RESTRICT BELOW O</td>
+<td style="width:40px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+13835</td>
+<td style="width:1160px;border:0px solid black;background-color:#ffffcc;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+hzdepb_r, hzdept_r, </td>
+</tr>
+</tbody></table>
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:#e6ffe6;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:#e6ffe6;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+THICKNESS OF SURFACE ORGANIC HORIZON</td>
+<td style="width:40px;border:0px solid black;background-color:#e6ffe6;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+10346</td>
+<td style="width:1160px;border:0px solid black;background-color:#e6ffe6;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+hzdept_h, hzdept_l, hzdept_r, lieutex, taxorder, texcl, </td>
+</tr>
+<tr>
+<td style="width:160px;border:0px solid black;background-color:#e6ffe6;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:#e6ffe6;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+SOIL DEPTH TO FIRST CEMENTED RESTRICTION BELOW O HORIZON</td>
+<td style="width:40px;border:0px solid black;background-color:#e6ffe6;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+13791</td>
+<td style="width:1160px;border:0px solid black;background-color:#e6ffe6;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+resdept_h, resdept_l, resdept_r, reskind, </td>
+</tr>
+</tbody></table>
+
+<table class="data">
+<tbody><tr>
+<td style="width:160px;border:0px solid black;background-color:#d3edf8;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+NSSC Pangaea</td>
+<td style="width:615px;border:0px solid black;background-color:#d3edf8;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+THICKNESS OF SURFACE ORGANIC HORIZON</td>
+<td style="width:40px;border:0px solid black;background-color:#d3edf8;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+10346</td>
+<td style="width:1160px;border:0px solid black;background-color:#d3edf8;color:black;text-align:center;font-size:10px;font-weight:normal;font-style:italic">
+hzdept_h, hzdept_l, hzdept_r, lieutex, taxorder, texcl, </td>
+</tr>
+</tbody></table>
+
+
+
+
+
+</div>
+
+</div>
+
+
+<br>
+<br>
+<p style="width:100%;color:blue;text-align:left;font-size:12px;font-weight:normal;font-style:italic">
+This report locates 1,249 items (data elements using either physical or logical name) in the parent property and in up to 16 properties called in derive statements. The data elements are in the area, area type, chorizon, chorizon aashto, chorizon consistence, chorizon desgn suffix, chorizon fragments, chorizon human artifacts, chorizon pores, chorizon structure, chorizon structure group, chorizon texture, chorizon texture group, chorizon texture modifier, chorizon unified, component, component canopy cover, component crop yield, component diagnostic features, component erosion accelerated, component existing plants, component forest prod, component forest prod other, component geomorph desc, component hydric criteria, component month, component parent material, component parent material grp, component potential windbreak, component restrictions, component soil moisture, component soil temperature, component surface fragments, component surface morph gc, component surface morph hpp, component surface morph mr, component surface morph ss, component tax fam mineralogy, component tax fam other, component tax moisture class, component usfs ground cover, component usfs interpretation, correlation, data mapunit, geomorph feature, geomorph feature type, legend, legend mapunit, and mapunit tables. It does not search for data elements ending in "iid", "iidref", rvindicators, sequence numbers, or object and record when last updated items.
+</p>
+<p style="width:100%;color:blue;text-align:left;font-size:12px;font-weight:normal;font-style:italic">
+Main properties occur first and are in grey. 1st-level derive properties are in yellow, 2nd-level in green, 3rd-level in blue, 4th-level in purple, and 5th-level in orange. Only one national interpretation (MIL - Helicopter Landing Zones (DOD)) uses a 4th-level derive property. All other national interpretations are 3rd-level or less.
+</p>
+<p style="width:100%;color:blue;text-align:left;font-size:12px;font-weight:normal;font-style:italic">
+The report works by isolating the word DERIVE and a line feed at the end of the derive statement. It must do this for every derive statement and this report can process up to 16 of them. It then isolates the NASIS site and property name using the first double quote, the colon, and the last double quote. In cases where the NASIS site is omitted, it is assigned from the parent property. With carefully constructed case statements, the code can accommodate either scenario. Derive statements preceeded by either a space or a hashtag are not included.
+</p>
+<p style="width:100%;color:blue;text-align:left;font-size:12px;font-weight:normal;font-style:italic">
+This report has no method to distinguish between data elements being used and those that have been hashed out with #. This unresolved issue remains significant.
+</p>
+<br>
+<br>
+<p style="width:100%;color:black;text-align:left;font-size:12px;font-weight:normal;font-style:italic">
+Questions, suggestions, or errors with this report
+<a href="mailto:mark.vanlear@va.usda.gov?Subject=INTERP%20-%20x1Rule%20Data%20Elements%20and%20Properties%20only%20Comments:">
+Send E-Mail
+</a>
+<php>
+ to: Mark Van Lear </php>
+</p>
+
+</div>
+
+
+</body></html>

@@ -28,6 +28,13 @@ plotEvaluation(e)
 plotEvaluation(e, xlim = c(3, 9))
 
 
+
+# ArbitraryLinear
+  e <- evals[evals$evalname == 'Xeric Biologic Climate', ]
+plotEvaluation(e)
+
+
+
 # beta
 # pretty sure this is defined by two values: "center" and "flex"
 # ... hmm this isn't right
