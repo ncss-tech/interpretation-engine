@@ -9,8 +9,8 @@ library(data.tree)
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 # load data.tree engine functions
-load("datatree_hsg.rdata") # loads tr.hsg
-load("datatree_svi.rdata") # loads tr.svi
+load("../datatree_hsg.rdata") # loads tr.hsg
+load("../datatree_svi.rdata") # loads tr.svi
 source("../tree_eval.r")
 
 # view interp trees
@@ -57,7 +57,7 @@ t4 <- Sys.time()
 brk.out <- brk.in
 
 brk.out$hsg <- 
-  brk.out$wt %>%
+  brk.out$wt %>% # needs a template raster for extent / crs / where the NA pixels are / etc. All values overwritten.
   setValues(factor(df.out$hsg,
                    levels = rev(c("A", "A/D", "B", "B/D", "C", "C/D", "D"))))
 
