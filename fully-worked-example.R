@@ -1,12 +1,15 @@
 library(soilDB)
 library(RODBC)
 library(XML)
-library(plyr)
 library(data.tree)
 library(digest)
 library(jsonlite)
 library(sharpshootR)
 library(knitr)
+library(furrr)
+
+## TODO: phase-out this functionality
+library(plyr)
 
 # source local functions
 source('local-functions.R')
@@ -17,6 +20,8 @@ source('local-functions.R')
 # load cached data
 load('cached-NASIS-data.Rda')
 
+
+## manual init of rules / evals
 
 y <- rules[rules$rulename == 'ENG - Dwellings With Basements', ]
 
@@ -68,14 +73,21 @@ points(20, ee$evalFunction(20), col='royalblue', pch=16, cex=2)
 
 
 
-
+# get unique set of properties required for this interp
 (ps <- getPropertySet(dt))
 
-## this is a component ID (NASIS only)
+# init additional cores
+plan(multisession)
+
+# this is a component ID (NASIS only)
+# parallel requests to national NASIS server
 props <- lookupProperties(unique(ps$propiid), coiid='1842461')
 
-z <- join(ps, props, by='propiid', type='left')
+# stop additional cores
+plan(sequential)
 
+# merge 
+z <- merge(ps, props, by='propiid', all.x = TRUE, sort = FALSE)
 kable(z)
 
 

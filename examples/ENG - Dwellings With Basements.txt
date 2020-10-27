@@ -1,0 +1,86 @@
+
+> print(basements, 'Type', 'Value', 'evalType', 'propname', 'propiid', 'propuom', limit=NULL)
+                                                                          levelName           Type Value evalType                                                   propname propiid              propuom
+1  ENG - Dwellings With Basements                                                                                                                                                                        
+2   °--RuleOperator_c451bdee                                                                    or                                                                                                       
+3       ¦--Permafrost                                                                                                                                                                                    
+4       ¦   °--RuleOperator_dd37796c                                                            or                                                                                                       
+5       ¦       ¦--RuleHedge_ea3fa12b                                                 not_null_and     0                                                                                                 
+6       ¦       ¦   °--Permafrost (Consolidated) InLieuOf                                                   Crisp                                  USDA TEXTURE (IN-LIEU-OF)     109                     
+7       ¦       ¦--RuleHedge_296e9a0c                                                 not_null_and     0                                                                                                 
+8       ¦       ¦   °--Texture Modifier (Permanently Frozen)                                                Crisp                                      USDA TEXTURE MODIFIER    1059                     
+9       ¦       °--RuleHedge_f6fc035d                                                 not_null_and     0                                                                                                 
+10      ¦           °--Shallow to Permafrost (50 to 100cm (20 to 40"))                                    Sigmoid                                        DEPTH TO PERMAFROST    1336                   CM
+11      ¦--Ponded > 4 hours                                                                                                                                                                              
+12      ¦   °--RuleOperator_d34208c1                                                           and                                                                                                       
+13      ¦       ¦--RuleHedge_ca3fa4e3                                                          not     0                                                                                                 
+14      ¦       ¦   °--RuleHedge_06ef14ed                                             not_null_and     0                                                                                                 
+15      ¦       ¦       °--Ponding Frequency None                                                           Crisp                                          PONDING FREQUENCY   11539                     
+16      ¦       °--RuleHedge_509df480                                                 not_null_and     0                                                                                                 
+17      ¦           °--Ponding Duration > Very Brief                                                        Crisp                                           PONDING DURATION    1005                     
+18      ¦--Slope 8 to > 15%                                                                                                                                                                              
+19      ¦   °--RuleHedge_f060a2d5                                                   null_not_rated     0                                                                                                 
+20      ¦       °--Slopes <8 to >15%                                                                      Sigmoid                                                      SLOPE      70                  pct
+21      ¦--Total Subsidence > 30cm (12")                                                                                                                                                                 
+22      ¦   °--RuleHedge_70712fe3                                                     not_null_and     0                                                                                                 
+23      ¦       °--Total Subsidence > 30cm (12")                                                            Crisp                                           SUBSIDENCE TOTAL    1066                   CM
+24      ¦--Flooding (Maximum Frequency)                                                                                                                                                                  
+25      ¦   °--RuleOperator_27684302                                                            or                                                                                                       
+26      ¦       ¦--RuleHedge_dd896630                                                 not_null_and     0                                                                                                 
+27      ¦       ¦   °--Flooding "VERY FREQUENT"                                                             Crisp                     FLOODING FREQUENCY (Maximum Frequency)      28                 CODE
+28      ¦       ¦--RuleHedge_fe17083b                                                 not_null_and     0                                                                                                 
+29      ¦       ¦   °--Flooding "FREQUENT"                                                                  Crisp                     FLOODING FREQUENCY (Maximum Frequency)      28                 CODE
+30      ¦       ¦--RuleHedge_d9736f1f                                                 not_null_and     0                                                                                                 
+31      ¦       ¦   °--Flooding "VERY RARE"                                                                 Crisp                     FLOODING FREQUENCY (Maximum Frequency)      28                 CODE
+32      ¦       ¦--RuleHedge_82c14f91                                                 not_null_and     0                                                                                                 
+33      ¦       ¦   °--Flooding "RARE"                                                                      Crisp                     FLOODING FREQUENCY (Maximum Frequency)      28                 CODE
+34      ¦       °--RuleHedge_943e79e7                                                 not_null_and     0                                                                                                 
+35      ¦           °--Flooding "OCCASIONAL"                                                                Crisp                     FLOODING FREQUENCY (Maximum Frequency)      28                 CODE
+36      ¦--Wet, Ground Water Near the Surface (75 - 180cm)                                                                                                                                               
+37      ¦   °--RuleHedge_fec987f3                                                     not_null_and     0                                                                                                 
+38      ¦       °--Wet, Ground Water Near Surface (75 - 180cm)                                            Sigmoid                             HIGH WATER TABLE DEPTH MINIMUM      23                   CM
+39      ¦--Shrink-Swell (LEP WTD_AVG Above Bedrock or 60") (revised)                                                                                                                                     
+40      ¦   °--RuleHedge_db194f0d                                                     not_null_and     0                                                                                                 
+41      ¦       °--Shrink-swell of Thickest Layer 25-150cm or Bedrock (revised)                           Sigmoid LEP WTD_AVG 25-150cm OR ABOVE RESTRICTION, BELOW O HORIZON   15178                  PCT
+42      ¦--Humus Bottom Layer                                                                                                                                                                            
+43      ¦   °--RuleHedge_f0cfe44c                                                     not_null_and     0                                                                                                 
+44      ¦       °--Unified (Organic in the bottom layer)                                                    Crisp                                       UNIFIED BOTTOM LAYER     123                     
+45      ¦--Depth to Hard Bedrock < 150cm (60") (revised)                                                                                                                                                 
+46      ¦   °--RuleHedge_626c372f                                                     not_null_and     0                                                                                                 
+47      ¦       °--Depth to Hard Bedrock 100 to 150cm (40 to 60") (revised)                               Sigmoid                     DEPTH TO BEDROCK HARD, BELOW O HORIZON   15170                   CM
+48      ¦--Shallow to Soft Bedrock < 100cm (40") (revised)                                                                                                                                               
+49      ¦   °--RuleHedge_4d671a3b                                                     not_null_and     0                                                                                                 
+50      ¦       °--Depth to Soft Bedrock 50 to 100cm (20 to 40") (revised)                                Sigmoid                     DEPTH TO BEDROCK SOFT, BELOW O HORIZON   15171                   CM
+51      ¦--Large Stones - Fract. >3in, 24.9 to >50%, Wght. Av. 0-40                                                                                                                                      
+52      ¦   °--RuleHedge_130e80f2                                                   null_not_rated     0                                                                                                 
+53      ¦       °--Fragments > 75mm, 25 to 50%, Wght. Av. 0 to 100cm (0-40in)                             Sigmoid            FRAGMENTS > 75MM WEIGHTED AVE. IN DEPTH 0-100CM      33           WEIGHT PCT
+54      ¦--Thick Cemented Pan 100 to 150cm (40 to 60")(revised)                                                                                                                                          
+55      ¦   °--RuleOperator_412c82c3                                                           and                                                                                                       
+56      ¦       ¦--RuleHedge_7573d199                                                          not     0                                                                                                 
+57      ¦       ¦   °--RuleHedge_9242d77e                                             not_null_and     0                                                                                                 
+58      ¦       ¦       °--Restrictive Feature Hardness Noncemented                                         Crisp                               RESTRICTIVE FEATURE HARDNESS   12111                     
+59      ¦       °--RuleHedge_206ea198                                                 not_null_and     0                                                                                                 
+60      ¦           °--Shallow to Thick Cemented Pan 100 to 150cm (revised)                               Sigmoid               DEPTH TO CEMENTED PAN THICK, BELOW O HORIZON   15175                   CM
+61      ¦--Thin Cemented Pan 50 to 100cm (20 to 40") (revised)                                                                                                                                           
+62      ¦   °--RuleOperator_12eea919                                                           and                                                                                                       
+63      ¦       ¦--RuleHedge_7573d199                                                          not     0                                                                                                 
+64      ¦       ¦   °--RuleHedge_9242d77e                                             not_null_and     0                                                                                                 
+65      ¦       ¦       °--Restrictive Feature Hardness Noncemented                                         Crisp                               RESTRICTIVE FEATURE HARDNESS   12111                     
+66      ¦       °--RuleHedge_501e58e9                                                 not_null_and     0                                                                                                 
+67      ¦           °--Shallow to Thin Cemented Pan 50 to 100cm (20 to 40)(revised)                       Sigmoid                DEPTH TO CEMENTED PAN THIN, BELOW O HORIZON   15176                   CM
+68      ¦--RuleHedge_5d4800cb                                                               weight     1                                                                                                 
+69      ¦   °--Unstable Fill                                                                                                                                                                             
+70      ¦       °--RuleHedge_57c5c848                                                 not_null_and     0                                                                                                 
+71      ¦           °--Reclaimed Land                                                                       Crisp                        COMPONENT LOCAL PHASE UNSTABLE FILL   37735 defined numeric code
+72      ¦--Subsidence Due to Gypsum, 3 to 18cm                                                                                                                                                           
+73      ¦   °--RuleHedge_96b8d1c4                                                   null_not_rated     0                                                                                                 
+74      ¦       °--Subsidence Due to Gypsum, 3 to 18 cm                                                   Sigmoid                              SUBSIDENCE DUE TO GYPSUM, REV   14600                   cm
+75      ¦--Impacted soil                                                                                                                                                                                 
+76      ¦   °--RuleHedge_e24623d1                                                   null_not_rated     0                                                                                                 
+77      ¦       °--Impacted soil                                                                            Crisp                             COMPONENT LOCAL PHASE IMPACTED   37734 defined numeric code
+78      °--SAS - Drainage Class Not Subaqueous (lim)                                                                                                                                                     
+79          °--RuleHedge_febf3fca                                                   null_not_rated     0                                                                                                 
+80              °--RuleHedge_48a358bd                                                          not     0                                                                                                 
+81                  °--Drainage Class is Not Subaqueous                                                     Crisp                           DRAINAGE CLASS IS NOT SUBAQUEOUS   52969                     
+
+> sink()

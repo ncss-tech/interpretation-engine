@@ -1,7 +1,7 @@
 
 initRuleset <- function(rulename) {
   
-  ## rules has to be loaded from somewhere
+  ## TODO: these are loaded from the global namespace, standardize this
   
   y <- rules[rules$rulename == rulename, ]
   
@@ -43,8 +43,16 @@ lookupProperties <- function(coiid, propIDs) {
     return(res)
   }
   
+  
+  ## slow, but works
   # convert back to DF and return
-  res <- ldply(propIDs, .getSingleProperty, coiid=coiid, .progress='text')
+  # res <- ldply(propIDs, .getSingleProperty, coiid=coiid, .progress='text')
+  
+  ## TODO: use purrr::safely()
+  
+  res <- future_map(propIDs, .getSingleProperty, coiid=coiid, .progress=TRUE)
+  res <- do.call('rbind', res)
+  
   return(res)
 }
 

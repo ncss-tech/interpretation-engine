@@ -1,3 +1,5 @@
+
+> print(valley.fever, 'Type', 'Value', 'evalType', 'propname', 'propiid', 'propuom', limit=NULL)
                                                                                                       levelName           Type Value        evalType                                        propname propiid         propuom
 1  Valley Fever                                                                                                                                                                                                             
 2   °--RuleHedge_3ae4da8a                                                                                             multiply     1                                                                                        
@@ -17,7 +19,7 @@
 16                      ¦           ¦--Gypsum 0 to 15% within 30cm                                                                                                                                                          
 17                      ¦           ¦   °--RuleHedge_c0182933                                                            power   0.5                                                                                        
 18                      ¦           ¦       °--RuleHedge_dcff0de1                                                 not_null_and     0                                                                                        
-19                      ¦           ¦           °--Gypsum 0 to 15% in depth 0-30cm wtd_avg                                            ArbitraryCurve     GYPSUM MAXIMUM, 0-50CM OR FIRST RESTRICTION   30181         percent
+19                      ¦           ¦           °--Gypsum 0 to 15% in depth 0-30cm wtd_avg                                            ArbitraryCurve                           GYPSUM FROM 0 to 30cm   14097             PCT
 20                      ¦           °--Soil Reaction WTD_AVG 0-30cm                                                                                                                                                         
 21                      ¦               °--RuleHedge_636937c3                                                   null_not_rated     0                                                                                        
 22                      ¦                   °--Soil Reaction Within 30cm (Valley Fever)                                                      Sigmoid SOIL REACTION 1-1 WATER MINIMUM IN DEPTH 0-30CM    1228              PH
@@ -98,3 +100,5 @@
 97                                  ¦   °--Cumulative Near Surface Saturation                                                         ArbitraryCurve              CUMULATIVE NEAR SURFACE SATURATION   49341                
 98                                  °--RuleHedge_738ba9d2                                                       null_not_rated     0                                                                                        
 99                                      °--Cumulative Long Ponding                                                                    ArbitraryCurve MONTHS WITH FREQUENT OR OCCASIONAL LONG PONDING   49342          MONTHS
+
+> sink()
