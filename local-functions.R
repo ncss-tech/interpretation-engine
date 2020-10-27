@@ -107,18 +107,19 @@ getAndCacheData <- function() {
   
   # get rules, note that "rule" is a reserved word, use [] to protect
   # load ALL rules, even those not ready for use
-  rules <- sqlQuery(channel, "SELECT rulename, ruledesign, primaryinterp, notratedphrase, ruledbiidref, ruleiid, [rule]
+  # note that long text fields must be CASE to `ntext` due to BUG in MS SQL ODBC driver
+  rules <- sqlQuery(channel, "SELECT rulename, ruledesign, primaryinterp, notratedphrase, ruledbiidref, ruleiid, CAST([rule] AS ntext) AS [rule]
 FROM rule_View_0 ;", stringsAsFactors=FALSE)
   
   # get all evaluation curves
-  evals <- sqlQuery(channel, "SELECT evaliid, evalname, evaldesc, eval, evaluationtype, invertevaluationresults, propiidref AS propiid
+  evals <- sqlQuery(channel, "SELECT evaliid, evalname, CAST(evaldesc AS ntext) AS evaldesc, CAST(eval AS ntext) AS eval, evaluationtype, invertevaluationresults, propiidref AS propiid
 FROM evaluation_View_0 ;", stringsAsFactors=FALSE)
   
   # get basic property parameters, but not the property definition
   properties <- sqlQuery(channel, "SELECT propiid, propuom, propmin, propmax, propmod, propdefval, propname FROM property_View_0", stringsAsFactors=FALSE)
   
   # property descriptions and CVIR code
-  property_def <- sqlQuery(channel, "SELECT propiid, propdesc, prop FROM property_View_0", stringsAsFactors=FALSE)
+  property_def <- sqlQuery(channel, "SELECT propiid, CAST(propdesc AS ntext) AS propdesc, CAST(prop AS ntext) AS prop FROM property_View_0", stringsAsFactors=FALSE)
   
   # uncode
   rules <- soilDB::uncode(rules, stringsAsFactors = FALSE)

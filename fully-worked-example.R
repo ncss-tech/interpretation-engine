@@ -18,7 +18,7 @@ source('local-functions.R')
 load('cached-NASIS-data.Rda')
 
 
-y <- rules[rules$rulename == 'FOR - Mechanical Planting Suitability', ]
+y <- rules[rules$rulename == 'ENG - Dwellings With Basements', ]
 
 dt <- parseRule(y)
 
@@ -49,7 +49,7 @@ SetGraphStyle(dt, rankdir='TD', inherit=TRUE)
 dt$Do(function(x) SetNodeStyle(x, shape = 'box', inherit = FALSE), 
       filterFun = function(x) x$isLeaf)
 
-plot(dt$RuleOperator_172efc65$`Slope Limitation (<5% to >25%)`)
+plot(dt$RuleOperator_c451bdee$`Depth to Hard Bedrock < 150cm (60") (revised)`)
 
 
 
@@ -57,7 +57,7 @@ plot(dt$RuleOperator_172efc65$`Slope Limitation (<5% to >25%)`)
 
 ## TODO: getting to the evaluation function of each rule is hard work... need to traverse each eval to the baseline function for plugging in properties
 
-ee <- dt$RuleOperator_172efc65$`Slope Limitation (<5% to >25%)`$`Slope <5% to >25%`$`RuleHedge_9ff73997`$`Slope <5% to >25%`
+ee <- dt$RuleOperator_c451bdee$`Slope 8 to > 15%`$RuleHedge_f060a2d5$`Slopes <8 to >15%`
 print(ee, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', 'propname', 'propiid', 'propuom', limit=NULL)
 
 e <- evals[evals$evaliid == ee$eval_refid, ]
@@ -71,7 +71,8 @@ points(20, ee$evalFunction(20), col='royalblue', pch=16, cex=2)
 
 (ps <- getPropertySet(dt))
 
-props <- lookupProperties(unique(ps$propiid), coiid='1842387')
+## this is a component ID (NASIS only)
+props <- lookupProperties(unique(ps$propiid), coiid='1842461')
 
 z <- join(ps, props, by='propiid', type='left')
 
