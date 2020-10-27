@@ -54,6 +54,15 @@ z <- merge(ps.basements, props, by='propiid', all.x=TRUE, sort=FALSE)
 kable(z)
 
 
+# example evaluation
+ee <- basements$RuleOperator_c451bdee$`Depth to Hard Bedrock < 150cm (60") (revised)`$`RuleHedge_626c372f`$`Depth to Hard Bedrock 100 to 150cm (40 to 60") (revised)`
+print(ee, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', 'propname', 'propiid', 'propuom', limit=NULL)
+
+e <- evals[evals$evaliid == ee$eval_refid, ]
+plotEvaluation(e, xlim = c(0, 200))
+points(140, ee$evalFunction(140), col='royalblue', pch=16, cex=2)
+
+
 
 
 # print more attributes

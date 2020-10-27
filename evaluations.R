@@ -30,7 +30,7 @@ plotEvaluation(e, xlim = c(3, 9))
 
 
 # ArbitraryLinear
-  e <- evals[evals$evalname == 'Xeric Biologic Climate', ]
+e <- evals[evals$evalname == 'Xeric Biologic Climate', ]
 plotEvaluation(e)
 
 

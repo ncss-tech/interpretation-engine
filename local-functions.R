@@ -56,6 +56,8 @@ lookupProperties <- function(coiid, propIDs) {
   return(res)
 }
 
+
+## TODO: convert to lapply / do.call
 getAttributeByEval <- function(x, a) {
   p <- x$Get(a)
   # remove NA and convert to data.frame
