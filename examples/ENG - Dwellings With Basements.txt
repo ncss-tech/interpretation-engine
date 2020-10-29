@@ -1,5 +1,3 @@
-
-> print(basements, 'Type', 'Value', 'evalType', 'propname', 'propiid', 'propuom', limit=NULL)
                                                                           levelName           Type Value evalType                                                   propname propiid              propuom
 1  ENG - Dwellings With Basements                                                                                                                                                                        
 2   °--RuleOperator_c451bdee                                                                    or                                                                                                       
@@ -82,5 +80,3 @@
 79          °--RuleHedge_febf3fca                                                   null_not_rated     0                                                                                                 
 80              °--RuleHedge_48a358bd                                                          not     0                                                                                                 
 81                  °--Drainage Class is Not Subaqueous                                                     Crisp                           DRAINAGE CLASS IS NOT SUBAQUEOUS   52969                     
-
-> sink()
