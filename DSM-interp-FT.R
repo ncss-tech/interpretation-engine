@@ -49,9 +49,16 @@ props <- lookupProperties(unique(ps.basements$propiid), coiid='1842387')
 # stop additional cores
 plan(sequential)
 
-# join / check
-z <- merge(ps.basements, props, by='propiid', all.x=TRUE, sort=FALSE)
+# check: OK
+# requires flattening to data.frame
+props.df <- do.call('rbind', props)
+z <- merge(ps.basements, props.df, by='propiid', all.x=TRUE, sort=FALSE)
 kable(z)
+
+
+## TODO: merge properties -> data.tree -> run evaluations
+
+
 
 
 # example evaluation

@@ -51,7 +51,9 @@ lookupProperties <- function(coiid, propIDs) {
   ## TODO: use purrr::safely()
   
   res <- future_map(propIDs, .getSingleProperty, coiid=coiid, .progress=TRUE)
-  res <- do.call('rbind', res)
+  
+  # retain as a list: other wise data are converted to character
+  names(res) <- as.character(sapply(res, '[[', 'propiid'))
   
   return(res)
 }
