@@ -10,9 +10,10 @@ initRuleset <- function(rulename) {
   # recusively splice-in sub-rules
   dt$Do(traversal='pre-order', fun=linkSubRules)
   
-  ## TODO: is this working?
   # splice-in evaluation functions, if possible
   dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
+  
+  # lookup / insert properties and run evaluations
   
   return(dt)
   

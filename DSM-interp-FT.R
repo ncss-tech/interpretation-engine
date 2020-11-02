@@ -58,7 +58,7 @@ kable(z)
 
 ## TODO: merge properties -> data.tree -> run evaluations
 
-
+## TODO: use attached eval functions vs. lookup 
 
 
 # example evaluation
