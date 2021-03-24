@@ -1,0 +1,16 @@
+<PAMDataset>
+  <PAMRasterBand band="1">
+    <CategoryNames>
+      <Category></Category>
+      <Category>Not limited</Category>
+      <Category>Somewhat limited</Category>
+      <Category>Very limited</Category>
+    </CategoryNames>
+    <Metadata>
+      <MDI key="STATISTICS_MAXIMUM">3</MDI>
+      <MDI key="STATISTICS_MEAN">2.4833787394562</MDI>
+      <MDI key="STATISTICS_MINIMUM">1</MDI>
+      <MDI key="STATISTICS_STDDEV">0.82624970734065</MDI>
+    </Metadata>
+  </PAMRasterBand>
+</PAMDataset>

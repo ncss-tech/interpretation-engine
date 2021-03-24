@@ -1,0 +1,20 @@
+log into nasis
+queries > nssc pangaea >
+A/L/M/DMU by areasymbol (official)
+
+target legend
+download legend / mapunit / data mapunit
+
+query eg %UT%
+
+wait
+
+accept
+
+wait
+
+query local. 
+select legend, mapunit, and data mapunit
+add to selected set
+
+now run the r script

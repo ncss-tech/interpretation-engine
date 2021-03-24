@@ -1,0 +1,17 @@
+<PAMDataset>
+  <PAMRasterBand band="1">
+    <CategoryNames>
+      <Category></Category>
+      <Category>Not suitable</Category>
+      <Category>Somewhat suitable</Category>
+      <Category>Moderately suitable</Category>
+      <Category>Suitable</Category>
+    </CategoryNames>
+    <Metadata>
+      <MDI key="STATISTICS_MAXIMUM">4</MDI>
+      <MDI key="STATISTICS_MEAN">1.243439742823</MDI>
+      <MDI key="STATISTICS_MINIMUM">1</MDI>
+      <MDI key="STATISTICS_STDDEV">0.49485611652686</MDI>
+    </Metadata>
+  </PAMRasterBand>
+</PAMDataset>
