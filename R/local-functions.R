@@ -49,7 +49,6 @@ evalbyeid <- function(eid,
 #'
 #' @return ruleset
 #' @export
-#' @import data.tree
 initRuleset <- function(rulename) {
   
   rules <- InterpretationEngine::NASIS_rules
@@ -244,7 +243,7 @@ FROM evaluation_View_0 ;", stringsAsFactors=FALSE)
 #'
 #' @return parsed XML chunk
 #' @export
-#'
+#' @importFrom XML xmlParse xmlToList
 xmlChunkParse <- function(x) {
   # replace bogus encoding
   x <- gsub('utf-16', 'utf-8', x)
@@ -794,7 +793,7 @@ makeNamesUnique3 <- function(l) {
 #'
 #' @return a data.tree
 #' @export
-#'
+#' @importFrom data.tree FromListExplicit 
 parseRule <- function(x) {
   
   # parse XML block into list
@@ -904,10 +903,10 @@ linkEvaluationFunctions <- function(node) {
 #' @export
 #' @aliases hsg_calc svi_calc
 #' @importFrom raster as.data.frame
-#' @import parallel
-#' @import data.tree
-#' @import foreach
-#' @import doParallel
+#' @importFrom data.tree isLeaf
+#' @importFrom parallel detectCores stopCluster
+#' @importFrom foreach foreach registerDoSEQ %dopar%
+#' @importFrom doParallel registerDoParallel 
 tree_eval <- function(
   tree,
   indata,
@@ -936,7 +935,7 @@ tree_eval <- function(
   ### set up paralellization
   # auto core counting: use n cores in computer, minus 2
   if(ncores == "auto") {
-    if(detectCores() == 2) { # just in case there's a dual core machine out there
+    if(parallel::detectCores() == 2) { # just in case there's a dual core machine out there
       ncores = 1
     } else {
       ncores <- parallel::detectCores() - 2
@@ -944,8 +943,8 @@ tree_eval <- function(
   }
   
   # check if user requested too many cores for the machine
-  if(ncores > detectCores()){
-    stop(cat("Cannot run with", ncores, "cores as your computer only has", detectCores()))
+  if(ncores > parallel::detectCores()){
+    stop(cat("Cannot run with", ncores, "cores as your computer only has", parallel::detectCores()))
   } 
   
   # register sequential or parallel backend, depending on ncores 
@@ -1020,7 +1019,7 @@ tree_eval <- function(
     return(node$result)
   }
   
-  if(ncores > 1) stopCluster(cl)
+  if(ncores > 1) parallel::stopCluster(cl)
   
   out <- unlist(outlist)
   
@@ -1090,7 +1089,7 @@ vf_calc <- function(indata,
     indata <- as.data.frame(indata)
   }
   
-  outdata <- indata[["xeric"]]
+  outdata <- indata[,'xeric',drop=FALSE]
   
   ## 1 - chemical subrule
   
