@@ -2,34 +2,43 @@
 # Joe Brehm
 # last edited 12/1/2020
 
-# This function is a shortcut for loading in a broad set of SDA data, filtered to area symbols specified by an input character vector
-# Other than filtering by area symbol, no modifications are made to the data
-# at last edit, these tables are returned:
-## legend
-## mapunit
-## component
-## chorizon
-## corestrictions
-## cosurffrags
-## cotaxfmmin
-## codiagfeatures
-## comonth
-## chtexturegrp
-## chfrags
-## chtexture
-## cosoilmoist
-## muaggatt
-## chunified
-## cointerpENG -- "ENG" rules only though
-
 ## added a function to allow "like" commands
 
 
-require(soilDB)
-require(tidyverse)
+# require(soilDB)
+# require(tidyverse)
 
-
-
+#' Quick SDA data acquisition
+#' This function is a shortcut for loading in a broad set of SDA data, filtered to area symbols specified by an input character vector.
+#' 
+#' Other than filtering by area symbol, no modifications are made to the data
+#' at last edit, these tables are returned: 
+#' 
+#' - `legend`
+#' - `mapunit`
+#' - `component`
+#' - `chorizon`
+#' - `corestrictions`
+#' - `cosurffrags`
+#' - `cotaxfmmin`
+#' - `codiagfeatures`
+#' - `comonth`
+#' - `chtexturegrp`
+#' - `chfrags`
+#' - `chtexture`
+#' - `cosoilmoist`
+#' - `muaggatt`
+#' - `chunified`
+#' - `cointerpENG` -- "ENG" rules only though
+#' 
+#' @param asym area symbol
+#' @param fun default "in"; alternately: "like
+#'
+#' @author Joseph Brehm
+#' @return SDA table result
+#' @export
+#' @importFrom soilDB  SDA_query
+#' @importFrom dplyr select `%>%`
 pull_SDA <- function(asym, fun = "in"){
   ls.tables.sda <- list()
   

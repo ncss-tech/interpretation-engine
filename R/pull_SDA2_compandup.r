@@ -14,11 +14,27 @@
 
 ## except this one just does component and up
 
-require(soilDB)
-require(tidyverse)
+# require(soilDB)
+# require(tidyverse)
 
 
-
+#' Quick SDA data acquisition (component up)
+#' This function is a shortcut for loading in a broad set of SDA data, filtered to area symbols specified by an input character vector.
+#' 
+#' Other than filtering by area symbol, no modifications are made to the data
+#' at last edit, these tables are returned:
+#' 
+#' - `legend`
+#' - `mapunit`
+#' - `component`
+#' @param asym area symbol
+#' @param fun default "in"; alternately: "like
+#'
+#' @author Joseph Brehm
+#' @return SDA table result
+#' @export
+#' @importFrom soilDB  SDA_query
+#' @importFrom dplyr select `%>%`
 pull_SDA_compup <- function(asym, fun = "in"){
   ls.tables.sda <- list()
   
