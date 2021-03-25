@@ -33,10 +33,8 @@
 evalbyeid <- function(eid, 
                       d,
                       sig.scale = 1) {
-    NASIS_evaluations <- NULL
-    load(system.file("data/NASIS_evaluations.rda", 
-                     package="InterpretationEngine"))
-    evals <- NASIS_evaluations
+  
+    evals <- InterpretationEngine::NASIS_evaluations
     
     e = evals[evals$evaliid == eid,]
     f = extractEvalCurve(e, sig.scale = sig.scale)
@@ -53,10 +51,8 @@ evalbyeid <- function(eid,
 #' @export
 #' @import data.tree
 initRuleset <- function(rulename) {
-  NASIS_rules <- NULL
-  load(system.file("data/NASIS_rules.rda", package="InterpretationEngine"))
   
-  rules <- NASIS_rules
+  rules <- InterpretationEngine::NASIS_rules
   
   y <- rules[rules$rulename == rulename, ]
   
@@ -740,15 +736,10 @@ makeNamesUnique2 <- function(l) {
 #'
 #' @importFrom digest digest
 makeNamesUnique3 <- function(l) {
-  NASIS_evaluations <- NULL
-  load(system.file("data/NASIS_evaluations.rda", 
-                   package="InterpretationEngine"))
-  evals <- NASIS_evaluations  
   
-  NASIS_rules <- NULL
-  load(system.file("data/NASIS_rules.rda", 
-                   package="InterpretationEngine"))
-  rules <- NASIS_rules
+  evals <- InterpretationEngine::NASIS_evaluations  
+
+  rules <- InterpretationEngine::NASIS_rules
 
   # iterate over list elements
   for(i in seq_along(l$Children)) {
@@ -832,10 +823,8 @@ parseRule <- function(x) {
 #' @export
 #'
 linkSubRules <- function(node) {
-  NASIS_rules <- NULL
-  load(system.file("data/NASIS_rules.rda", 
-                   package="InterpretationEngine"))
-  rules <- NASIS_rules
+  
+  rules <- InterpretationEngine::NASIS_rules
   
   # if this is a sub-rule
   if(!is.null(node$rule_refid)) {
@@ -868,10 +857,7 @@ linkSubRules <- function(node) {
 #' @export
 #'
 linkEvaluationFunctions <- function(node) {
-  NASIS_evaluations <- NULL
-  load(system.file("data/NASIS_evaluations.rda", 
-                   package="InterpretationEngine"))
-  evals <- NASIS_evaluations  
+  evals <- InterpretationEngine::NASIS_evaluations  
   
   # only operate on evaluations
   if(!is.null(node$eval_refid)) {
@@ -1055,11 +1041,8 @@ tree_eval <- function(
 
 #' @export
 hsg_calc <- function(indata, ncores = 1) {
-  datatree_hsg <- NULL
-  load(system.file("data/datatree_hsg.rda",
-                   package="InterpretationEngine"))
   
-  tree_eval(tree = datatree_hsg,
+  tree_eval(tree = InterpretationEngine::datatree_hsg,
             indata = indata,
             ncores = ncores)
 }
@@ -1067,10 +1050,7 @@ hsg_calc <- function(indata, ncores = 1) {
 #' @export
 svi_calc <- function(indata, ncores = 1) {
   
-  datatree_svi <- NULL
-  load(system.file("data/datatree_svi.rda", package="InterpretationEngine"))
-  
-  tree_eval(tree = datatree_svi,
+  tree_eval(tree = InterpretationEngine::datatree_svi,
             indata = indata,
             ncores = ncores)
 }
@@ -1088,8 +1068,6 @@ svi_calc <- function(indata, ncores = 1) {
 #' @author Joseph Brehm
 #' @return evaluation result
 #' @export
-#' @import XML
-#' @import digest
 #' @importFrom dplyr select `%>%` if_else
 #' @importFrom raster setValues brick
 #' @importFrom tidyr replace_na
