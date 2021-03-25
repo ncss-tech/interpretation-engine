@@ -17,7 +17,12 @@ require(soilDB)
 ## check drainage class, it looks off as a raster
 ## add time estimate output
 
-setwd("E:/NMSU/interpretation-engine/")
+
+## 1 run parameters ####
+#setwd to interp engine parent
+#setwd("E:/NMSU/interpretation-engine/") # set to the interp engine parent
+setwd("C:\\Users\\jbrehm\\Documents\\GitHub\\interpretation-engine")
+
 
 ## if you have a list of nasis coiid values, enter it here
 ## (NB: Not cokeys from SDA or other projects. Only coiids)
@@ -25,17 +30,10 @@ v.coiid <- NULL
 
 ## if no list of coiids is supplied, it will default to pulling all coiids from the specified state
 ## (2 letter codes)
-stcode <- "RI"
+stcode <- "AR"
 
 ## currently, this has do be done one state at a time
 ## one way to get multi-state data at once would be to get a list of coiids independently
-
-
-### 1: do things in NASIS ####
-### open NASIS download all component, map unit, and legend tables for the state
-### use the query 'NSSC Pangaea::Area/Legend/Mapunit/DMU by areasymbol (official data)'
-### load them into the selected set
-### keep them there until this entire script is run
 
 ### 2: get list of NASIS coiid's to work with (skipped if v.coiid defined above) ####
 ## here, this loads from a crosswalk file connecting NASIS and SDA keys. 
@@ -242,4 +240,4 @@ t.nasisrename <-
 ### 6: Save ####
 write.csv(t.nasisrename,
           file = paste0("Input/DWBpropertyData-", stcode, ".csv"))
-
+list.files(path = "Input/DWB/NASIS Property Tables")

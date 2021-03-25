@@ -5,7 +5,7 @@
 ## is the xeric part working? should GC UT be non-xeric?
 ## add time estimate output
 
-setwd("E:/NMSU/interpretation-engine/")
+#setwd("E:/NMSU/interpretation-engine/")
 
 require(plyr)
 require(tidyverse)
@@ -17,23 +17,20 @@ require(data.tree)
 require(dplyr)
 require(soilDB)
 
+
+### 1: run parameters ####
+setwd("C:\\Users\\jbrehm\\Documents\\GitHub\\interpretation-engine") #set to interp engine parent
+
 ## if you have a list of nasis coiid values, enter it here
 ## (NB: Not cokeys from SDA or other projects. Only coiids)
 v.coiid <- NULL
 
 ## if no list of coiids is supplied, it will default to pulling all coiids from the specified state
 ## (2 letter code)
-stcode <- "RI"
+stcode <- "AR"
 
 ## currently, this has do be done one state at a time
 ## one way to get multi-state data at once would be to get a list of coiids independently
-
-### 1: do things in NASIS ####
-#### You maybe dont actually have to do this??? Just need nasis for the crosswalk
-### open NASIS download all component, map unit, and legend tables for the state
-### use the query 'NSSC Pangaea::Area/Legend/Mapunit/DMU by areasymbol (official data)'
-### load them into the selected set
-### keep them there until this entire script is run
 
 ### 2: get list of NASIS coiid's to work with (skipped if v.coiid defined above) ####
 ## here, this loads from a crosswalk file connecting NASIS and SDA keys. 
@@ -41,6 +38,7 @@ stcode <- "RI"
 
 ## load the crosswalk
 dbcrosswalk <- read.csv(paste0("dbcrosswalk/dbcrosswalk_inner_", stcode, ".csv"))
+list.files("dbcrosswalk/")
 
 if(is.null(v.coiid)){
   ## get the nasis coiids from that state
@@ -54,9 +52,6 @@ load('Engine Guts/cached-NASIS-data.Rda')
 
 dt <- initRuleset('Soil Habitat for Saprophyte Stage of Coccidioides')
 ps <- getPropertySet(dt)
-
-#### ADD XERIC MLRA FLAG ####
-#ps$propiid <- c(ps$propiid, 15380)
 
 ### loading the nasis data is slow, and *must* save intermediates along the way. 
 ### This code does this by saving chunks of 100 components at a time
@@ -77,10 +72,8 @@ for(i in 1:length(v.splitcoiid)){
            "/VFpropertyChunk", stcode, i, ".rdata")
   print(paste("Writing chunk", i, "of", length(v.splitcoiid)))
   
-  if(file.exists(name))
+  if(!file.exists(name))
   {
-    ## all this code does is write the files; no action taken if the file exists   
-  } else {
     vv <- v.splitcoiid[[i]]
     l.props <- list()
     
@@ -250,39 +243,6 @@ gssurgo.component <-
                 "cokey")
   
 
-gssurgo.component
-
-# define rv	isnull(taxsuborder) then 0 else if 
-# taxsuborder imatches "xer*" then 1 else if
-# taxsubgrp imatches "*xer*" then 1 else  if 
-# xericmlra == 1 then 1 else .8.
-
-
-# %>%
-#   mutate(
-#     aspectfactor_calc = if_else( ## this is translated from cvir "VALLEY FEVER ASPECT FACTOR", property 35987
-#       ### it has to be recreated here because web export turns the 0-1 decimal into 0 or 1 integer
-#       is.na(aspectrep), 0,
-#       if_else(
-#         aspectrep >= 0 & aspectrep < 0, 0,
-#         if_else(
-#           aspectrep >= 80 & aspectrep < 280, -((aspectrep-180)**2)/9000+1,
-#           0 # if all false
-#         )
-#       )
-#     )
-#   ) 
-
-
-#### CUT THE CHOPPERS ENTIRELY
-### HARD CODE INTO THE FUNCTION TO DO THE RATIO BASED ON A NORMAL INPUT MEASURE, AIRTEMP
-# %>%
-#   mutate( # these translated from CVIR air temp choppers, props 35988 and 35989 
-#     xericairtempchopper_calc = airtempa_r / 16,
-#     nonxericairtempchopper_calc = airtempa_r / 18.5
-#   )
-
-
 t.nasisrename <- 
   left_join(
     t.nasisrename,
@@ -307,9 +267,6 @@ t.nasisrename <-
  write.csv(t.nasisrename,
            file = paste0("Input/VFpropertyData-", stcode, ".csv"), row.names = F)
 
-# write.csv(t.nasisrename,
-#           file = paste0("Input/VFpropertyTestData-", stcode, ".csv"), row.names = F)
-# 
 # write.csv(t.nasisjoin,
 #           file = paste0("Input/VFpropertyTestDataNoRename-", stcode, ".csv"), row.names = F)
 # 
