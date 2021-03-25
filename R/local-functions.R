@@ -1053,6 +1053,7 @@ tree_eval <- function(
   
 }
 
+#' @export
 hsg_calc <- function(indata, ncores = 1) {
   datatree_hsg <- NULL
   load(system.file("data/datatree_hsg.rda",
@@ -1063,6 +1064,7 @@ hsg_calc <- function(indata, ncores = 1) {
             ncores = ncores)
 }
 
+#' @export
 svi_calc <- function(indata, ncores = 1) {
   
   datatree_svi <- NULL
