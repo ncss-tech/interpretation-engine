@@ -10,23 +10,32 @@
 
 ### 3/19/21 jrb
 ## added vf, dwb, svi, and hsg code
+# 
+# require(plyr)
+# require(tidyverse) 
+# require(data.tree)
+# require(XML)
+# require(soilDB)
+# require(digest)
+# require(raster)
 
-require(plyr)
-require(tidyverse) 
-require(data.tree)
-require(XML)
-require(soilDB)
-require(digest)
-require(raster)
 
 
-# evaluation by the eid code
-evalbyeid <- 
-  function(
-    eid, # eval id -- nb, not rule id or property id. Evals only. 
-    d,
-    sig.scale = 1
-  ) {
+#' Evaluation by the eid code
+#'
+#' @param eid Evaluation ID -- NB: not rule id or property id. Evaluation only. 
+#' @param d data to pass through evaluation curve?
+#' @param sig.scale default 1
+#'
+#' @return result of evaluation made with the specified evaluation curve
+#' @export
+#'
+evalbyeid <- function(eid, 
+                      d,
+                      sig.scale = 1) {
+  
+    evals <- InterpretationEngine::NASIS_evaluations
+    
     e = evals[evals$evaliid == eid,]
     f = extractEvalCurve(e, sig.scale = sig.scale)
     outdata = f(d)
@@ -34,9 +43,15 @@ evalbyeid <-
   }
 
 
+#' Initialize a ruleset
+#'
+#' @param rulename Rule name charatcer
+#'
+#' @return ruleset
+#' @export
 initRuleset <- function(rulename) {
   
-  ## rules has to be loaded from somewhere
+  rules <- InterpretationEngine::NASIS_rules
   
   y <- rules[rules$rulename == rulename, ]
   
@@ -61,6 +76,18 @@ initRuleset <- function(rulename) {
 # https://cran.r-project.org/web/packages/curl/vignettes/intro.html#async_requests
 
 # this web report undestands multiple component rec. ids
+#' Lookup Properties using NASIS Web Report
+#' 
+#' This function uses `WEB-PROPERY-COMPONENT_property` NASIS Web Report to lookup property data
+#'
+#' @param coiid Vector of component IDs (`coiid`)
+#' @param propIDs Vector of property IDs 
+#'
+#' @return properties?
+#' @export
+#'
+#' @importFrom soilDB parseWebReport
+#' @importFrom plyr ldply
 lookupProperties <- function(coiid, propIDs) {
   
   # get a single property for a single component
@@ -83,6 +110,15 @@ lookupProperties <- function(coiid, propIDs) {
   return(res)
 }
 
+#' Get Attribute By Evaluation
+#'
+#' @param x a data.tree
+#' @param a attribute
+#'
+#' @return attribute
+#' @export
+#'
+#' @importFrom plyr ldply
 getAttributeByEval <- function(x, a) {
   p <- x$Get(a)
   # remove NA and convert to data.frame
@@ -98,6 +134,14 @@ getAttributeByEval <- function(x, a) {
 # get the unique set of properties for all evaluations
 # this requires several calls to getAttributeByEval(), one for each attribute
 # why?
+#' Get unique properties for all evaluations
+#'
+#' @param x vector of evaluations
+#'
+#' @return a set of properties
+#' @export
+#'
+#' @importFrom plyr join
 getPropertySet <- function(x) {
   p.1 <- getAttributeByEval(x, 'propname')
   p.2 <- getAttributeByEval(x, 'propiid')
@@ -109,6 +153,16 @@ getPropertySet <- function(x) {
 
 
 ## TODO: add critical points
+#' Plot Evaluation Curve
+#'
+#' @param x data
+#' @param xlim `plot` xlim default `NULL`
+#' @param resolution number of points (default 100)
+#' @param ... additional arguments passed to plot
+#'
+#' @return a plot
+#' @export
+#' @importFrom graphics grid abline lines
 plotEvaluation <- function(x, xlim=NULL, resolution=100, ...) {
   
   ## TODO: need higher-level checking: crisp expressions require a very different interface
@@ -136,6 +190,14 @@ plotEvaluation <- function(x, xlim=NULL, resolution=100, ...) {
 
 
 # soilDB::uncode() used to convert coded -> uncoded values
+#' Cache dataset containing important NASIS data
+#' soilDB::uncode() used to convert coded -> uncoded values
+#' @return cached data
+#' @export
+#' 
+#' @importFrom soilDB uncode
+#' @importFrom plyr join
+#' @importFrom RODBC odbcDriverConnect sqlQuery
 getAndCacheData <- function() {
   # init connection
   channel <- odbcDriverConnect(connection = "DSN=nasis_local;UID=NasisSqlRO;PWD=nasisRe@d0n1y365")
@@ -175,6 +237,13 @@ FROM evaluation_View_0 ;", stringsAsFactors=FALSE)
 
 
 # parse evaluation chunk XML and return as list
+#' Parse an evaluation chunk XML return a list
+#'
+#' @param x evaluation curve XML text
+#'
+#' @return parsed XML chunk
+#' @export
+#' @importFrom XML xmlParse xmlToList
 xmlChunkParse <- function(x) {
   # replace bogus encoding
   x <- gsub('utf-16', 'utf-8', x)
@@ -187,9 +256,18 @@ xmlChunkParse <- function(x) {
 ### extract eval functions ####
 
 ## TODO: return function and critical points as a list
+
 # dispatch specialized functions based on eval type
-# x: evalulation record
+# x: evaluation record
 # res: number of intermediate points
+#' Extract an evaluaton curve
+#'
+#' @param evalrec Evaluation record
+#' @param resolution Number of intermediate points
+#' @param sig.scale default 1
+#'
+#' @return evaluation curve values
+#' @export
 extractEvalCurve <- function(evalrec, resolution=250, sig.scale = 1) { ### edited default resolution 12/11 ### added sig.scale param 2/18
   
   # type
@@ -254,7 +332,15 @@ extractEvalCurve <- function(evalrec, resolution=250, sig.scale = 1) { ### edite
 }
 
 
-# x: evalulation curve XML text
+#' Extract Trapeziodal Eval Curve
+#'
+#' @param x evaluation curve XML text
+#' @param invert logical
+#'
+#' @return curve function
+#' @export
+#'
+#' @importFrom stats approxfun
 extractTrapezoidEval <- function(x, invert) {
   l <- xmlChunkParse(x)
   # exract pieces
@@ -280,7 +366,15 @@ extractTrapezoidEval <- function(x, invert) {
 }
 
 
-# x: evalulation curve XML text
+#' Extract Arbitrary Eval Curve
+#'
+#' @param x evaluation curve XML text
+#' @param invert logical
+#'
+#' @return curve function
+#' @export
+#'
+#' @importFrom stats approxfun
 extractArbitraryCurveEval <- function(x, invert) {
   l <- xmlChunkParse(x)
   # exract pieces
@@ -305,7 +399,15 @@ extractArbitraryCurveEval <- function(x, invert) {
   return(af)
 }
 
-# x: evalulation curve XML text
+#' Extract Arbitrary Linear Eval Curve
+#'
+#' @param x  evaluation curve XML text
+#' @param invert logical
+#'
+#' @return curve function
+#' @export
+#'
+#' @importFrom stats approxfun
 extractArbitraryLinearCurveEval <- function(x, invert) {
   l <- xmlChunkParse(x)
   # exract pieces
@@ -329,9 +431,18 @@ extractArbitraryLinearCurveEval <- function(x, invert) {
   return(af)
 }
 
-# x: evalulation curve XML text
-# res: number of intermediate points
-extractSigmoidCurveEval <- function(evalxml, invert, res, sig.scale = 1) {
+#' Extract Sigmoid Eval Curve
+#'
+#' @param x evaluation curve XML text
+#' @param invert logical
+#' @param res number of intermediate points
+#' @param sig.scale default 1
+#'
+#' @return curve function
+#' @export
+#' @importFrom stats plogis
+#' @importFrom stats approxfun
+extractSigmoidCurveEval <- function(x, invert, res, sig.scale = 1) {
   
   ### test in global params because bad programmer
   # if(1==0){
@@ -340,7 +451,7 @@ extractSigmoidCurveEval <- function(evalxml, invert, res, sig.scale = 1) {
   #   invert <- t$evalrow$invertevaluationresults
   # }
   
-  l <- xmlChunkParse(evalxml)
+  l <- xmlChunkParse(x)
   # get the lower and upper asymptotes
   dp <- as.numeric(as.vector(unlist(l$DomainPoints)))
   
@@ -447,8 +558,16 @@ extractSigmoidCurveEval <- function(evalxml, invert, res, sig.scale = 1) {
   return(af)
 }
 
-# x: evalulation curve XML text
-# res: number of intermediate points
+#' Extract Linear Evaluation Curve
+#'
+#' @param x evaluation curve XML text
+#' @param invert logical
+#' @param res number of intermediate points
+#'
+#' @return curve function
+#' @export
+#' 
+#' @importFrom stats approxfun
 extractLinearCurveEval <- function(x, invert, res) {
   l <- xmlChunkParse(x)
   # get the lower and upper end points
@@ -480,8 +599,17 @@ extractLinearCurveEval <- function(x, invert, res) {
 ## TODO: breaks on eval "GRL-Frost Action = moderate"
 ## TODO: parsing expression must be generalized
 ## TODO: this doesn't work with expressions like this "!= \"oxisols\" or \"gelisols\""
-# x: evalulation curve XML text
-# res: number of intermediate points
+#' Extract Crisp Evaluation Curve
+#'
+#' @param x evalulation curve XML text
+#' @param invert logical
+#' @param res number of intermediate points
+#' @param dmin domain range minimum 
+#' @param dmax domain range maximum
+#'
+#' @return curve function
+#' @export
+#'
 extractCrispCurveEval <- function(x, invert, res, dmin, dmax) {
   l <- xmlChunkParse(x)
   # get expression
@@ -517,9 +645,13 @@ extractCrispCurveEval <- function(x, invert, res, dmin, dmax) {
   return(af)
 }
 
-#####
-
-# serial number added to names
+#' serial number added to names
+#'
+#' @param l a data.tree
+#'
+#' @return a data.tree
+#' @export
+#'
 makeNamesUnique <- function(l) {
   l.names <- names(l$Children)
   # multiple children types
@@ -552,7 +684,14 @@ makeNamesUnique <- function(l) {
   return(l)
 }
 
-# use hash function for unique names
+# 
+#' Use hash function for unique names
+#'
+#' @param l a data.tree
+#'
+#' @return a data.tree
+#' @export
+#' @importFrom digest digest
 makeNamesUnique2 <- function(l) {
   
   # iterate over list elements
@@ -584,9 +723,23 @@ makeNamesUnique2 <- function(l) {
 
 
 # lookup the actual rule name
-# split Rule ref Ids from Evaluation ref Ids
+# 
+#' lookup rule name
+#' 
+#' Split Rule ref Ids from Evaluation ref Ids
+#'
+#' @param l a data.tree
+#'
+#' @return a data.tree
+#' @export
+#'
+#' @importFrom digest digest
 makeNamesUnique3 <- function(l) {
   
+  evals <- InterpretationEngine::NASIS_evaluations  
+
+  rules <- InterpretationEngine::NASIS_rules
+
   # iterate over list elements
   for(i in seq_along(l$Children)) {
     # get curret name
@@ -634,7 +787,13 @@ makeNamesUnique3 <- function(l) {
 
 
 
-# attempt to convert interpretation rule into data.tree representation
+#' Convert interpretation rule into data.tree representation
+#'
+#' @param x should contain `rule` element with XML text to parse
+#'
+#' @return a data.tree
+#' @export
+#' @importFrom data.tree FromListExplicit 
 parseRule <- function(x) {
   
   # parse XML block into list
@@ -655,7 +814,17 @@ parseRule <- function(x) {
 
 
 ## TODO: splice/prune issues
+#' Link Subrules
+#'
+#' @param node a data.tree node
+#'
+#' @return a (modified) data.tree?
+#' @export
+#'
 linkSubRules <- function(node) {
+  
+  rules <- InterpretationEngine::NASIS_rules
+  
   # if this is a sub-rule
   if(!is.null(node$rule_refid)) {
     # get sub-rule
@@ -679,7 +848,16 @@ linkSubRules <- function(node) {
 }
 
 # this will break if there are errors in extractEvalCurve
+#' Link Evaluation Functions
+#'
+#' @param node a data.tree node
+#'
+#' @return a (modified) data.tree?
+#' @export
+#'
 linkEvaluationFunctions <- function(node) {
+  evals <- InterpretationEngine::NASIS_evaluations  
+  
   # only operate on evaluations
   if(!is.null(node$eval_refid)) {
     # get eval record
@@ -708,23 +886,31 @@ linkEvaluationFunctions <- function(node) {
 
 #### adding hsg, svi, vf, and dwb functions ## jrb 03-19-21 ####
 
-require(parallel)
-require(data.tree)
-require(foreach)
-require(doParallel)
+# require(parallel)
+# require(data.tree)
+# require(foreach)
+# require(doParallel)
 
+#' Evaluate a tree
+#'
+#' @param tree tree is a data tree object structured with classifications as leaves above those, all nodes must contain these attributes: "var", specifying the variable name to evaluate, "logical", specifying the logical evaluation at that step. MUST INCLUDE THE SAME VARIABLE "VAR"
+#' @param indata data must be a data frame containing columns with names matching all the values of "var" used in the tree object
+#' @param ncores number of cores to parallelize over. if set to 1 (default), runs sequentially. Also accepts "auto" as input. Will run with ncores on computer - 2.
+#'
+#' @author Joseph Brehm
+#' @return eval result TODO
+#' 
+#' @export
+#' @aliases hsg_calc svi_calc
+#' @importFrom raster as.data.frame
+#' @importFrom data.tree isLeaf
+#' @importFrom parallel detectCores stopCluster
+#' @importFrom foreach foreach registerDoSEQ %dopar%
+#' @importFrom doParallel registerDoParallel 
 tree_eval <- function(
   tree,
-  # tree is a data tree object structured with classifications as leaves
-  # above those, all nodes must contain these attributes:
-  # "var", specifying the variable name to evaluate,
-  # "logical", specifying the logical evaluation at that step. MUST INCLUDE THE SAME VARIABLE "VAR"
   indata,
-  # data must be a data frame containing columns with names matching all the values of "var" used in the tree object
   ncores = 1
-  # number of cores to parallelize over. 
-  # if set to 1 (default), runs sequentially
-  # Also accepts "auto" as input. Will run with ncores on computer - 2
 ){
   ### data pre-processing 
   
@@ -749,7 +935,7 @@ tree_eval <- function(
   ### set up paralellization
   # auto core counting: use n cores in computer, minus 2
   if(ncores == "auto") {
-    if(detectCores() == 2) { # just in case there's a dual core machine out there
+    if(parallel::detectCores() == 2) { # just in case there's a dual core machine out there
       ncores = 1
     } else {
       ncores <- parallel::detectCores() - 2
@@ -757,8 +943,8 @@ tree_eval <- function(
   }
   
   # check if user requested too many cores for the machine
-  if(ncores > detectCores()){
-    stop(cat("Cannot run with", ncores, "cores as your computer only has", detectCores()))
+  if(ncores > parallel::detectCores()){
+    stop(cat("Cannot run with", ncores, "cores as your computer only has", parallel::detectCores()))
   } 
   
   # register sequential or parallel backend, depending on ncores 
@@ -833,7 +1019,7 @@ tree_eval <- function(
     return(node$result)
   }
   
-  if(ncores > 1) stopCluster(cl)
+  if(ncores > 1) parallel::stopCluster(cl)
   
   out <- unlist(outlist)
   
@@ -852,26 +1038,40 @@ tree_eval <- function(
   
 }
 
+#' @export
 hsg_calc <- function(indata, ncores = 1) {
-  tree_eval(tree = tr.hsg,
+  
+  tree_eval(tree = InterpretationEngine::datatree_hsg,
             indata = indata,
             ncores = ncores)
 }
 
+#' @export
 svi_calc <- function(indata, ncores = 1) {
-  tree_eval(tree = tr.svi,
+  
+  tree_eval(tree = InterpretationEngine::datatree_svi,
             indata = indata,
             ncores = ncores)
 }
 
 ### vf
-require(tidyverse)
-require(soilDB)
-require(XML)
-require(digest)
+# require(tidyverse)
+# require(soilDB)
+# require(XML)
+# require(digest)
 
+#' Valley Fever 
+#'
+#' @param indata input data
+#' @param doxeric force xeric or nonxeric function, or let it choose for each data row/pixel depending on an input raster (accepts "auto" / "xeric" / "nonxeric")
+#' @author Joseph Brehm
+#' @return evaluation result
+#' @export
+#' @importFrom dplyr select `%>%` if_else
+#' @importFrom raster setValues brick
+#' @importFrom tidyr replace_na
 vf_calc <- function(indata, 
-                    doxeric = "auto" # force xeric or nonxeric function, or let it choose for each data row/pixel depending on an input raster (accepts "auto" / "xeric" / "nonxeric")
+                    doxeric = "auto" # 
 ){ 
   if(!(doxeric %in% c("auto", F, T))){
     print("Unknown input for xeric parameter, which determines whether to process data as xeric or nonxeric conditions")
@@ -884,14 +1084,12 @@ vf_calc <- function(indata,
   rasterinput <- class(indata)[1] %in% c("RasterStack", "RasterBrick")
   
   if(rasterinput) {
-    require(raster)
+    # require(raster)
     r.template <- indata[[1]] # save the first raster in the obj as a template to create an out raster later
     indata <- as.data.frame(indata)
   }
   
-  outdata <- indata %>% dplyr::select(
-    # cokey, coiid, comp_name, mukey, muiid, 
-    xeric)
+  outdata <- indata[,'xeric',drop=FALSE]
   
   ## 1 - chemical subrule
   
@@ -1025,6 +1223,15 @@ vf_calc <- function(indata,
 }
 
 ## dwb
+#' Dwewllings Without Basements
+#'
+#' @param indata Input data
+#'
+#' @return evaluation result
+#' @export
+#' @importFrom dplyr select `%>%` if_else
+#' @importFrom tidyr replace_na
+#' @importFrom raster brick setValues
 dwb_calc <- function(indata){
   
   # this works on a data frame. 

@@ -1,0 +1,27 @@
+Package: InterpretationEngine
+Title: Stand-alone NASIS Interpretation Engine
+Version: 0.0.0.9000
+Authors@R: 
+    c(person(given = "Dylan",
+           family = "Beaudette",
+           role = c("aut", "cre"),
+           email = "dylan.beaudette@usda.gov"),
+    person(given = "Joseph",
+           family = "Brehm",
+           role = c("aut"),
+           email = "jrbrehm@nmsu.edu"),
+    person(given = "Andrew",
+           family = "Brown",
+           role = c("ctb"),
+           email = "andrew.g.brown@usda.gov"))
+Maintainer: Dylan Beaudette <dylan.beaudette@usda.gov>
+Description: InterpretationEngine contains tools to develop, test, and apply interpretations to soil data outside the context of NASIS. This project aims to create a prototype from existing interpretation rules, evaluations, and properties as managed in NASIS. Once the prototype is complete it should be possible to generate fuzzy ratings from arbitrary sources of soil and environmental data sources.
+License: GPL (>= 3)
+Encoding: UTF-8
+Depends: R (>= 3.5.0)
+Imports: RODBC, XML, caret, data.tree, digest, doParallel, dplyr, foreach, plyr, raster, soilDB, forcats, tidyr
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Suggests: testthat (>= 3.0.0)
+Config/testthat/edition: 3
