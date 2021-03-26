@@ -6,12 +6,13 @@
 projectcode <- "Yolo1" # area of irrigated cropland in Yolo County near UC Davis
 latitude <- 38.5262
 longitude <- -121.785 # make buffer around extent (in geographic decimal degrees)
+geo_buf <- 0.01
 
 # slightly larger and more variable, near the Dunnigan Hills
 # projectcode <- "Dunn1"
 # latitude <- 38.7941
 # longitude <- -121.955
-# geo_buf <- 0.03
+# geo_buf <- 0.01
 
 # STEPS
 #  - use soilDB to query SDA geometry extent near a target point
