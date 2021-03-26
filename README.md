@@ -1,12 +1,31 @@
-# Interpretations Outside of NASIS
-There are many reasons for wanting to develop, test, and apply interpretations to soil data outside the context of NASIS. This project aims to create a prototype from existing interpretation rules, evaluations, and properties as managed in NASIS. Once the prototype is complete it should be possible to generate fuzzy ratings from arbitrary sources of soil and environmental data sources.
+# {InterpretationEngine} (alpha) R package
 
+To install the alpha version of the "interpretation engine" R package install the dependencies, then use `remotes` to get the latest version from GitHub.
+
+```r
+# install required packages 
+install.packages(c("RODBC", "XML", "caret", "data.tree", "digest", "doParallel", "dplyr", 
+                   "foreach", "plyr", "raster", "soilDB", "forcats", "tidyr", "remotes"))
+                   
+# install package from ncss-tech interpretation-engine repository                   
+remotes::install_github('ncss-tech/interpretation-engine')
+```
+
+Input data for @josephbrehm's demonstration and other demonstrations can be found in the `inst/extdata` portion of this repository. 
+A demonstration script and input boundary files can be found in `/demo` folder.
+
+To have all that data to try, you can download the repository as a static ZIP file, or "clone" with `git` it so you can keep up with the changes that are coming!
+
+<!-- TODO: move these to main NCSS tech page as docs etc that link to the manual for this package?
 # Examples
  * http://ncss-tech.github.io/interpretation-engine/nasis-interp-guts.html
  * http://ncss-tech.github.io/interpretation-engine/D3/tree.html
+ -->
  
+# Interpretations Outside of NASIS
+There are many reasons for wanting to develop, test, and apply interpretations to soil data outside the context of NASIS. This project aims to create a prototype from existing interpretation rules, evaluations, and properties as managed in NASIS. Once the prototype is complete it should be possible to generate fuzzy ratings from arbitrary sources of soil and environmental data sources.
 
-# How
+## How Does it Work?
 The [data.tree](https://cran.r-project.org/web/packages/data.tree/vignettes/data.tree.html) package defines objects and methods that are well suited to the task of describing the hierachy of rules and evaluations. The mapping between domain vaules and fuzzy membership can be accomplished with `approxfun`.
 
 ## Outline
