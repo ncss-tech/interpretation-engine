@@ -15,12 +15,6 @@ Input data for @josephbrehm's demonstration and other demonstrations can be foun
 A demonstration script and input boundary files can be found in `/demo` folder.
 
 To have all that data to try, you can download the repository as a static ZIP file, or "clone" with `git` it so you can keep up with the changes that are coming!
-
-<!-- TODO: move these to main NCSS tech page as docs etc that link to the manual for this package?
-# Examples
- * http://ncss-tech.github.io/interpretation-engine/nasis-interp-guts.html
- * http://ncss-tech.github.io/interpretation-engine/D3/tree.html
- -->
  
 # Interpretations Outside of NASIS
 There are many reasons for wanting to develop, test, and apply interpretations to soil data outside the context of NASIS. This project aims to create a prototype from existing interpretation rules, evaluations, and properties as managed in NASIS. Once the prototype is complete it should be possible to generate fuzzy ratings from arbitrary sources of soil and environmental data sources.
@@ -61,7 +55,11 @@ The [data.tree](https://cran.r-project.org/web/packages/data.tree/vignettes/data
 ### Evaluation Curves
 The following image was generated from a evaluation curve data from NASIS.
 
-![alt text](static-figures/ca-storie-index-slope-eval.png)
+# Examples
+ * http://ncss-tech.github.io/interpretation-engine/misc/nasis-interp-guts.html
+ * http://ncss-tech.github.io/interpretation-engine/misc/D3/tree.html
+ 
+![alt text](misc/static-figures/ca-storie-index-slope-eval.png)
 
 
 ### Rule Trees
