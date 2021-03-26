@@ -1,6 +1,10 @@
 load("misc/cached-NASIS-data.Rda")
-load("misc/TODO/SVI/datatree-svi.rdata")
-load("misc/TODO/HSG/datatree-hsg.rdata")
+
+source("misc/internal-datasets/SVI/tr.svi.R")
+load("misc/internal-datasets/SVI/datatree-svi.rdata")
+
+source("misc/internal-datasets/HSG/tr.hsg.R")
+load("misc/internal-datasets/HSG/datatree-hsg.rdata")
 
 NASIS_evaluations <- evals
 NASIS_properties <- properties
