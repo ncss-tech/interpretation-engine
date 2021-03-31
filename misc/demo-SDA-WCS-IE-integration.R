@@ -3,16 +3,16 @@
 #   and potentially buffered. this is then used to query the SoilWeb MUKEY web coverage service
 
 # save data for small (~11kB) self contained demo
-projectcode <- "Yolo1" # area of irrigated cropland in Yolo County near UC Davis
-latitude <- 38.5262
-longitude <- -121.785 # make buffer around extent (in geographic decimal degrees)
-geo_buf <- 0.01
+# projectcode <- "Yolo1" # area of irrigated cropland in Yolo County near UC Davis
+# latitude <- 38.5262
+# longitude <- -121.785 # make buffer around extent (in geographic decimal degrees)
+# geo_buf <- 0.01
 
 # slightly larger and more variable, near the Dunnigan Hills
-# projectcode <- "Dunn1"
-# latitude <- 38.7941
-# longitude <- -121.955
-# geo_buf <- 0.01
+projectcode <- "Dunn1"
+latitude <- 38.7941
+longitude <- -121.955
+geo_buf <- 0.01
 
 # STEPS
 #  - use soilDB to query SDA geometry extent near a target point
@@ -59,17 +59,6 @@ maa <- SDA_query(sprintf("SELECT * FROM muaggatt WHERE mukey IN %s", format_SQL_
 #   1. calculate minimum ksat by cokey
 #   2. calculate surface horizon kw factor by cokey
 
-## aqp approach (new "k" index syntax for first horizon)
-# library(aqp)
-# depths(ch) <- cokey ~ hzdept_r + hzdepb_r
-# cokey_sda_derived <- horizons(ch[,,.FIRST])[,c('cokey','ksat_r','kwfact')]
-
-## dplyr approach
-# library(dplyr)
-# group_by(ch, cokey) %>% 
-#   mutate(min_ksat = ksat_r[ksat_r == min(ksat_r, na.rm = TRUE)][1],
-#          surface_kw = kwfact[hzdept_r == min(hzdept_r, na.rm = TRUE)][1])
-
 ## data.table approach
 cokey_sda_derived <- data.table(ch)[, list(min_ksat = ksat_r[ksat_r == min(ksat_r, na.rm = TRUE)][1],
                                            surface_kw = kwfact[hzdept_r == min(hzdept_r, na.rm = TRUE)][1]),
@@ -83,7 +72,11 @@ dominant_components <- co[, list(comppct_max = max(comppct_r), # calculate domin
                           #           ^^^                      ^^^ join to other tables
 
 # merge into raster attribute table
-levels(wcs_mukey) <- merge(levels(wcs_mukey)[[1]], dominant_components, by.x="ID", by.y="mukey", all.x=TRUE)
+levels(wcs_mukey) <- merge(levels(wcs_mukey)[[1]],
+                           dominant_components,
+                           by.x = "ID",
+                           by.y = "mukey",
+                           all.x = TRUE)
 
 # inspect ratified raster
 plot(wcs_mukey, "min_ksat")
@@ -172,6 +165,12 @@ rasterVis::levelplot(out.hsg,
 table(df.hsg$hsg)
 table(df.hsg.cmp$hydgrpdcd)
 
+if (!dir.exists(sprintf("inst/extdata/Output/HSG/%s", projectcode)))
+  dir.create(sprintf("inst/extdata/Output/HSG/%s", projectcode), recursive = TRUE)
+             
+writeRaster(out.hsg, filename = sprintf("inst/extdata/Output/HSG/%s/%s_HSG.tif",
+                                        projectcode, projectcode))         
+
 # prepare data.frame and short hsg code for SVI
 df.svi <- as.data.frame(brick.ml1.svi)
 df.svi$shorthsg <- gsub("(.*)/?.*", "\\1", df.hsg$hsg)
@@ -193,3 +192,8 @@ rasterVis::levelplot(out.svi,
                      main = "Soil Vulnerability Index\n(Cultivated Cropland)",
                      col.regions = rev(heat.colors(4)))
 
+if (!dir.exists(sprintf("inst/extdata/Output/SVI/%s", projectcode)))
+  dir.create(sprintf("inst/extdata/Output/SVI/%s", projectcode), recursive = TRUE)
+             
+writeRaster(out.svi, filename = sprintf("inst/extdata/Output/SVI/%s/%s_SVI.tif", 
+                                        projectcode, projectcode), recursive = TRUE)
