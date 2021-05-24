@@ -228,7 +228,7 @@ FROM evaluation_View_0 ;", stringsAsFactors=FALSE)
   property_def$propiid <- as.character(property_def$propiid)
   
   ## TODO: maybe useful to keep the split?
-  # there is onle 1 property / evaluation, so join them
+  # there is only 1 property / evaluation, so join them
   evals <- join(evals, properties, by='propiid')
   
   # save tables for offline testing

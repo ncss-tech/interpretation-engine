@@ -10,9 +10,7 @@ library(knitr)
 
 library(stringr)
 
-
-# source local functions
-source('local-functions.R')
+# devtools::load_all()
 
 # re-load cached data
 # getAndCacheData()
