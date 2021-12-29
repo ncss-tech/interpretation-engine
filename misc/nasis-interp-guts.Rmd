@@ -20,17 +20,13 @@ options(width=500, stringsAsFactors=FALSE)
 
 ```{r, fig.width=6, fig.height=4}
 library(soilDB)
-library(RODBC)
-library(XML)
 library(plyr)
 library(data.tree)
 library(digest)
 library(jsonlite)
 library(sharpshootR)
 library(knitr)
-
-# source local functions
-source('local-functions.R')
+library(InterpretationEngine)
 
 # re-load cached data
 # getAndCacheData()
@@ -82,12 +78,10 @@ plotEvaluation(e)
 e <- evals[evals$evalname == 'Available Water Capacity <10cm', ]
 plotEvaluation(e)
 
-
 ## trapezoid
 e <- evals[evals$evalname == 'American Optimum Average pH (1:1 H2O) 0-150 cm', ]
 plotEvaluation(e)
 plotEvaluation(e, xlim = c(3, 9))
-
 
 ## doesn't work due to NA in min/max
 ## consider defaults of 0,1 ?

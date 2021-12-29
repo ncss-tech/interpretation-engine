@@ -32,7 +32,7 @@
                             {
                               "name": "WICCPI - OM 0-20cm",
                               "eval_refid": "58969",
-                              "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                              "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f, na.rm)"],
                               "evalType": "ArbitraryCurve",
                               "propiid": "17047",
                               "propname": "ORGANIC MATTER IN DEPTH 0-20CM, WTD AVE",
@@ -56,7 +56,7 @@
                             {
                               "name": "WICCPI - OM 20-100cm",
                               "eval_refid": "58970",
-                              "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                              "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f, na.rm)"],
                               "evalType": "ArbitraryCurve",
                               "propiid": "27537",
                               "propname": "ORGANIC MATTER PERCENT 20-100 CM WGT AVG",
@@ -93,7 +93,7 @@
                             {
                               "name": "WICCPI - CEC 0-20cm or Restriction",
                               "eval_refid": "58971",
-                              "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                              "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f, na.rm)"],
                               "evalType": "ArbitraryCurve",
                               "propiid": "27539",
                               "propname": "CEC WEIGHTED AVG 0-20 CM ABOVE RESTRICTION",
@@ -117,7 +117,7 @@
                             {
                               "name": "WICCPI - CEC 20-100cm or Restriction",
                               "eval_refid": "58972",
-                              "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                              "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f, na.rm)"],
                               "evalType": "ArbitraryCurve",
                               "propiid": "27540",
                               "propname": "CEC WEIGHTED AVG 20-100 CM ABOVE RESTRICTION",
@@ -150,7 +150,7 @@
                         {
                           "name": "WICCPI - pH 20-100cm",
                           "eval_refid": "58973",
-                          "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                          "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f, na.rm)"],
                           "evalType": "ArbitraryCurve",
                           "propiid": "27541",
                           "propname": "pH IN DEPTH 20-100CM, WTD AVG",
@@ -181,7 +181,7 @@
                         {
                           "name": "WICCPI - Depth to Restrictive Layer (Subrule)",
                           "eval_refid": "58979",
-                          "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                          "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f, na.rm)"],
                           "evalType": "ArbitraryCurve",
                           "propiid": "27563",
                           "propname": "DEPTH TO FIRST RESTRICTION BELOW ORGANIC LAYER, 200  DEFAULT",
@@ -212,7 +212,7 @@
                         {
                           "name": "WICCPI - First Depth to KSAT >42 or <1.39",
                           "eval_refid": "58974",
-                          "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                          "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f, na.rm)"],
                           "evalType": "ArbitraryCurve",
                           "propiid": "27542",
                           "propname": "LAYER THICKNESS, KSAT >42 or <1.39",
@@ -251,7 +251,7 @@
                                 {
                                   "name": "WICCPI - AWC 0-20cm",
                                   "eval_refid": "58978",
-                                  "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                                  "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f, na.rm)"],
                                   "evalType": "ArbitraryCurve",
                                   "propiid": "27546",
                                   "propname": "AWC 0-20 cm",
@@ -275,7 +275,7 @@
                                 {
                                   "name": "WICCPI - AWC 20-60cm",
                                   "eval_refid": "58975",
-                                  "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                                  "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f, na.rm)"],
                                   "evalType": "ArbitraryCurve",
                                   "propiid": "27543",
                                   "propname": "AWC, 20-60 cm",
@@ -299,7 +299,7 @@
                                 {
                                   "name": "WICCPI - AWC 60-100cm",
                                   "eval_refid": "58976",
-                                  "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                                  "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f, na.rm)"],
                                   "evalType": "ArbitraryCurve",
                                   "propiid": "27544",
                                   "propname": "AWC, 60-100 cm",
@@ -323,7 +323,7 @@
                                 {
                                   "name": "WICCPI - AWC 100-150cm",
                                   "eval_refid": "58977",
-                                  "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                                  "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f, na.rm)"],
                                   "evalType": "ArbitraryCurve",
                                   "propiid": "27545",
                                   "propname": "AWC, 100-150 cm",
@@ -343,7 +343,7 @@
                         {
                           "name": "WICCPI - INTERPRETABLE COMPONENT - WATER",
                           "eval_refid": "58989",
-                          "evalFunction": ["function (x) ", "return(NULL)"],
+                          "evalFunction": ["function (evalrec) ", "{", "    return(NULL)", "}"],
                           "evalType": "Crisp",
                           "propiid": "47023",
                           "propname": "WICCPI - INTERPRETABLE COMPONENT - WATER",
@@ -353,7 +353,7 @@
                         {
                           "name": "WICCPI - INTERPRETABLE COMPONENT - SLOPE",
                           "eval_refid": "58988",
-                          "evalFunction": ["function (x) ", "return(NULL)"],
+                          "evalFunction": ["function (evalrec) ", "{", "    return(NULL)", "}"],
                           "evalType": "Crisp",
                           "propiid": "47022",
                           "propname": "WICCPI - INTERPRETABLE COMPONENT - SLOPE",
@@ -388,7 +388,7 @@
                             {
                               "name": "WICCPI - Wetness May",
                               "eval_refid": "58980",
-                              "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                              "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f, na.rm)"],
                               "evalType": "ArbitraryCurve",
                               "propiid": "27547",
                               "propname": "WATER TABLE DEPTH MIN DURING MAY",
@@ -412,7 +412,7 @@
                             {
                               "name": "WICCPI - Wetness Apr",
                               "eval_refid": "58986",
-                              "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                              "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f, na.rm)"],
                               "evalType": "ArbitraryCurve",
                               "propiid": "30309",
                               "propname": "WATER TABLE DEPTH MIN DURING APR",
@@ -445,7 +445,7 @@
                         {
                           "name": "WICCPI - Effective Slope",
                           "eval_refid": "58982",
-                          "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                          "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f, na.rm)"],
                           "evalType": "ArbitraryCurve",
                           "propiid": "27557",
                           "propname": "SLOPE PERCENT AND BEDROCK NOT <50",
@@ -476,7 +476,7 @@
                         {
                           "name": "WICCPI - MONTHS W/ FLOODING (FREQ),  APRIL-MAY",
                           "eval_refid": "58983",
-                          "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                          "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f, na.rm)"],
                           "evalType": "ArbitraryLinear",
                           "propiid": "27550",
                           "propname": "MONTHS W/ FLOODING (FREQ),  APRIL-MAY, RATING",
@@ -507,7 +507,7 @@
                         {
                           "name": "WICCPI - MONTHS W/ FLOODING (DUR),  APRIL-MAY",
                           "eval_refid": "58984",
-                          "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                          "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f, na.rm)"],
                           "evalType": "ArbitraryLinear",
                           "propiid": "27552",
                           "propname": "MONTHS W/ FLOODING (DUR),  APRIL-MAY, RATING",
@@ -538,7 +538,7 @@
                         {
                           "name": "WICCPI - Water Balance by MLRA",
                           "eval_refid": "58985",
-                          "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f)"],
+                          "evalFunction": ["function (v) ", ".approxfun(x, y, v, method, yleft, yright, f, na.rm)"],
                           "evalType": "ArbitraryLinear",
                           "propiid": "47017",
                           "propname": "MLRA Ranking",
@@ -564,7 +564,7 @@
                     {
                       "name": "WICCPI - Interpretable Component",
                       "eval_refid": "58981",
-                      "evalFunction": ["function (x) ", "return(NULL)"],
+                      "evalFunction": ["function (evalrec) ", "{", "    return(NULL)", "}"],
                       "evalType": "Crisp",
                       "propiid": "15327",
                       "propname": "INTERPRETABLE COMPONENT",
