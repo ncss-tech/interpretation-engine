@@ -195,27 +195,24 @@ plotEvaluation <- function(x, xlim=NULL, resolution=100, ...) {
 #' @return cached data
 #' @export
 #' 
-#' @importFrom soilDB uncode
+#' @importFrom soilDB uncode dbQueryNASIS NASIS
 #' @importFrom plyr join
-#' @importFrom RODBC odbcDriverConnect sqlQuery
 getAndCacheData <- function() {
-  # init connection
-  channel <- odbcDriverConnect(connection = "DSN=nasis_local;UID=NasisSqlRO;PWD=nasisRe@d0n1y365")
   
   # get rules, note that "rule" is a reserved word, use [] to protect
   # load ALL rules, even those not ready for use
-  rules <- sqlQuery(channel, "SELECT rulename, ruledesign, primaryinterp, notratedphrase, ruledbiidref, ruleiid, [rule]
-FROM rule_View_0 ;", stringsAsFactors=FALSE)
+  rules <- soilDB::dbQueryNASIS(soilDB::NASIS(), "SELECT rulename, ruledesign, primaryinterp, notratedphrase, ruledbiidref, ruleiid, [rule]
+FROM rule_View_0 ;")
   
   # get all evaluation curves
-  evals <- sqlQuery(channel, "SELECT evaliid, evalname, evaldesc, eval, evaluationtype, invertevaluationresults, propiidref AS propiid
-FROM evaluation_View_0 ;", stringsAsFactors=FALSE)
+  evals <- soilDB::dbQueryNASIS(soilDB::NASIS(), "SELECT evaliid, evalname, evaldesc, CAST(eval AS text) AS eval, evaluationtype, invertevaluationresults, propiidref AS propiid
+FROM evaluation_View_0 ;")
   
   # get basic property parameters, but not the property definition
-  properties <- sqlQuery(channel, "SELECT propiid, propuom, propmin, propmax, propmod, propdefval, propname FROM property_View_0", stringsAsFactors=FALSE)
+  properties <- soilDB::dbQueryNASIS(soilDB::NASIS(), "SELECT propiid, propuom, propmin, propmax, propmod, propdefval, propname FROM property_View_0")
   
   # property descriptions and CVIR code
-  property_def <- sqlQuery(channel, "SELECT propiid, propdesc, prop FROM property_View_0", stringsAsFactors=FALSE)
+  property_def <- soilDB::dbQueryNASIS(soilDB::NASIS(), "SELECT propiid, propdesc, prop FROM property_View_0")
   
   # uncode
   rules <- soilDB::uncode(rules, stringsAsFactors = FALSE)
@@ -229,7 +226,7 @@ FROM evaluation_View_0 ;", stringsAsFactors=FALSE)
   
   ## TODO: maybe useful to keep the split?
   # there is only 1 property / evaluation, so join them
-  evals <- join(evals, properties, by='propiid')
+  evals <- merge(evals, properties, by='propiid', all.x=TRUE, sort=FALSE)
   
   # save tables for offline testing
   save(rules, evals, properties, property_def, file='cached-NASIS-data.Rda')
@@ -574,9 +571,9 @@ extractLinearCurveEval <- function(x, invert, res) {
   domain <- as.numeric(as.vector(unlist(l$DomainPoints)))
   
   # rating is implied: {0,1}
-  ###rating <- c(0,1)
+  rating <- c(0,1)
   ## changed 2/22 to get the range points out of 'l'
-  rating <- as.numeric(as.vector(unlist(l$RangePoints)))
+  # rating <- as.numeric(as.vector(unlist(l$RangePoints)))
   
   # invert?
   if(invert == 1)

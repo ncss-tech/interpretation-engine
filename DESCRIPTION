@@ -1,6 +1,6 @@
 Package: InterpretationEngine
 Title: Stand-alone NASIS Interpretation Engine
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: 
     c(person(given = "Dylan",
            family = "Beaudette",
@@ -19,9 +19,9 @@ Description: InterpretationEngine contains tools to develop, test, and apply int
 License: GPL (>= 3)
 Encoding: UTF-8
 Depends: R (>= 3.5.0)
-Imports: RODBC, XML, caret, data.tree, digest, doParallel, dplyr, foreach, plyr, raster, soilDB, forcats, tidyr
+Imports: XML, caret, data.tree, digest, doParallel, dplyr, foreach, plyr, raster, soilDB, forcats, tidyr
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Suggests: testthat (>= 3.0.0)
 Config/testthat/edition: 3
