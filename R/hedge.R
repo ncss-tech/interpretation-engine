@@ -1,6 +1,7 @@
 # hedge functions
 
 # NULL hedge: if NULL data in `x` then `null.value`, else `x`
+#' @importFrom stats na.omit
 .NULL_HEDGE <- function(x, null.value = NULL, na.rm = FALSE) {
   if (na.rm) x <- na.omit(x)
   x[is.null(x) | is.na(x)] <- null.value
