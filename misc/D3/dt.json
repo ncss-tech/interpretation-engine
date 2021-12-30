@@ -343,7 +343,7 @@
                         {
                           "name": "WICCPI - INTERPRETABLE COMPONENT - WATER",
                           "eval_refid": "58989",
-                          "evalFunction": ["function (evalrec) ", "{", "    return(NULL)", "}"],
+                          "evalFunction": ["function (x) ", "return(NULL)"],
                           "evalType": "Crisp",
                           "propiid": "47023",
                           "propname": "WICCPI - INTERPRETABLE COMPONENT - WATER",
@@ -353,7 +353,7 @@
                         {
                           "name": "WICCPI - INTERPRETABLE COMPONENT - SLOPE",
                           "eval_refid": "58988",
-                          "evalFunction": ["function (evalrec) ", "{", "    return(NULL)", "}"],
+                          "evalFunction": ["function (x) ", "return(NULL)"],
                           "evalType": "Crisp",
                           "propiid": "47022",
                           "propname": "WICCPI - INTERPRETABLE COMPONENT - SLOPE",
@@ -564,7 +564,7 @@
                     {
                       "name": "WICCPI - Interpretable Component",
                       "eval_refid": "58981",
-                      "evalFunction": ["function (evalrec) ", "{", "    return(NULL)", "}"],
+                      "evalFunction": ["function (x) ", "return(NULL)"],
                       "evalType": "Crisp",
                       "propiid": "15327",
                       "propname": "INTERPRETABLE COMPONENT",

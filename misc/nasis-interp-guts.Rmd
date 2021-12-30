@@ -57,15 +57,15 @@ plotEvaluation(e, xlim=c(0, 200))
 # get a function to describe the evaluation
 s <- seq(0, 100, length.out = 10)
 f <- extractEvalCurve(e)
-cbind(domain=s, fuzzy.rating=f(s))
+cbind(domain = s, fuzzy.rating = f(s))
 
 ## sigmoid:
-e <- evals[evals$evalname == 'SAR, WTD_AVG 0 to 100cm', ]
-plotEvaluation(e, xlim=c(0,25))
+e <- evals[evals$evalname == 'SAR, WTD_AVG 0 to 100cm',]
+plotEvaluation(e, xlim = c(0, 25))
 
 # arbitrary linear
-e <- evals[evals$evalname == 'GRL - EC maximum in depth 25 to 50 cm (NV)', ]
-plotEvaluation(e, xlim=c(0, 1000))
+e <- evals[evals$evalname == 'GRL - EC maximum in depth 25 to 50 cm (NV)',]
+plotEvaluation(e, xlim = c(0, 1000))
 
 # linear
 e <- evals[evals$evalname == 'Slope 0 to >15%', ]
@@ -83,10 +83,9 @@ e <- evals[evals$evalname == 'American Optimum Average pH (1:1 H2O) 0-150 cm', ]
 plotEvaluation(e)
 plotEvaluation(e, xlim = c(3, 9))
 
-## doesn't work due to NA in min/max
-## consider defaults of 0,1 ?
-# e <- evals[evals$evalname == 'GRL-Frost Action = moderate', ]
-# plotEvaluation(e)
+## crispexpression
+e <- evals[evals$evalname == 'GRL-Frost Action = moderate', ]
+plotEvaluation(e)
 ```
 
 Evaluate an arbitrary rule, with an arbitrary value.
@@ -113,10 +112,11 @@ dt <- parseRule(y)
 # print intermediate results
 print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', limit=25)
 
-# recusively splice-in sub-rules
-dt$Do(traversal='pre-order', fun=linkSubRules)
+# recursively splice-in sub-rules
+dt$Do(traversal = 'pre-order', fun = linkSubRules)
+
 # splice-in evaluation functions, if possible
-dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
+dt$Do(traversal = 'pre-order', fun = linkEvaluationFunctions)
 
 # print more attributes
 options(width=300)
@@ -137,8 +137,9 @@ dt <- parseRule(y)
 # print intermediate results
 print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', limit=25)
 
-# recusively splice-in sub-rules
+# recursively splice-in sub-rules
 dt$Do(traversal='pre-order', fun=linkSubRules)
+
 # splice-in evaluation functions, if possible
 dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
 
@@ -167,10 +168,11 @@ dt <- parseRule(y)
 # print intermediate results
 print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', limit=25)
 
-# recusively splice-in sub-rules
-dt$Do(traversal='pre-order', fun=linkSubRules)
+# recursively splice-in sub-rules
+dt$Do(traversal = 'pre-order', fun = linkSubRules)
+
 # splice-in evaluation functions, if possible
-dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
+dt$Do(traversal = 'pre-order', fun = linkEvaluationFunctions)
 
 # print more attributes
 options(width=300)
@@ -216,8 +218,6 @@ z <- join(ps, props, by='propiid', type='left')
 kable(z)
 ```
 
-
-
 ### More Examples
 
 **WLF-Soil Suitability - Karner Blue Butterfly**
@@ -245,9 +245,11 @@ plotEvaluation(e, xlim=c(0, 200))
 e <- evals[evals$evalname == 'KARNER-AWS, 0-50CM OR FIRST RESTRICTIVE LAYER', ]
 plotEvaluation(e, xlim=c(0, 200))
 
-## dangit, haven't implemented this kind of evaluation yet
-# e <- evals[evals$evalname == 'WICCPI - Interpretable Component', ]
-# plotEvaluation(e, xlim=c(0, 200))
+# for "crisp expressions" there is no curve to plot, but the evaluation can still be extracted and run
+e <- evals[evals$evalname == 'WICCPI - Interpretable Component', ]
+WICCPIInterpretableComponent <- extractCrispExpression(e$eval)
+# the function template takes x as an argument, in this case x corresponds to output from PROPERTY script INTERPRETABLE COMPONENT
+WICCPIInterpretableComponent(x = c("series", "miscellaneous area", "taxadjunct", "miscellaneous area"))
 ```
 
 
@@ -310,7 +312,6 @@ write.csv(unique(ps), file='examples/CCPI-WI-properties.csv', row.names = FALSE)
 
 d <- ToDataFrameTable(dt, 'name', 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', 'propname', 'propiid')
 write.csv(unique(d), file='examples/CCPI-WI-table-representation.csv', row.names = FALSE)
-
 ```
 
 
@@ -330,14 +331,11 @@ dt$Do(traversal='pre-order', fun=linkSubRules)
 dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
 print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limit=25)
 
-
-
 y <- rules[rules$rulename == 'DHS - Catastrophic Mortality, Large Animal Disposal, Pit', ]
 dt <- parseRule(y)
 dt$Do(traversal='pre-order', fun=linkSubRules)
 dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
 print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', limit=25)
-
 
 # this one has a single RuleEvaluation: RefId points to rows in evals table
 y <- rules[rules$rulename == 'Clay %, in surface - MO2', ]
