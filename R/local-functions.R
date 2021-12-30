@@ -270,73 +270,122 @@ xmlChunkParse <- function(x) {
 #'
 #' @return evaluation curve values
 #' @export
-extractEvalCurve <- function(evalrec, resolution=250, sig.scale = 1) { ### edited default resolution 12/11 ### added sig.scale param 2/18
+extractEvalCurve <- function(evalrec, resolution=250, sig.scale = 1) {
+  if (!missing(resolution))
+    .Deprecated(msg = "extractEvalCurve resolution argument is no longer used") 
+  
+  if (!missing(sig.scale))
+    .Deprecated(msg = "extractEvalCurve sig.scale argument is no longer used")
   
   # type
   et <- evalrec$evaluationtype
+  
   # invert
   invert.eval <- evalrec$invertevaluationresults
   
+  # use the defined min / max values (if any)
+  domain.min <- evalrec$propmin
+  domain.max <- evalrec$propmax
   
-  ## TODO: this isn't finished, currently using linear interpolation
-  # shoudl be some kind of spline interpolation, splinefun() isn't working
-  if(et  == 'ArbitraryCurve') {
+  # should be some kind of spline interpolation, splinefun() isn't working
+  # 
+  # AGB 2021/12/30: now uses the same spline functions defined in NASIS
+  if (et  == 'ArbitraryCurve') {
     res <- extractArbitraryCurveEval(evalrec$eval, invert=invert.eval)
     return(res)
   }
   
   # linear interpolation
-  if(et  == 'ArbitraryLinear') {
-    res <- extractArbitraryLinearCurveEval(evalrec$eval, invert=invert.eval)
+  if (et  == 'ArbitraryLinear') {
+    res <- extractArbitraryLinearCurveEval(evalrec$eval, invert = invert.eval)
     return(res)
   }
   
-  if(et == 'Sigmoid') {
-    res <- extractSigmoidCurveEval(evalrec$eval, invert=invert.eval, res = resolution, sig.scale = sig.scale)
+  if (et == 'Sigmoid') {
+    # sig.scale is deprecated, scaling can be determined from width of interval
+    res <- extractSigmoidCurveEval(evalrec$eval, 
+                                   xlim = c(domain.min, domain.max),
+                                   invert = invert.eval)
     return(res)
   }
     
-  if(et == 'Crisp') {
+  if (et == 'Crisp') {
     
-    ## need a reliable characteristic to use another approach
-    # some crisp evaluations are logical expressions that don't utilize thresholds
-    if(is.na(evalrec$propmin) & is.na(evalrec$propmax)) {
-      res <- extractCrispExpression(evalrec$eval, invert=invert.eval)
+    # some crisp are logical expressions that don't utilize thresholds of domain
+    if(is.na(domain.min) & is.na(domain.max)) {
+      res <- extractCrispExpression(evalrec$eval, invert = invert.eval)
+      
       warning("Evaluating CrispExpression (", attr(res, "CrispExpression"),") has only experimental support", call. = FALSE)
+      
       return(res)
-      # return(function(evalrec) {return(NULL)})
     }
     
-    # use the defined min / max values
-    domain.min <- evalrec$propmin
-    domain.max <- evalrec$propmax
+    res <- extractCrispCurveEval(
+      evalrec$eval,
+      xlim = c(domain.min, domain.max),
+      invert = invert.eval
+    )
+    return(res)
+  }
+  
+  if (et == 'Linear') {
+    res <- extractLinearCurveEval(evalrec$eval, invert = invert.eval) 
+    return(res)
+  }
+  
+  if (et == 'Trapezoid') {
+    res <- extractTrapezoidEval(evalrec$eval,
+                                xlim = c(domain.min, domain.max),
+                                invert = invert.eval)
+    return(res)
+  }
+  
+  if (et == "Beta") {
+    res <- extractBetaCurveEval(
+      evalrec$eval,
+      xlim = c(domain.min, domain.max),
+      invert = invert.eval
+    )
+    return(res)
+  }
+  
+  if (et == "Gauss") {
+    res <- extractGaussCurveEval(
+      evalrec$eval,
+      xlim = c(domain.min, domain.max),
+      invert = invert.eval
+    )
+    return(res)
     
-    res <- extractCrispCurveEval(evalrec$eval, invert=invert.eval, resolution, dmin=domain.min, dmax=domain.max)
+  }
+  
+  if (et == "Triangle") {
+    res <- extractTriangleCurveEval(
+      evalrec$eval,
+      xlim = c(domain.min, domain.max),
+      invert = invert.eval
+    )
     return(res)
   }
   
-  if(et == 'Linear') {
-    res <- extractLinearCurveEval(evalrec$eval, invert=invert.eval, res = resolution)
+  if (et == "PI") {
+    res <- extractPICurveEval(
+      evalrec$eval,
+      xlim = c(domain.min, domain.max),
+      invert = invert.eval
+    )
     return(res)
   }
   
-  if(et == 'Trapezoid') {
-    res <- extractTrapezoidEval(evalrec$eval, invert=invert.eval)
-    return(res)
-  }
+  ## ... there are others
+  #   IsNull -- not needed? / not a curve?
   
-  ## ... there are many others
-#   Beta
-#   IsNull
-#   Gauss
-#   Triangle
-#   PI
   warning("extractEvalCurve: curve type not yet supported", call. = FALSE)
   return(function(evalrec) {return(NULL)})
 }
 
 
-#' Extract Trapeziodal Eval Curve
+#' Extract Trapezoidal Eval Curve
 #'
 #' @param x evaluation curve XML text
 #' @param invert logical
@@ -345,30 +394,9 @@ extractEvalCurve <- function(evalrec, resolution=250, sig.scale = 1) { ### edite
 #' @export
 #'
 #' @importFrom stats approxfun
-extractTrapezoidEval <- function(x, invert) {
-  l <- xmlChunkParse(x)
-  # exract pieces
-  domain <- as.numeric(as.vector(unlist(l$DomainPoints)))
-  # rating is fixed at 0 -> 1 -> 1 -> 0 along trapezoid from left to right
-  rating <- c(0, 1, 1, 0)
-  
-  # invert?
-  if(invert == 1)
-    rating <- (1 - rating)
-  
-  if (rating[1] > rating[length(rating)]){ # added this to hopefully fix errors where the left and right sides have the wrong vals
-    yl = 1
-    yr = 0
-  } else {
-    yl = 0
-    yr = 1
-  }
-  
-  # create interpolator
-  af <- approxfun(domain, rating, method = 'linear', rule=2, yleft = yl, yright = yr)
-  return(af)
+extractTrapezoidEval <- function(x, xlim, invert = FALSE) {
+  .genericInterpolator(x, xlim = xlim, FUN = CVIRTrapezoid, invert = invert)
 }
-
 
 #' Extract Arbitrary Eval Curve
 #'
@@ -378,29 +406,9 @@ extractTrapezoidEval <- function(x, invert) {
 #' @return curve function
 #' @export
 #'
-#' @importFrom stats approxfun
 extractArbitraryCurveEval <- function(x, invert) {
-  l <- xmlChunkParse(x)
-  # exract pieces
-  domain <- as.numeric(as.vector(unlist(l$DomainPoints)))
-  rating <- as.numeric(as.vector(unlist(l$RangePoints)))
-  
-  # invert?
-  if(invert == 1)
-    rating <- (1 - rating)
-  
-  if (rating[1] > rating[length(rating)]){ # added this to hopefully fix errors where the left and right sides have the wrong vals
-    yl = 1
-    yr = 0
-  } else {
-    yl = 0
-    yr = 1
-  }
-  
-  ## TODO: this should be a spline-based interpolator (?)
-  # create interpolator
-  af <- approxfun(domain, rating, method = 'linear', rule=2, yleft = yl, yright = yr)
-  return(af)
+  .genericInterpolator(x, xlim = NULL, FUN = NULL, invert = invert)
+  # ## TODO: this should be a spline-based interpolator (?)
 }
 
 #' Extract Arbitrary Linear Eval Curve
@@ -410,141 +418,72 @@ extractArbitraryCurveEval <- function(x, invert) {
 #'
 #' @return curve function
 #' @export
-#'
-#' @importFrom stats approxfun
 extractArbitraryLinearCurveEval <- function(x, invert) {
-  l <- xmlChunkParse(x)
-  # exract pieces
-  domain <- as.numeric(as.vector(unlist(l$DomainPoints)))
-  rating <- as.numeric(as.vector(unlist(l$RangePoints)))
-  
-  # invert?
-  if(invert == 1)
-    rating <- (1 - rating)
-  
-  if (rating[1] > rating[length(rating)]){ # added this to hopefully fix errors where the left and right sides have the wrong vals
-    yl = 1
-    yr = 0
-  } else {
-    yl = 0
-    yr = 1
-  }
-  
-  # create interpolator
-  af <- approxfun(domain, rating, method = 'linear', rule=2, yleft = yl, yright = yr)
-  return(af)
+  .genericInterpolator(x, xlim = NULL, FUN = NULL, invert = invert)
 }
 
 #' Extract Sigmoid Eval Curve
 #'
 #' @param x evaluation curve XML text
+#' @param xlim domain range minimum/maximum
 #' @param invert logical
-#' @param res number of intermediate points
-#' @param sig.scale default 1
 #'
 #' @return curve function
 #' @export
-#' @importFrom stats plogis
-#' @importFrom stats approxfun
-extractSigmoidCurveEval <- function(x, invert, res, sig.scale = NULL) {
-  
-  if (!missing(sig.scale))
-    .Deprecated(msg = "sig.scale argument is now calculated from the width of the domain (difference of upper and lower asymptotes)")
-  
-  ### test in global params because bad programmer
-  # if(1==0){
-  #   evalxml <- t$evalrow$eval
-  #   res <- 51
-  #   invert <- t$evalrow$invertevaluationresults
-  # }
-  
-  l <- xmlChunkParse(x)
-  
-  # get the lower and upper asymptotes
-  dp <- as.numeric(as.vector(unlist(l$DomainPoints)))
-  
-    # ### added jrb 2021-02-16 in response to sigmoid curves sometimes having weird breaks between the fuzz space and the fixed val space
-  # # if the domain starts at a whole number, adjust it to start at a slightly wider range, that overlaps with hard space
-  # if(dp[1]%%1 == 0){
-  #   dp[1] <- dp[1] - 0.01
-  # }
-  # if(dp[2]%%1 == 0){
-  #   dp[2] <- dp[2] + 0.01
-  # }
-  #### but it doesnt work
-  
-  # generate a sequence along domain
-  domain <- seq(from = dp[1], to = dp[2], length.out = 1001)
-
-  # create sigmoid curve
-  sig.loc <- (dp[1] + dp[2]) / 2 # location parameter is center of range
-  
-  #sig.scale <- 1 #### THIS NEEDS TO VARY WITH THE FUNCTION, NOT DEFAULT TO 1!! 
-  ## No idea how to fit this to so many difft eval functions, so now its an input param passed aaaallll the way up to evalbyeid
-  
-  # AGB 2021/12/29: the scale factor needs to vary with the width of the domain
-  #                 at dp[1] curve value is 0 and dp[2] curve value is 1
-  .scaleLogistic <- function(domain_width) { 
-    # determined empirically by reading values off various width sigmoid curves
-    # and finding optimal scale parameter for each width 
-    # _after_ accounting for [0,1] rescaling of limits
-    # after 3 sets of 5 X/Y pairs the pattern was evident
-    0.14320552 * domain_width - 0.00254715 
-  }
-  
-  rating <- plogis(domain, location = sig.loc, scale = .scaleLogistic(dp[2] - dp[1]))
-  
-  # rescale to [0,1]
-  rating <- rating - min(rating) 
-  rating <- rating / max(rating)
-           
-  ## not sure about this, can it happen?
-  #   # if the first value is > second, then swap direction
-  #   if(dp[2] < dp[1])
-  #     rating <- 1 - rating
-
-  # invert?
-  if(invert == 1)
-    rating <- (1 - rating) 
-  
-  if (rating[1] > rating[length(rating)]){ # added this to hopefully fix errors where the left and right sides have the wrong vals
-    yl = 1
-    yr = 0
-  } else {
-    yl = 0
-    yr = 1
-  }
-  
-  # create interpolator
-  af <- approxfun(domain, rating, method = 'linear', rule=2, yleft = yl, yright = yr)
-  return(af)
-}
-
-#' Extract Linear Evaluation Curve
-#'
-#' @param x evaluation curve XML text
-#' @param invert logical
-#' @param res number of intermediate points
-#'
-#' @return curve function
-#' @export
-#' 
-#' @importFrom stats approxfun
-extractLinearCurveEval <- function(x, invert, res) {
-  l <- xmlChunkParse(x)
-  # get the lower and upper end points
-  domain <- as.numeric(as.vector(unlist(l$DomainPoints)))
-  
-  # rating is implied: {0,1}
-  rating <- c(0,1)
-  ## changed 2/22 to get the range points out of 'l'
-  # rating <- as.numeric(as.vector(unlist(l$RangePoints)))
-  
-  # invert?
-  if(invert == 1)
-    rating <- (1 - rating)
-  
-  ### this is never used????
+extractSigmoidCurveEval <- function(x, xlim, invert) {
+  .genericInterpolator(x, xlim = xlim, FUN = CVIRSigmoid, invert = invert)
+  # l <- xmlChunkParse(x)
+  # 
+  # # get the lower and upper asymptotes
+  # dp <- as.numeric(as.vector(unlist(l$DomainPoints)))
+  # 
+  #   # ### added jrb 2021-02-16 in response to sigmoid curves sometimes having weird breaks between the fuzz space and the fixed val space
+  # # # if the domain starts at a whole number, adjust it to start at a slightly wider range, that overlaps with hard space
+  # # if(dp[1]%%1 == 0){
+  # #   dp[1] <- dp[1] - 0.01
+  # # }
+  # # if(dp[2]%%1 == 0){
+  # #   dp[2] <- dp[2] + 0.01
+  # # }
+  # #### but it doesnt work
+  # 
+  # # generate a sequence along domain
+  # domain <- seq(from = dp[1], to = dp[2], length.out = 1001)
+  # 
+  # # create sigmoid curve
+  # sig.loc <- (dp[1] + dp[2]) / 2 # location parameter is center of range
+  # 
+  # #sig.scale <- 1 #### THIS NEEDS TO VARY WITH THE FUNCTION, NOT DEFAULT TO 1!! 
+  # ## No idea how to fit this to so many difft eval functions, so now its an input param passed aaaallll the way up to evalbyeid
+  # 
+  # # # AGB 2021/12/29: the scale factor needs to vary with the width of the domain
+  # # #                 at dp[1] curve value is 0 and dp[2] curve value is 1
+  # # .scaleLogistic <- function(domain_width) { 
+  # #   # determined empirically by reading values off various width sigmoid curves
+  # #   # and finding optimal scale parameter for each width 
+  # #   # _after_ accounting for [0,1] rescaling of limits
+  # #   # after 3 sets of 5 X/Y pairs the pattern was evident
+  # #   0.14320552 * domain_width - 0.00254715 
+  # # }
+  # # 
+  # # rating <- plogis(domain, location = sig.loc, scale = .scaleLogistic(dp[2] - dp[1]))
+  # # 
+  # # # rescale to [0,1]
+  # # rating <- rating - min(rating) 
+  # # rating <- rating / max(rating)
+  # 
+  # # this uses the actual curve function defined by NASIS CVIR
+  # rating <- CVIRSigmoid(domain, dp, ascending = !invert)
+  #          
+  # ## not sure about this, can it happen?
+  # #   # if the first value is > second, then swap direction
+  # #   if(dp[2] < dp[1])
+  # #     rating <- 1 - rating
+  # 
+  # # invert?
+  # if(invert == 1)
+  #   rating <- (1 - rating) 
+  # 
   # if (rating[1] > rating[length(rating)]){ # added this to hopefully fix errors where the left and right sides have the wrong vals
   #   yl = 1
   #   yr = 0
@@ -552,59 +491,105 @@ extractLinearCurveEval <- function(x, invert, res) {
   #   yl = 0
   #   yr = 1
   # }
-  
-  # create interpolator
-  af <- approxfun(domain, rating, method = 'linear', rule=2)
-  return(af)
+  # 
+  # # create interpolator
+  # af <- approxfun(domain, rating, method = 'linear', rule=2, yleft = yl, yright = yr)
+  # return(af)
 }
 
-## TODO: breaks on eval "GRL-Frost Action = moderate"
-## TODO: parsing expression must be generalized
-## TODO: this doesn't work with expressions like this "!= \"oxisols\" or \"gelisols\""
-#' Extract Crisp Evaluation Curve
+#' Extract Linear Evaluation Curve
 #'
-#' @param x evalulation curve XML text
+#' @param x evaluation curve XML text
 #' @param invert logical
-#' @param res number of intermediate points
-#' @param dmin domain range minimum 
-#' @param dmax domain range maximum
 #'
 #' @return curve function
 #' @export
+extractLinearCurveEval <- function(x, invert) {
+  .genericInterpolator(x, xlim = NULL, FUN = CVIRLinear, invert = invert)
+}
+
+#' Extract Crisp Evaluation Curve
 #'
-extractCrispCurveEval <- function(x, invert, res, dmin, dmax) {
+#' @param x evalulation curve XML text
+#' @param xlim domain range minimum/maximum
+#' @param invert logical
+#'
+#' @return curve function
+#' @export
+extractCrispCurveEval <- function(x, xlim, invert = FALSE) {
+  # this supports crispexpressions involving "domain"
+  .genericInterpolator(x, xlim = xlim, FUN = NULL, invert = invert)
+}
+
+.genericInterpolator <- function(x, xlim = NULL, FUN = NULL, invert = FALSE) {
+    
   l <- xmlChunkParse(x)
-  # get expression
+  
+  # get the lower and upper end points
+  domain <- as.numeric(as.vector(unlist(l$DomainPoints)))
+  
+  # get range points (if present)
+  rp <- as.numeric(as.vector(unlist(l$RangePoints)))
+  
+  # get crisp expression (if present)
   crisp.expression <- l$CrispExpression
   
-  # insert domain vector at begining
-  crisp.expression <- paste0('domain ', crisp.expression)
-  
-  # replace logical operators, and add domain vector
-  crisp.expression <- gsub('and', '& domain', crisp.expression)
-  crisp.expression <- gsub('or', '| domain', crisp.expression)
-  
-  ## TODO: check for valid min/max
-  # generate domain range using supplied range
-  domain <- seq(from=dmin, to=dmax, length.out = res)
-  
-  # apply evaluation, implicitly converts TRUE/FALSE -> 1/0
-  rating <- as.numeric(eval(parse(text=crisp.expression)))
-  
-  # invert?
-  if(invert == 1)
-    rating <- (1 - rating)
-  
-  if (rating[1] > rating[length(rating)]){ # added this to hopefully fix errors where the left and right sides have the wrong vals
-    yl = 1
-    yr = 0
-  } else {
-    yl = 0
-    yr = 1
+  if (!is.null(crisp.expression)) {
+    # insert domain vector at beginning
+    crisp.expression <- paste0('domain ', crisp.expression)
+    
+    # replace logical operators, and add domain vector
+    crisp.expression <- gsub('and', '& domain', crisp.expression)
+    crisp.expression <- gsub('or', '| domain', crisp.expression)
   }
-  # create interpolator
-  af <- approxfun(domain, rating, method = 'linear', rule=2, yleft = yl, yright = yr)
-  return(af)
+
+  if (is.null(xlim)) {
+    x1 <- domain
+  } else {
+    x1 <- seq(xlim[1], xlim[2], (xlim[2] - xlim[1]) / pmax(100, (xlim[2] - xlim[1]) * 10))
+  }
+    
+  # if x limits not specified, use the domain as is
+  if (length(domain) == 0) {
+    domain <- x1
+  }
+  
+  # "arbitrary" curves provide the rating values via RangePoints or CrispExpression
+  if (!is.null(crisp.expression)) {
+    # crisp curves where ratings are derived from logical expressions about the _domain_
+    rating <- as.numeric(eval(parse(text = crisp.expression)))
+  } else if (length(rp) > 0) {
+    # other curves just give the values directly
+    rating <- rp
+  # note that the more general crisp case is not a curve and uses arbitrary property values for ratings -- see extractCrispExpression()
+  } else {
+    if (is.null(FUN)){
+      stop("Curve function `FUN` must be specified when evaluation does not contain RangePoints", call. = FALSE)
+    }
+    rating <- FUN(x1, domain)
+  }
+    
+  # invert?
+  if (invert) {
+    rating <- (1 - rating)
+  }
+  approxfun(x1, rating, method = 'linear', rule = 2)
+}
+
+extractBetaCurveEval <- function(x, xlim, invert = FALSE) {
+  .genericInterpolator(x, xlim = xlim, FUN = CVIRBeta, invert = invert)
+}
+
+extractGaussCurveEval <- function(x, xlim,  invert = FALSE) {
+  .genericInterpolator(x, xlim = xlim, FUN = CVIRGauss, invert = invert)
+}
+
+extractTriangleCurveEval <- function(x, xlim, invert = FALSE) {
+  .genericInterpolator(x, xlim = xlim, FUN = CVIRTriangle, invert = invert)
+}
+
+extractPICurveEval <- function(x, xlim, invert = FALSE) {
+  .genericInterpolator(x, xlim = xlim, FUN = CVIRPI, invert = invert)
 }
 
 #' Extract Crisp Expression Logic as R function
@@ -617,14 +602,15 @@ extractCrispCurveEval <- function(x, invert, res, dmin, dmax) {
 #' @details The generated function returns a logical value (converted to numeric) when the relevant property data are supplied.
 #' @export
 #'
-#' @examples
 extractCrispExpression <- function(x, invert = FALSE, asString = FALSE) {
+  # this supports arbitrary crisp expressions (i.e. expressions not about domain)
   l <- xmlChunkParse(x)
   expr <- l$CrispExpression
   if (length(expr) == 0) expr <- ""
   .crispExpressionGenerator(expr, invert = invert, asString = asString)
 }
 
+# regex based parser (naive but it works)
 .crispExpressionGenerator <- function(x, invert = FALSE, asString = FALSE) {
   # wildcards matches/imatches
   step1 <- gsub("i?matches \"([^\"]*)\"", "grepl(\"^\\1$\", x, ignore.case = TRUE)", 

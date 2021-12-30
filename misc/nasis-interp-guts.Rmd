@@ -69,7 +69,7 @@ plotEvaluation(e, xlim = c(0, 1000))
 
 # linear
 e <- evals[evals$evalname == 'Slope 0 to >15%', ]
-plotEvaluation(e)
+plotEvaluation(e, c(-1,20))
 
 # crisp:
 e <- evals[evals$evalname == 'Soil pH (water) >= 4.5 and <= 8.4, 0-100cm', ]
@@ -83,9 +83,25 @@ e <- evals[evals$evalname == 'American Optimum Average pH (1:1 H2O) 0-150 cm', ]
 plotEvaluation(e)
 plotEvaluation(e, xlim = c(3, 9))
 
-## crispexpression
-e <- evals[evals$evalname == 'GRL-Frost Action = moderate', ]
+## beta
+e <- evals[evals$evalname == 'Surface pH - GCPI (Referenced)',]
 plotEvaluation(e)
+
+## gauss (inverted)
+e <- evals[evals$evalname == 'Soil Reaction (pH between 5.6 & 7.6) Surface Layer',]
+plotEvaluation(e)
+
+## triangle
+e <- evals[evals$evalname == 'ISU Slope <15%',]
+plotEvaluation(e)
+
+## PI (inverted)
+e <- evals[evals$evalname == 'BW and BC soil reaction',]
+plotEvaluation(e)
+
+## crisp expression
+e <- evals[evals$evalname == 'GRL-Frost Action = moderate', ]
+extractCrispExpression(e$eval)(c('moderate','none'))
 ```
 
 Evaluate an arbitrary rule, with an arbitrary value.
