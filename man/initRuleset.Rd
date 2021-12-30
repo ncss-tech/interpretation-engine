@@ -7,7 +7,7 @@
 initRuleset(rulename)
 }
 \arguments{
-\item{rulename}{Rule name charatcer}
+\item{rulename}{Rule name character}
 }
 \value{
 ruleset

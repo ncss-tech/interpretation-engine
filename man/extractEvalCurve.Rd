@@ -2,20 +2,20 @@
 % Please edit documentation in R/EvaluationCurves.R
 \name{extractEvalCurve}
 \alias{extractEvalCurve}
-\title{Extract an evaluaton curve}
+\title{Extract an evaluation curve}
 \usage{
-extractEvalCurve(evalrec, resolution = 250, sig.scale = 1)
+extractEvalCurve(evalrec, resolution = NULL, sig.scale = NULL)
 }
 \arguments{
 \item{evalrec}{Evaluation record}
 
-\item{resolution}{Number of intermediate points}
+\item{resolution}{not used}
 
-\item{sig.scale}{default 1}
+\item{sig.scale}{not used}
 }
 \value{
 evaluation curve values
 }
 \description{
-Extract an evaluaton curve
+Extract an evaluation curve
 }

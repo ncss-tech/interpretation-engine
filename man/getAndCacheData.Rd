@@ -2,8 +2,7 @@
 % Please edit documentation in R/local-functions.R
 \name{getAndCacheData}
 \alias{getAndCacheData}
-\title{Cache dataset containing important NASIS data
-soilDB::uncode() used to convert coded -> uncoded values}
+\title{Cache dataset containing important NASIS data}
 \usage{
 getAndCacheData()
 }
@@ -11,6 +10,5 @@ getAndCacheData()
 cached data
 }
 \description{
-Cache dataset containing important NASIS data
 soilDB::uncode() used to convert coded -> uncoded values
 }
