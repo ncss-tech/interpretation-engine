@@ -4,3 +4,4 @@
 ^inst.*$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^cached-NASIS-data\.Rda$
