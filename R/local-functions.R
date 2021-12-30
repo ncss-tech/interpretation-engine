@@ -1,4 +1,3 @@
-
 ### ~11/15 jrb
 ### Added yleft and yright arguments to the approxfun calls, in the extract[type]curve functions
 ### this should fix the min & max responses not being 0 and 1
@@ -10,42 +9,46 @@
 
 ### 3/19/21 jrb
 ## added vf, dwb, svi, and hsg code
-# 
-# require(plyr)
-# require(tidyverse) 
-# require(data.tree)
-# require(XML)
-# require(soilDB)
-# require(digest)
-# require(raster)
 
+### 12/30/21 agb
+## Cleaned and generalized evaluation curves based on NASIS implementation 
+##  - See EvaluationCurves.R and CVIRCurve.R
+##  - Implemented missing curve types: Beta, Gauss, Triangle, PI
+##  - Added function generator for Crisp Expressions not involving "domain"
+##  - Fixed scaling issues w/ sigmoid eval functions (no longer using plogis())
+##  - Fixed strange results w/ trapezoid eval functions 
+##  - The `sig.scale` argument for sigmoids, and `resolution` argument for curves are no longer used. The interpolator methods now will generate a sufficiently detailed domain such that this does not need to be customized at a high level.
+## Moved Joe's tree_eval()-based functions to own file
+## Moved plotEvaluation() to own file
 
+## Issues encountered
+##  - lookupProperties() WEB-PROPERY-COMPONENT_property rounds decimal values
 
-#' Evaluation by the eid code
+#' Extract Evaluation Curve by Evaluation ID
 #'
 #' @param eid Evaluation ID -- NB: not rule id or property id. Evaluation only. 
 #' @param d data to pass through evaluation curve?
-#' @param sig.scale default 1
+#' @param sig.scale not used
 #'
 #' @return result of evaluation made with the specified evaluation curve
 #' @export
-#'
-evalbyeid <- function(eid, 
-                      d,
-                      sig.scale = 1) {
-  
-    evals <- InterpretationEngine::NASIS_evaluations
-    
-    e = evals[evals$evaliid == eid,]
-    f = extractEvalCurve(e, sig.scale = sig.scale)
-    outdata = f(d)
-    return(outdata)
-  }
+#' @aliases evalbyeid
+#' @rdname evalByEID
+evalByEID <- function(eid, d, sig.scale = 1) {
+  evals <- InterpretationEngine::NASIS_evaluations
+  extractEvalCurve(evals[evals$evaliid == eid, ])(d)
+}
 
+#' @export
+#' @rdname evalByEID
+evalbyeid <- function(eid, d, sig.scale = 1) {
+  .Deprecated("evalByEID")
+  evalByEID(eid, d, sig.scale)
+}
 
 #' Initialize a ruleset
 #'
-#' @param rulename Rule name charatcer
+#' @param rulename Rule name character
 #'
 #' @return ruleset
 #' @export
@@ -53,61 +56,18 @@ initRuleset <- function(rulename) {
   
   rules <- InterpretationEngine::NASIS_rules
   
-  y <- rules[rules$rulename == rulename, ]
+  y <- rules[rules$rulename == rulename,]
   
   dt <- parseRule(y)
   
-  # recusively splice-in sub-rules
-  dt$Do(traversal='pre-order', fun=linkSubRules)
+  # recursively splice-in sub-rules
+  dt$Do(traversal = 'pre-order', fun = linkSubRules)
   
   ## TODO: is this working?
   # splice-in evaluation functions, if possible
-  dt$Do(traversal='pre-order', fun=linkEvaluationFunctions)
+  dt$Do(traversal = 'pre-order', fun = linkEvaluationFunctions)
   
   return(dt)
-  
-}
-
-
-
-# get all properties for single coiid and vector of property IDs
-# TODO: vectorize over both arguments
-# TODO: parallel requests?
-# https://cran.r-project.org/web/packages/curl/vignettes/intro.html#async_requests
-
-# this web report undestands multiple component rec. ids
-#' Lookup Properties using NASIS Web Report
-#' 
-#' This function uses `WEB-PROPERY-COMPONENT_property` NASIS Web Report to lookup property data
-#'
-#' @param coiid Vector of component IDs (`coiid`)
-#' @param propIDs Vector of property IDs 
-#'
-#' @return properties?
-#' @export
-#'
-#' @importFrom soilDB parseWebReport
-#' @importFrom plyr ldply
-lookupProperties <- function(coiid, propIDs) {
-  
-  # get a single property for a single component
-  .getSingleProperty <- function(i, coiid) {
-    url <- 'https://nasis.sc.egov.usda.gov/NasisReportsWebSite/limsreport.aspx?report_name=WEB-PROPERY-COMPONENT_property'
-    args <- list(prop_id=i, cokey=coiid)
-    res <- parseWebReport(url, args, index=1)
-    
-    # HTTP errors will result in NULL
-    if(is.null(res))
-      return(NULL)
-    
-    # otherwise, add property name back to the results for joining
-    res <- cbind(propiid=i, res)
-    return(res)
-  }
-  
-  # convert back to DF and return
-  res <- ldply(propIDs, .getSingleProperty, coiid=coiid, .progress='text')
-  return(res)
 }
 
 #' Get Attribute By Evaluation
@@ -130,10 +90,10 @@ getAttributeByEval <- function(x, a) {
   return(d)
 }
 
-
 # get the unique set of properties for all evaluations
 # this requires several calls to getAttributeByEval(), one for each attribute
 # why?
+
 #' Get unique properties for all evaluations
 #'
 #' @param x vector of evaluations
@@ -147,56 +107,14 @@ getPropertySet <- function(x) {
   p.2 <- getAttributeByEval(x, 'propiid')
   
   # splice together with left join
-  p <- join(p.1, p.2, by='evaluation', type='left')
+  p <- join(p.1, p.2, by = 'evaluation', type = 'left')
   return(unique(p))
 }
 
-
-## TODO: add critical points
-#' Plot Evaluation Curve
-#'
-#' @param x data
-#' @param xlim `plot` xlim default `NULL`
-#' @param resolution number of points (default 100)
-#' @param ... additional arguments passed to plot
-#'
-#' @return a plot
-#' @export
-#' @importFrom graphics grid abline lines
-plotEvaluation <- function(x, xlim=NULL, resolution=100, ...) {
-  
-  # most evaluation curves return an approxfun() function
-  res <- extractEvalCurve(x)
-  
-  # crisp expressions return a function of x that can return a logical vector
-  if (!is.null(attr(res, 'CrispExpression'))) {
-    stop("Cannot plot CrispExpression: ", attr(res, 'CrispExpression'), call. = FALSE)
-  }
-  
-  # default sequence attempts to use min/max range from eval
-  # this isn't always useful, as min/max might be way too wide
-  if(is.null(xlim)) {
-    s <- seq(x$propmin, x$propmax, length.out = resolution)
-    s.range <- range(s)
-    xlim <- s.range
-  } else {
-    s <- seq(xlim[1], xlim[2], length.out = resolution)
-    s.range <- range(s)
-  }
-    
-  
-  x.lab <- paste0(x$propname, ' (', x$propuom, ')')
-  plot(0,0, type='n', xlab=x.lab, cex.lab=0.85, ylab='fuzzy rating', main=x$evalname, sub=x$evaluationtype, cex.sub=0.85, las=1, ylim=c(0, 1), xlim=xlim, ...)
-  grid()
-  abline(h=c(0,1), lty=2, col='red')
-  lines(s, res(s))
-  
-}
-
-
-# soilDB::uncode() used to convert coded -> uncoded values
 #' Cache dataset containing important NASIS data
+#' 
 #' soilDB::uncode() used to convert coded -> uncoded values
+#' 
 #' @return cached data
 #' @export
 #' 
@@ -237,7 +155,6 @@ FROM evaluation_View_0 ;")
   save(rules, evals, properties, property_def, file='cached-NASIS-data.Rda')
 }
 
-
 # parse evaluation chunk XML and return as list
 #' Parse an evaluation chunk XML return a list
 #'
@@ -253,397 +170,6 @@ xmlChunkParse <- function(x) {
   x.doc <- xmlParse(x)
   l <- xmlToList(x.doc)
   return(l)
-}
-
-### extract eval functions ####
-
-## TODO: return function and critical points as a list
-
-# dispatch specialized functions based on eval type
-# x: evaluation record
-# res: number of intermediate points
-#' Extract an evaluaton curve
-#'
-#' @param evalrec Evaluation record
-#' @param resolution Number of intermediate points
-#' @param sig.scale default 1
-#'
-#' @return evaluation curve values
-#' @export
-extractEvalCurve <- function(evalrec, resolution=250, sig.scale = 1) {
-  if (!missing(resolution))
-    .Deprecated(msg = "extractEvalCurve resolution argument is no longer used") 
-  
-  if (!missing(sig.scale))
-    .Deprecated(msg = "extractEvalCurve sig.scale argument is no longer used")
-  
-  # type
-  et <- evalrec$evaluationtype
-  
-  # invert
-  invert.eval <- evalrec$invertevaluationresults
-  
-  # use the defined min / max values (if any)
-  domain.min <- evalrec$propmin
-  domain.max <- evalrec$propmax
-  
-  # should be some kind of spline interpolation, splinefun() isn't working
-  # 
-  # AGB 2021/12/30: now uses the same spline functions defined in NASIS
-  if (et  == 'ArbitraryCurve') {
-    res <- extractArbitraryCurveEval(evalrec$eval, invert=invert.eval)
-    return(res)
-  }
-  
-  # linear interpolation
-  if (et  == 'ArbitraryLinear') {
-    res <- extractArbitraryLinearCurveEval(evalrec$eval, invert = invert.eval)
-    return(res)
-  }
-  
-  if (et == 'Sigmoid') {
-    # sig.scale is deprecated, scaling can be determined from width of interval
-    res <- extractSigmoidCurveEval(evalrec$eval, 
-                                   xlim = c(domain.min, domain.max),
-                                   invert = invert.eval)
-    return(res)
-  }
-    
-  if (et == 'Crisp') {
-    
-    # some crisp are logical expressions that don't utilize thresholds of domain
-    if(is.na(domain.min) & is.na(domain.max)) {
-      res <- extractCrispExpression(evalrec$eval, invert = invert.eval)
-      
-      warning("Evaluating CrispExpression (", attr(res, "CrispExpression"),") has only experimental support", call. = FALSE)
-      
-      return(res)
-    }
-    
-    res <- extractCrispCurveEval(
-      evalrec$eval,
-      xlim = c(domain.min, domain.max),
-      invert = invert.eval
-    )
-    return(res)
-  }
-  
-  if (et == 'Linear') {
-    res <- extractLinearCurveEval(evalrec$eval, invert = invert.eval) 
-    return(res)
-  }
-  
-  if (et == 'Trapezoid') {
-    res <- extractTrapezoidEval(evalrec$eval,
-                                xlim = c(domain.min, domain.max),
-                                invert = invert.eval)
-    return(res)
-  }
-  
-  if (et == "Beta") {
-    res <- extractBetaCurveEval(
-      evalrec$eval,
-      xlim = c(domain.min, domain.max),
-      invert = invert.eval
-    )
-    return(res)
-  }
-  
-  if (et == "Gauss") {
-    res <- extractGaussCurveEval(
-      evalrec$eval,
-      xlim = c(domain.min, domain.max),
-      invert = invert.eval
-    )
-    return(res)
-    
-  }
-  
-  if (et == "Triangle") {
-    res <- extractTriangleCurveEval(
-      evalrec$eval,
-      xlim = c(domain.min, domain.max),
-      invert = invert.eval
-    )
-    return(res)
-  }
-  
-  if (et == "PI") {
-    res <- extractPICurveEval(
-      evalrec$eval,
-      xlim = c(domain.min, domain.max),
-      invert = invert.eval
-    )
-    return(res)
-  }
-  
-  ## ... there are others
-  #   IsNull -- not needed? / not a curve?
-  
-  warning("extractEvalCurve: curve type not yet supported", call. = FALSE)
-  return(function(evalrec) {return(NULL)})
-}
-
-
-#' Extract Trapezoidal Eval Curve
-#'
-#' @param x evaluation curve XML text
-#' @param invert logical
-#'
-#' @return curve function
-#' @export
-#'
-#' @importFrom stats approxfun
-extractTrapezoidEval <- function(x, xlim, invert = FALSE) {
-  .genericInterpolator(x, xlim = xlim, FUN = CVIRTrapezoid, invert = invert)
-}
-
-#' Extract Arbitrary Eval Curve
-#'
-#' @param x evaluation curve XML text
-#' @param invert logical
-#'
-#' @return curve function
-#' @export
-#'
-extractArbitraryCurveEval <- function(x, invert) {
-  .genericInterpolator(x, xlim = NULL, FUN = NULL, invert = invert)
-  # ## TODO: this should be a spline-based interpolator (?)
-}
-
-#' Extract Arbitrary Linear Eval Curve
-#'
-#' @param x  evaluation curve XML text
-#' @param invert logical
-#'
-#' @return curve function
-#' @export
-extractArbitraryLinearCurveEval <- function(x, invert) {
-  .genericInterpolator(x, xlim = NULL, FUN = NULL, invert = invert)
-}
-
-#' Extract Sigmoid Eval Curve
-#'
-#' @param x evaluation curve XML text
-#' @param xlim domain range minimum/maximum
-#' @param invert logical
-#'
-#' @return curve function
-#' @export
-extractSigmoidCurveEval <- function(x, xlim, invert) {
-  .genericInterpolator(x, xlim = xlim, FUN = CVIRSigmoid, invert = invert)
-  # l <- xmlChunkParse(x)
-  # 
-  # # get the lower and upper asymptotes
-  # dp <- as.numeric(as.vector(unlist(l$DomainPoints)))
-  # 
-  #   # ### added jrb 2021-02-16 in response to sigmoid curves sometimes having weird breaks between the fuzz space and the fixed val space
-  # # # if the domain starts at a whole number, adjust it to start at a slightly wider range, that overlaps with hard space
-  # # if(dp[1]%%1 == 0){
-  # #   dp[1] <- dp[1] - 0.01
-  # # }
-  # # if(dp[2]%%1 == 0){
-  # #   dp[2] <- dp[2] + 0.01
-  # # }
-  # #### but it doesnt work
-  # 
-  # # generate a sequence along domain
-  # domain <- seq(from = dp[1], to = dp[2], length.out = 1001)
-  # 
-  # # create sigmoid curve
-  # sig.loc <- (dp[1] + dp[2]) / 2 # location parameter is center of range
-  # 
-  # #sig.scale <- 1 #### THIS NEEDS TO VARY WITH THE FUNCTION, NOT DEFAULT TO 1!! 
-  # ## No idea how to fit this to so many difft eval functions, so now its an input param passed aaaallll the way up to evalbyeid
-  # 
-  # # # AGB 2021/12/29: the scale factor needs to vary with the width of the domain
-  # # #                 at dp[1] curve value is 0 and dp[2] curve value is 1
-  # # .scaleLogistic <- function(domain_width) { 
-  # #   # determined empirically by reading values off various width sigmoid curves
-  # #   # and finding optimal scale parameter for each width 
-  # #   # _after_ accounting for [0,1] rescaling of limits
-  # #   # after 3 sets of 5 X/Y pairs the pattern was evident
-  # #   0.14320552 * domain_width - 0.00254715 
-  # # }
-  # # 
-  # # rating <- plogis(domain, location = sig.loc, scale = .scaleLogistic(dp[2] - dp[1]))
-  # # 
-  # # # rescale to [0,1]
-  # # rating <- rating - min(rating) 
-  # # rating <- rating / max(rating)
-  # 
-  # # this uses the actual curve function defined by NASIS CVIR
-  # rating <- CVIRSigmoid(domain, dp, ascending = !invert)
-  #          
-  # ## not sure about this, can it happen?
-  # #   # if the first value is > second, then swap direction
-  # #   if(dp[2] < dp[1])
-  # #     rating <- 1 - rating
-  # 
-  # # invert?
-  # if(invert == 1)
-  #   rating <- (1 - rating) 
-  # 
-  # if (rating[1] > rating[length(rating)]){ # added this to hopefully fix errors where the left and right sides have the wrong vals
-  #   yl = 1
-  #   yr = 0
-  # } else {
-  #   yl = 0
-  #   yr = 1
-  # }
-  # 
-  # # create interpolator
-  # af <- approxfun(domain, rating, method = 'linear', rule=2, yleft = yl, yright = yr)
-  # return(af)
-}
-
-#' Extract Linear Evaluation Curve
-#'
-#' @param x evaluation curve XML text
-#' @param invert logical
-#'
-#' @return curve function
-#' @export
-extractLinearCurveEval <- function(x, invert) {
-  .genericInterpolator(x, xlim = NULL, FUN = CVIRLinear, invert = invert)
-}
-
-#' Extract Crisp Evaluation Curve
-#'
-#' @param x evalulation curve XML text
-#' @param xlim domain range minimum/maximum
-#' @param invert logical
-#'
-#' @return curve function
-#' @export
-extractCrispCurveEval <- function(x, xlim, invert = FALSE) {
-  # this supports crispexpressions involving "domain"
-  .genericInterpolator(x, xlim = xlim, FUN = NULL, invert = invert)
-}
-
-.genericInterpolator <- function(x, xlim = NULL, FUN = NULL, invert = FALSE) {
-    
-  l <- xmlChunkParse(x)
-  
-  # get the lower and upper end points
-  domain <- as.numeric(as.vector(unlist(l$DomainPoints)))
-  
-  # get range points (if present)
-  rp <- as.numeric(as.vector(unlist(l$RangePoints)))
-  
-  # get crisp expression (if present)
-  crisp.expression <- l$CrispExpression
-  
-  if (!is.null(crisp.expression)) {
-    # insert domain vector at beginning
-    crisp.expression <- paste0('domain ', crisp.expression)
-    
-    # replace logical operators, and add domain vector
-    crisp.expression <- gsub('and', '& domain', crisp.expression)
-    crisp.expression <- gsub('or', '| domain', crisp.expression)
-  }
-
-  if (is.null(xlim)) {
-    x1 <- domain
-  } else {
-    x1 <- seq(xlim[1], xlim[2], (xlim[2] - xlim[1]) / pmax(100, (xlim[2] - xlim[1]) * 10))
-  }
-    
-  # if x limits not specified, use the domain as is
-  if (length(domain) == 0) {
-    domain <- x1
-  }
-  
-  # "arbitrary" curves provide the rating values via RangePoints or CrispExpression
-  if (!is.null(crisp.expression)) {
-    # crisp curves where ratings are derived from logical expressions about the _domain_
-    rating <- as.numeric(eval(parse(text = crisp.expression)))
-  } else if (length(rp) > 0) {
-    # other curves just give the values directly
-    rating <- rp
-  # note that the more general crisp case is not a curve and uses arbitrary property values for ratings -- see extractCrispExpression()
-  } else {
-    if (is.null(FUN)){
-      stop("Curve function `FUN` must be specified when evaluation does not contain RangePoints", call. = FALSE)
-    }
-    rating <- FUN(x1, domain)
-  }
-    
-  # invert?
-  if (invert) {
-    rating <- (1 - rating)
-  }
-  approxfun(x1, rating, method = 'linear', rule = 2)
-}
-
-extractBetaCurveEval <- function(x, xlim, invert = FALSE) {
-  .genericInterpolator(x, xlim = xlim, FUN = CVIRBeta, invert = invert)
-}
-
-extractGaussCurveEval <- function(x, xlim,  invert = FALSE) {
-  .genericInterpolator(x, xlim = xlim, FUN = CVIRGauss, invert = invert)
-}
-
-extractTriangleCurveEval <- function(x, xlim, invert = FALSE) {
-  .genericInterpolator(x, xlim = xlim, FUN = CVIRTriangle, invert = invert)
-}
-
-extractPICurveEval <- function(x, xlim, invert = FALSE) {
-  .genericInterpolator(x, xlim = xlim, FUN = CVIRPI, invert = invert)
-}
-
-#' Extract Crisp Expression Logic as R function
-#'
-#' @param x evaluation XML content containing a CrispExpression
-#' @param invert invert logic with `!`? Default: `FALSE`
-#' @param asString return un-parsed function (for debugging/inspection) Default: `FALSE`
-#'
-#' @return a generated function of an input variable `x` 
-#' @details The generated function returns a logical value (converted to numeric) when the relevant property data are supplied.
-#' @export
-#'
-extractCrispExpression <- function(x, invert = FALSE, asString = FALSE) {
-  # this supports arbitrary crisp expressions (i.e. expressions not about domain)
-  l <- xmlChunkParse(x)
-  expr <- l$CrispExpression
-  if (length(expr) == 0) expr <- ""
-  .crispExpressionGenerator(expr, invert = invert, asString = asString)
-}
-
-# regex based parser (naive but it works)
-.crispExpressionGenerator <- function(x, invert = FALSE, asString = FALSE) {
-  # wildcards matches/imatches
-  step1 <- gsub("i?matches \"([^\"]*)\"", "grepl(\"^\\1$\", x, ignore.case = TRUE)", 
-                gsub("\" or i?matches \"", "$|^", x, ignore.case = TRUE), ignore.case = TRUE)
-  step2 <- gsub("*", ".*", step1, fixed = TRUE)
-  
-  # (in)equality  
-  step3 <- gsub(" x  grepl", "grepl", gsub("^([><=]*) ?(\")?|(and|or) ([><=]*)? ?(\")?", "\\3 x \\1\\4 \\2\\5", step2))
-  
-  # convert = to ==
-  step4 <- gsub("x =? ", "x == ", gsub("\" ?(, ?| or ?)\"", "\" | x == \"", step3, ignore.case = TRUE))
-  
-  # convert and/or to &/|
-  expr <- trimws(gsub(" or ", " | ", gsub(" and ", " & ", step4)))
-  
-  # various !=
-  expr <- gsub("== != \"|== not \"", "!= \"", expr, ignore.case = TRUE)
-  expr <- gsub("== \"any class other than ", "!= \"", expr)
-  
-  # final matches
-  expr <- gsub("== MATCHES ", "== ", expr, ignore.case = TRUE)
-  
-  # many evals just return the property
-  expr[expr == "x =="] <- "x"
-  
-  # logical expression, possibly inverted, then converted to numeric (0/1)
-  # TODO: handle NA via na.rm/na.omit, returning attribute of offending indices
-  res <- sprintf("function(x) { as.numeric(%s(%s)) }", 
-                           ifelse(invert, "!", ""), expr)
-  if (asString) return(res)
-  res <- eval(parse(text = res))
-  attr(res, 'CrispExpression') <- x
-  res
 }
 
 #' serial number added to names
@@ -671,9 +197,8 @@ makeNamesUnique <- function(l) {
       if(is.null(l.sub$Children)) {
         # print('leaf')
         names(l$Children)[idx[this.element]] <- paste0(t.names[this.type], '_', this.element)
-      }
-      # otherwise re-name and then step into this element and apply this function recursively
-      else {
+      } else {
+        # otherwise re-name and then step into this element and apply recursively
         # print('branch')
         names(l$Children)[idx[this.element]] <- paste0(t.names[this.type], '_', this.element)
         # fix this branch and splice back into tree
@@ -720,8 +245,6 @@ makeNamesUnique2 <- function(l) {
     
   return(l)
 }
-
-
 
 # lookup the actual rule name
 # 
@@ -786,8 +309,6 @@ makeNamesUnique3 <- function(l) {
   return(l)
 }
 
-
-
 #' Convert interpretation rule into data.tree representation
 #'
 #' @param x should contain `rule` element with XML text to parse
@@ -811,8 +332,6 @@ parseRule <- function(x) {
   
   return(n)
 }
-
-
 
 ## TODO: splice/prune issues
 #' Link Subrules
@@ -883,470 +402,5 @@ linkEvaluationFunctions <- function(node) {
   }
 }
 
-
-
-#### adding hsg, svi, vf, and dwb functions ## jrb 03-19-21 ####
-
-# require(parallel)
-# require(data.tree)
-# require(foreach)
-# require(doParallel)
-
-#' Evaluate a tree
-#'
-#' @param tree tree is a data tree object structured with classifications as leaves above those, all nodes must contain these attributes: "var", specifying the variable name to evaluate, "logical", specifying the logical evaluation at that step. MUST INCLUDE THE SAME VARIABLE "VAR"
-#' @param indata data must be a data frame containing columns with names matching all the values of "var" used in the tree object
-#' @param ncores number of cores to parallelize over. if set to 1 (default), runs sequentially. Also accepts "auto" as input. Will run with ncores on computer - 2.
-#'
-#' @author Joseph Brehm
-#' @return eval result TODO
-#' 
-#' @export
-#' @aliases hsg_calc svi_calc
-#' @importFrom raster as.data.frame
-#' @importFrom data.tree isLeaf
-#' @importFrom parallel detectCores stopCluster
-#' @importFrom foreach foreach registerDoSEQ %dopar%
-#' @importFrom doParallel registerDoParallel 
-tree_eval <- function(
-  tree,
-  indata,
-  ncores = 1
-){
-  ### data pre-processing 
-  
-  # if class is raster brick, convert it to a dataframe. Calc may be faster though???
-  ## does this work with stacks?
-  inclass <- class(indata)[1]
-  
-  # remove the all-na rows
-  ## this might need to go away, check what it does to raster data
-  
-  if (inclass %in% c("RasterBrick", "RasterStack")) {
-    prepdata <- raster::as.data.frame(indata)
-    prepdata <- prepdata[rowSums(is.na(prepdata)) != ncol(prepdata), ]
-    
-  } else {
-    prepdata <- indata[rowSums(is.na(indata)) != ncol(indata), ]
-  }
-  #### last minute patch 3/19. Fix the above lines, something is very wrong there
-  prepdata <- indata
-  ###
-  
-  ### set up paralellization
-  # auto core counting: use n cores in computer, minus 2
-  if(ncores == "auto") {
-    if(parallel::detectCores() == 2) { # just in case there's a dual core machine out there
-      ncores = 1
-    } else {
-      ncores <- parallel::detectCores() - 2
-    }
-  }
-  
-  # check if user requested too many cores for the machine
-  if(ncores > parallel::detectCores()){
-    stop(cat("Cannot run with", ncores, "cores as your computer only has", parallel::detectCores()))
-  } 
-  
-  # register sequential or parallel backend, depending on ncores 
-  if (ncores > 1) {
-    cat("Running parallel with", ncores, "cores")
-    cl <- parallel::makeCluster(ncores)
-    doParallel::registerDoParallel()
-  } else {
-    cat("Running sequentially")
-    foreach::registerDoSEQ()
-  }
-  
-  
-  ### do the thing!
-  
-  outlist <- foreach(
-    row = 1:nrow(prepdata),
-    .packages = "data.tree"
-  ) %dopar% {    
-    
-    # start at the root node
-    node = tree$root
-    
-    # descend through the tree until arriving at an end node
-    while(!isLeaf(node))  {
-      
-      # extract the name of the variable to evaluate
-      varname = node$nextvar
-      
-      # check to see if its in the input data
-      if(!(varname %in% colnames(prepdata))) {
-        stop(paste(varname, "must be a column name in input data"))
-      }
-      
-      # extract the value
-      value = prepdata[row,varname]
-      
-      # if the value is na, this point can't be evaluated due to missing data unless there is a check for NA's in the logic set
-      if(is.na(value) & !grepl("is.na", node$nextlogical)) return(NA)
-      
-      # change the logical string to use the generic 'value' instead of the specified variable name
-      # specific variable names are used in the tree objects for readability
-      lstr = gsub(varname, "value", node$nextlogical)
-      
-      # go from the semicolon delimited list of logicals to a vector
-      v.lstr <- unlist(strsplit(lstr, split = ";"))
-      
-      # evaluate them all
-      v.bool <- sapply(v.lstr, function(l){eval(parse(text = l))})
-      
-      # which is true?
-      pathno <- which(v.bool)
-      
-      # if 0 or >1 paths are true, there is an error in the tree
-      if(length(pathno) != 1){
-        stop(paste0(
-          "Node '", node$pathString, "' has ", sum(v.bool), " solutions, should be 1"
-        ))
-      }
-      
-      # if there are more logicals to evaluate than there are children, there is an error in the tree
-      if(length(v.bool) > length(node$children)) {
-        stop(paste0(
-          "Node '", node$pathString, "' has ", length(v.bool), " logical statements but ", length(node$children), " children"
-        ))
-      }
-      
-      # otherwise, take that path
-      node = node$children[[pathno]]
-    } # loop back to evaluate the new node now -- or exit, if its a leaf
-    
-    return(node$result)
-  }
-  
-  if(ncores > 1) parallel::stopCluster(cl)
-  
-  out <- unlist(outlist)
-  
-  if(inclass %in% c("RasterBrick", "RasterStack")) {
-    
-    if(class(out) == "character") out <- factor(out)
-    
-    r.out <- indata[[1]]
-    r.out[!is.na(r.out)] <- out
-    
-    return(r.out)
-  } else {
-    return(out)
-  }
-  
-  
-}
-
-#' @export
-hsg_calc <- function(indata, ncores = 1) {
-  
-  tree_eval(tree = InterpretationEngine::datatree_hsg,
-            indata = indata,
-            ncores = ncores)
-}
-
-#' @export
-svi_calc <- function(indata, ncores = 1) {
-  
-  tree_eval(tree = InterpretationEngine::datatree_svi,
-            indata = indata,
-            ncores = ncores)
-}
-
-### vf
-# require(tidyverse)
-# require(soilDB)
-# require(XML)
-# require(digest)
-
-#' Valley Fever 
-#'
-#' @param indata input data
-#' @param doxeric force xeric or nonxeric function, or let it choose for each data row/pixel depending on an input raster (accepts "auto" / "xeric" / "nonxeric")
-#' @author Joseph Brehm
-#' @return evaluation result
-#' @export
-#' @importFrom dplyr select `%>%` if_else
-#' @importFrom raster setValues brick
-#' @importFrom tidyr replace_na
-vf_calc <- function(indata, 
-                    doxeric = "auto" # 
-){ 
-  if(!(doxeric %in% c("auto", F, T))){
-    print("Unknown input for xeric parameter, which determines whether to process data as xeric or nonxeric conditions")
-    print("Accepted input is 'auto', 'T' (process all as xeric), or 'F' (process all as nonxeric).")
-    print("Defaulting to auto. This requires data specifying conditions by data point, and will error if not provided")
-    doxeric <- "auto"
-  }
-  
-  # if a raster stack or brick is provided as input, the output will be a raster brick
-  rasterinput <- class(indata)[1] %in% c("RasterStack", "RasterBrick")
-  
-  if(rasterinput) {
-    # require(raster)
-    r.template <- indata[[1]] # save the first raster in the obj as a template to create an out raster later
-    indata <- as.data.frame(indata)
-  }
-  
-  outdata <- indata[,'xeric',drop=FALSE]
-  
-  ## 1 - chemical subrule
-  
-  outdata$fuzzsar <- evalbyeid(42999, indata$sar, sig.scale = 5) %>% replace_na(0)
-  outdata$fuzzgypsumcontent <- evalbyeid(42991, indata$gypsumcontent) ^ (0.5) %>% replace_na(0)
-  
-  
-  outdata$fuzzec <- evalbyeid(43000, indata$ec) %>% replace_na(0)
-  outdata$fuzzph <- evalbyeid(42985, indata$ph, sig.scale = 0.125) %>% replace_na(0)
-  
-  outdata$fuzzchem <- 
-    do.call(pmax, c(outdata[,c('fuzzsar', 'fuzzec', 'fuzzgypsumcontent', 'fuzzph')], na.rm = T))
-  
-  ## 2 - climatic subrule
-  if(!("xeric"  %in% colnames(indata))) indata$xeric <- NA
-  if(doxeric != "auto"){
-    if(doxeric) {indata$xeric <- 1}
-    if(!doxeric) {indata$xeric <- 0}
-  }
-  
-  outdata$fuzzprecipX <- evalbyeid(42997, indata$map)
-  outdata$fuzzprecipNX <- evalbyeid(42998, indata$map)
-  
-  outdata$fuzzalbedo <- evalbyeid(43047, 1 - indata$albedo)
-  
-  indata$aspectfactor = if_else( ## this is translated from cvir "VALLEY FEVER ASPECT FACTOR", property 35987
-    is.na(indata$aspect), 0,
-    if_else(
-      indata$aspect >= 0 & indata$aspect < 0, 0,
-      if_else(
-        indata$aspect >= 80 & indata$aspect < 280, -((indata$aspect-180)**2)/9000+1,
-        0 # if all false
-      )
-    )
-  )
-  
-  outdata$fuzzslopeheatload <- evalbyeid(43048, indata$slope)
-  outdata$fuzzaspect <- evalbyeid(43049, indata$aspectfactor)
-  outdata$fuzzheatingfactor <- 
-    outdata$fuzzalbedo *
-    outdata$fuzzslopeheatload *
-    outdata$fuzzaspect
-  
-  
-  outdata$airtempchopperX <- indata$airtemp / 16
-  outdata$airtempchopperNX <- indata$airtemp / 18.5
-  
-  outdata$fuzzsurftempX <- evalbyeid(43050, outdata$airtempchopperX)
-  outdata$fuzzsurftempNX <- evalbyeid(43051, outdata$airtempchopperNX) 
-  
-  outdata$fuzzairtempX <- evalbyeid(42995, indata$airtemp)
-  outdata$fuzzairtempNX <- evalbyeid(42996, indata$airtemp)
-  
-  ### combine all the x/nx rows together
-  outdata$fuzzprecip <-
-    if_else(
-      indata$xeric == 1,
-      outdata$fuzzprecipX,
-      outdata$fuzzprecipNX
-    )
-  
-  outdata$fuzzsurftemp <-
-    if_else(
-      indata$xeric == 1,
-      outdata$fuzzsurftempX,
-      outdata$fuzzsurftempNX
-    )
-  
-  outdata$fuzzairtemp <-
-    if_else(
-      indata$xeric == 1,
-      outdata$fuzzairtempX,
-      outdata$fuzzairtempNX
-    )
-  
-  outdata$fuzzclimate <- 
-    (outdata$fuzzheatingfactor * outdata$fuzzsurftemp + outdata$fuzzairtemp) * outdata$fuzzprecip
-  
-  ## 3 others 
-  outdata$fuzzwrd <- evalbyeid(42987, indata$wrd, sig.scale = 2)
-  outdata$fuzzwatergatheringsurface <- evalbyeid(42988, sqrt(indata$watergatheringsurface))
-  outdata$fuzzom <- evalbyeid(42990, indata$om)
-  
-  outdata$fuzzsaturation <- evalbyeid(63800, indata$saturationmonths)
-  outdata$fuzzflood <- evalbyeid(63801, indata$floodmonths) #### this is not used?
-  outdata$fuzzsurfsat <- 
-    do.call(pmin, c(outdata[,c('fuzzsaturation', 'fuzzflood')], na.rm = T))
-  
-  ## 4 combine all the subrules
-  outdata$fuzzvf <- 
-    sqrt(
-      sqrt(outdata$fuzzwrd) * 
-        sqrt(outdata$fuzzwatergatheringsurface) * 
-        sqrt(outdata$fuzzom) * 
-        sqrt(outdata$fuzzsurfsat) *
-        outdata$fuzzclimate * 
-        outdata$fuzzchem) /
-    0.95
-  
-  # in rare cases, this can be more than 1 (highest val seen in testing was 1.026)
-  # clamp it, for data quality & appearance (this should not have meaningful changes. If it does, there is an error here somewhere)
-  outdata[outdata$fuzzvf > 1 & !is.na(outdata$fuzzvf), "fuzzvf"] <- 1
-  
-  classbreaks <- c(0, 0.1, 0.2, 0.5, 0.8, 1)
-  classlabels <- c("Not suitable", "Somewhat suitable", "Moderately suitable", "Suitable", "Highly suitable")
-  
-  outdata$vf <- base::cut(outdata$fuzzvf, breaks = classbreaks, labels = classlabels, right = TRUE, include.lowest = T)
-  
-  # outdata <- 
-  #   outdata %>%
-  #   mutate(cokey = as.character(cokey),
-  #          coiid = as.character(coiid),
-  #          mukey = as.character(mukey))
-  
-  ## all fuzzy values are returned, as is the column for the maximum fuzzy score, and the final classification
-  ## if the input was a raster stack or brick, the output will be a small 2 layer brick instead of the df
-  if(rasterinput){
-    vf <- r.template %>%
-      setValues(factor(outdata$vf),
-                levels = rev(classlabels))
-    fuzzvf <- r.template %>%
-      setValues(outdata$fuzzvf)
-    
-    outdatabrk <- brick(vf, fuzzvf)
-    outdata <- outdatabrk
-    names(outdata) <- c("vf", "fuzzvf")
-    
-  }
-  
-  return(outdata)
-}
-
-## dwb
-#' Dwewllings Without Basements
-#'
-#' @param indata Input data
-#'
-#' @return evaluation result
-#' @export
-#' @importFrom dplyr select `%>%` if_else
-#' @importFrom tidyr replace_na
-#' @importFrom raster brick setValues
-dwb_calc <- function(indata){
-  
-  # this works on a data frame. 
-  # if a raster stack or brick is passed as input, it will convert to df
-  
-  rasterinput <- class(indata)[1] %in% c("RasterStack", "RasterBrick")
-  #print(rasterinput)
-  if(rasterinput) {
-    r.template <- indata[[1]] # save the first one as a template to create an out raster later
-    indata <- as.data.frame(indata)
-  }
-  
-  outdata <- indata[,0] # this makes an empty data frame with the correct num of rows
-  
-  # 1 - depth to permafrost
-  outdata$fuzzpermdepth <-
-    pmax(
-      evalbyeid(10356, indata$permdepth) %>% replace_na(0), ### case 1: fuzzy logic eval
-      indata$pftex %>% as.integer() %>% replace_na(0) # T when there is a pf code in either texinlieu or texmod      
-    )
-  
-  # 2 - ponding duration
-  outdata$fuzzpond <- 
-    indata$ponding %>% as.integer() %>% replace_na(0)
-  
-  # 3 - slope
-  outdata$fuzzslope <- evalbyeid(10125, indata$slope_r) #%>% replace_na(0) # null goes to NR
-  
-  # 4 - subsidence(cm)
-  # this is secretly a crisp eval
-  outdata$fuzzsubsidence <- as.numeric(as.numeric(indata$totalsub_r) >= 30) %>% replace_na(0)
-  
-  # 5 - flooding frequency
-  outdata$fuzzfloodlim <- 
-    indata$flooding %>% as.integer() %>% replace_na(0)
-  
-  # 6 - depth to water table
-  outdata$fuzzwt <- evalbyeid(299, indata$wt) %>% replace_na(0)
-  
-  # 7 - shrink-swell
-  outdata$fuzzshrinkswell <- evalbyeid(18502, indata$lep) %>% replace_na(0)
-  
-  # 8 - om content class of the last layer above bedrock / deepest layer
-  outdata$fuzzomlim <- 
-    indata$organicsoil %>% as.integer() %>% replace_na(0)
-  
-  # 9 - depth to bedrock (hard)
-  outdata$fuzzdepbrockhard <- evalbyeid(18503, indata$depbrockhard) %>% replace_na(0)
-  
-  # 10 - depth to bedrock (soft)
-  outdata$fuzzdepbrocksoft <- evalbyeid(18504, indata$depbrocksoft) %>% replace_na(0)
-  
-  # 11 - large stone content
-  outdata$fuzzlgstone <- evalbyeid(267, indata$fragvol_wmn) # %>% replace_na(0) #### null goes to not rated
-  
-  # 12 - depth to cemented pan (thick)
-  outdata$fuzzdepcementthick <- evalbyeid(18505, indata$depcementthick) %>% replace_na(0) ### the fuzzy space here is not whats in the notes
-  #outdata$fuzzdepcementthick[indata$noncemented] <- 0
-  
-  # 13 - depth to cemented pan (thin)
-  outdata$fuzzdepcementthin <- evalbyeid(18501, indata$depcementthin) %>% replace_na(0)
-  #outdata$fuzzdepcementthin[indata$noncemented] <- 0
-  
-  # 14 - unstable fill
-  outdata$fuzzunstable <- 
-    indata$unstablefill %>% as.integer() %>% replace_na(0)
-  
-  # 15 - subsidence due to gypsum
-  outdata$fuzzgypsum <- evalbyeid(16254, indata$gypsum) # %>% replace_na(0) ## null to not rated
-  
-  # 16 impaction
-  outdata$fuzzimpaction <- 
-    indata$impaction %>% as.integer() %>% replace_na(0)
-  
-  # 17 drainage class
-  outdata$fuzzdrainage <- (indata$drainageclass != 1) %>% as.integer() %>% replace_na(0)
-  
-  ### aggregate, returning the highest fuzzy value (ie, most limiting variable) and classifying based on it
-  firstcol <- which(colnames(outdata) == "fuzzpermdepth")
-  lastcol <- which(colnames(outdata) == "fuzzdrainage")
-  
-  outdata$maxfuzz <- do.call(pmax, c(outdata[,firstcol:lastcol], na.rm = T))
-  
-  outdata$dwb <- 
-    if_else(outdata$maxfuzz == 1, 
-            "Very limited",
-            if_else(outdata$maxfuzz == 0, 
-                    "Not limited",
-                    "Somewhat limited"))
-  
-  ## all fuzzy values are returned, as is the column for the maximum fuzzy score, and the final DWB classification
-  
-  ## if the input was a raster stack or brick, the output will be a small 2 layer brick instead of the df
-  if(rasterinput){
-    
-    ## this used to work. now it doesnt. export
-    dwb <- r.template %>%
-      setValues(factor(outdata$dwb),
-                levels = rev(c("Not limited", "Somewhat limited", "Very limited")))
-
-    # dwb <- r.template %>% 
-    #   setValues(outdata$dwb)
-    
-    
-    
-    fuzzdwb <- r.template %>%
-      setValues(outdata$maxfuzz)
-    
-    outdata <- brick(dwb, fuzzdwb)
-    names(outdata) <- c("dwb", "maxfuzz")
-  }
-  
-  
-  return(outdata)
-}
 
 

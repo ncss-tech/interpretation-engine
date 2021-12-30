@@ -1,20 +1,18 @@
 # This file contains functions for extracting interpolation functions for different Evaluation curves
-### extract eval functions ####
 
 ## TODO: return function and critical points as a list
 
-# dispatch specialized functions based on eval type
-# x: evaluation record
-# res: number of intermediate points
-#' Extract an evaluaton curve
+# Extracting evaluation curves ----
+
+#' Extract an evaluation curve
 #'
 #' @param evalrec Evaluation record
-#' @param resolution Number of intermediate points
-#' @param sig.scale default 1
-#'
+#' @param resolution not used
+#' @param sig.scale not used
+#' 
 #' @return evaluation curve values
 #' @export
-extractEvalCurve <- function(evalrec, resolution=250, sig.scale = 1) {
+extractEvalCurve <- function(evalrec, resolution = NULL, sig.scale = NULL) {
   if (!missing(resolution))
     .Deprecated(msg = "extractEvalCurve resolution argument is no longer used") 
   
@@ -31,9 +29,7 @@ extractEvalCurve <- function(evalrec, resolution=250, sig.scale = 1) {
   domain.min <- evalrec$propmin
   domain.max <- evalrec$propmax
   
-  # should be some kind of spline interpolation, splinefun() isn't working
-  # 
-  # AGB 2021/12/30: now uses the same spline functions defined in NASIS
+  # TODO: should be some kind of spline interpolation, splinefun() isn't working
   if (et  == 'ArbitraryCurve') {
     res <- extractArbitraryCurveEval(evalrec$eval, invert=invert.eval)
     return(res)
@@ -128,79 +124,74 @@ extractEvalCurve <- function(evalrec, resolution=250, sig.scale = 1) {
   return(function(evalrec) {return(NULL)})
 }
 
-
-#' Extract Trapezoidal Eval Curve
-#'
-#' @param x evaluation curve XML text
-#' @param invert logical
-#'
-#' @return curve function
+#' Function Generators for Interpolating Evaluation Curves
+#' 
+#' @param x evaluation XML content
+#' @param xlim domain points (see details)
+#' @param invert invert rating values? Default: `FALSE`
+#' 
+#' @details Generally the `xlim` argument is a numeric vector of length two that refers to the upper and lower boundaries of the domain (property value range) of interest. In the case of `extractTrapezoidEval()` `xlim` is a vector of length 4 used to specify the x-axis position of left base, two upper "plateau" boundaries, and right base. For arbitrary curves, the `xlim` vector may be any length.
+#' 
 #' @export
-#'
-#' @importFrom stats approxfun
+#' @rdname EvaluationCurveInterpolators
 extractTrapezoidEval <- function(x, xlim, invert = FALSE) {
-  .genericInterpolator(x, xlim = xlim, FUN = CVIRTrapezoid, invert = invert)
+  .linearInterpolator(x, xlim = xlim, FUN = CVIRTrapezoid, invert = invert)
 }
 
-#' Extract Arbitrary Eval Curve
-#'
-#' @param x evaluation curve XML text
-#' @param invert logical
-#'
-#' @return curve function
 #' @export
-#'
-extractArbitraryCurveEval <- function(x, invert) {
-  .genericInterpolator(x, xlim = NULL, FUN = NULL, invert = invert)
-  # ## TODO: this should be a spline-based interpolator (?)
+#' @rdname EvaluationCurveInterpolators
+extractArbitraryCurveEval <- function(x, xlim = NULL, invert = FALSE) {
+  .linearInterpolator(x, xlim = NULL, FUN = NULL, invert = invert)
+  # TODO: .linearInterpolator is linear but this should be a spline-based interpolator 
 }
 
-#' Extract Arbitrary Linear Eval Curve
-#'
-#' @param x  evaluation curve XML text
-#' @param invert logical
-#'
-#' @return curve function
 #' @export
-extractArbitraryLinearCurveEval <- function(x, invert) {
-  .genericInterpolator(x, xlim = NULL, FUN = NULL, invert = invert)
+#' @rdname EvaluationCurveInterpolators
+extractArbitraryLinearCurveEval <- function(x, xlim = NULL, invert = FALSE) {
+  .linearInterpolator(x, xlim = NULL, FUN = NULL, invert = invert)
 }
 
-#' Extract Sigmoid Eval Curve
-#'
-#' @param x evaluation curve XML text
-#' @param xlim domain range minimum/maximum
-#' @param invert logical
-#'
-#' @return curve function
 #' @export
-extractSigmoidCurveEval <- function(x, xlim, invert) {
-  .genericInterpolator(x, xlim = xlim, FUN = CVIRSigmoid, invert = invert)
+#' @rdname EvaluationCurveInterpolators
+extractSigmoidCurveEval <- function(x, xlim, invert = FALSE) {
+  .linearInterpolator(x, xlim = xlim, FUN = CVIRSigmoid, invert = invert)
 }
 
-extractLinearCurveEval <- function(x, invert) {
-  .genericInterpolator(x, xlim = NULL, FUN = CVIRLinear, invert = invert)
+#' @export
+#' @rdname EvaluationCurveInterpolators
+extractLinearCurveEval <- function(x, xlim = NULL, invert = FALSE) {
+  .linearInterpolator(x, xlim = NULL, FUN = CVIRLinear, invert = invert)
 }
 
+#' @export
+#' @rdname EvaluationCurveInterpolators
 extractCrispCurveEval <- function(x, xlim, invert = FALSE) {
   # this supports crispexpressions involving "domain"
-  .genericInterpolator(x, xlim = xlim, FUN = NULL, invert = invert)
+  .linearInterpolator(x, xlim = xlim, FUN = NULL, invert = invert)
 }
 
+#' @export
+#' @rdname EvaluationCurveInterpolators
 extractBetaCurveEval <- function(x, xlim, invert = FALSE) {
-  .genericInterpolator(x, xlim = xlim, FUN = CVIRBeta, invert = invert)
+  .linearInterpolator(x, xlim = xlim, FUN = CVIRBeta, invert = invert)
 }
 
+#' @export
+#' @rdname EvaluationCurveInterpolators
 extractGaussCurveEval <- function(x, xlim,  invert = FALSE) {
-  .genericInterpolator(x, xlim = xlim, FUN = CVIRGauss, invert = invert)
+  .linearInterpolator(x, xlim = xlim, FUN = CVIRGauss, invert = invert)
 }
 
+#' @export
+#' @rdname EvaluationCurveInterpolators
 extractTriangleCurveEval <- function(x, xlim, invert = FALSE) {
-  .genericInterpolator(x, xlim = xlim, FUN = CVIRTriangle, invert = invert)
+  .linearInterpolator(x, xlim = xlim, FUN = CVIRTriangle, invert = invert)
 }
 
+#' @export
+#' @rdname EvaluationCurveInterpolators
 extractPICurveEval <- function(x, xlim, invert = FALSE) {
-  .genericInterpolator(x, xlim = xlim, FUN = CVIRPI, invert = invert)
+  .linearInterpolator(x, xlim = xlim, FUN = CVIRPI, invert = invert)
 }
 
 #' Extract Crisp Expression Logic as R function
@@ -212,17 +203,19 @@ extractPICurveEval <- function(x, xlim, invert = FALSE) {
 #' @return a generated function of an input variable `x` 
 #' @details The generated function returns a logical value (converted to numeric) when the relevant property data are supplied.
 #' @export
-#'
 extractCrispExpression <- function(x, invert = FALSE, asString = FALSE) {
   # this supports arbitrary crisp expressions (i.e. expressions not about domain)
   l <- xmlChunkParse(x)
   expr <- l$CrispExpression
   if (length(expr) == 0) expr <- ""
-  .crispExpressionGenerator(expr, invert = invert, asString = asString)
+  .crispFunctionGenerator(expr, invert = invert, asString = asString)
 }
 
-# internal method for approxfun() linear interopolation
-.genericInterpolator <- function(x, xlim = NULL, FUN = NULL, invert = FALSE) {
+
+# INTERNAL METHODS ----
+
+# internal method for approxfun() linear interpolation
+.linearInterpolator <- function(x, xlim = NULL, FUN = NULL, invert = FALSE) {
   
   l <- xmlChunkParse(x)
   
@@ -277,8 +270,13 @@ extractCrispExpression <- function(x, invert = FALSE, asString = FALSE) {
   approxfun(x1, rating, method = 'linear', rule = 2)
 }
 
+.CVIRSplineInterpolator <- function() {
+  # emulates non-linear interpolator used for 'arbitrary' curves in NASIS CVIR
+  # TODO
+}
+
 # regex based property crispexpression parser (naive but it works)
-.crispExpressionGenerator <- function(x, invert = FALSE, asString = FALSE) {
+.crispFunctionGenerator <- function(x, invert = FALSE, asString = FALSE) {
   # wildcards matches/imatches
   step1 <- gsub("i?matches \"([^\"]*)\"", "grepl(\"^\\1$\", x, ignore.case = TRUE)", 
                 gsub("\" or i?matches \"", "$|^", x, ignore.case = TRUE), ignore.case = TRUE)
