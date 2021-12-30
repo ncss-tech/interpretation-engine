@@ -474,7 +474,7 @@ extractSigmoidCurveEval <- function(x, invert, res, sig.scale = NULL) {
   #### but it doesnt work
   
   # generate a sequence along domain
-  domain <- seq(from=dp[1], to=dp[2], length.out=11)
+  domain <- seq(from = dp[1], to = dp[2], length.out = 1001)
 
   # create sigmoid curve
   sig.loc <- (dp[1] + dp[2]) / 2 # location parameter is center of range
@@ -482,66 +482,21 @@ extractSigmoidCurveEval <- function(x, invert, res, sig.scale = NULL) {
   #sig.scale <- 1 #### THIS NEEDS TO VARY WITH THE FUNCTION, NOT DEFAULT TO 1!! 
   ## No idea how to fit this to so many difft eval functions, so now its an input param passed aaaallll the way up to evalbyeid
   
-  rating <- plogis(domain, location=sig.loc, scale=sig.scale)
+  # AGB 2021/12/29: the scale factor needs to vary with the width of the domain
+  #                 at dp[1] curve value is 0 and dp[2] curve value is 1
+  .scaleLogistic <- function(domain_width) { 
+    # determined empirically by reading values off various width sigmoid curves
+    # and finding optimal scale parameter for each width 
+    # _after_ accounting for [0,1] rescaling of limits
+    # after 3 sets of 5 X/Y pairs the pattern was evident
+    0.14320552 * domain_width - 0.00254715 
+  }
   
-  # if(1==0){
-  #   dp[1] + dp[2]
-  #   plot(rating ~ domain)
-  #   cbind(round(rating, digits = 3), round(domain, digits = 3))
-  #   
-  #   v.sig.scale <- seq(1, 100, length.out = 51)/100
-  #   
-  #   df.fuzzval <- read.csv ("../../nasis equation xy/vf_ph_42985.csv")
-  #   
-  #   df.fuzzval
-  #   
-  #   mx <- cbind(df.fuzzval,
-  #               sapply(v.sig.scale, function(scl)
-  #                 plogis(df.fuzzval[,1], location=sig.loc, scale=scl)
-  #               )) %>% round(digits = 3)
-  #   
-  #   mx
-  #   
-  #   mxdiff <-
-  #     mx - mx$fuzz.nasis
-  #   
-  #   round(colSums(mxdiff), digits = 5)
-  #   
-  #   #for ph (fuzz space 8-9, total range 1-14):
-  #   ### best fits at index 7-8
-  #   v.sig.scale[7-2] # .0892
-  #   v.sig.scale[8-2] # .1090
-  #   
-  #   #
-  # }
-  # 
+  rating <- plogis(domain, location = sig.loc, scale = .scaleLogistic(dp[2] - dp[1]))
   
-  
-  
-  ### sig scale needs to vary with the data
-  # ## trawl through a lot of them
-  # 
-
-  # 
-  # 
-  
-  # 
-  # evalxml2 <- t2$evalrow$eval
-  # l2 <- xmlChunkParse(evalxml2)
-  # # get the lower and upper asymptotes
-  # dp2 <- as.numeric(as.vector(unlist(l2$DomainPoints)))
-  # 
-  # # generate a sequence along domain
-  # domain2 <- seq(from=dp2[1], to=dp2[2], length.out=res)
-  # 
-  # # create sigmoid curve
-  # sig.loc2 <- (dp2[1] + dp2[2])/2 # location parameter is center of range
-  # sig.scale <- 1
-  # rating2 <- plogis(domain2, location=sig.loc2, scale=sig.scale*2)
-  # 
-  # plot(rating2 ~ domain2)
-  # 
-  # 
+  # rescale to [0,1]
+  rating <- rating - min(rating) 
+  rating <- rating / max(rating)
            
   ## not sure about this, can it happen?
   #   # if the first value is > second, then swap direction
@@ -551,7 +506,6 @@ extractSigmoidCurveEval <- function(x, invert, res, sig.scale = NULL) {
   # invert?
   if(invert == 1)
     rating <- (1 - rating) 
-  
   
   if (rating[1] > rating[length(rating)]){ # added this to hopefully fix errors where the left and right sides have the wrong vals
     yl = 1
