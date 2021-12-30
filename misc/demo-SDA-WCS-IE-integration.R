@@ -14,6 +14,11 @@ latitude <- 38.7941
 longitude <- -121.955
 geo_buf <- 0.01
 
+# projectcode <- "Messick"
+# latitude <- 37.5
+# longitude <- -119.93
+# geo_buf <- 0.01
+
 # STEPS
 #  - use soilDB to query SDA geometry extent near a target point
 #  - get mapunit, component, horizon, muaggatt tables
@@ -39,7 +44,7 @@ poly_target <- st_buffer(st_as_sf(SDA_spatialQuery(as_Spatial(st_as_sf(
   data.frame(y = latitude, x = longitude), 
   coords = c("x","y"),
   crs = st_crs(4326)
-)), 'geom')), geo_buf)
+)), 'mupolygon')), geo_buf)
 
 # dem and slope map -- lower zoom level if needed/desiered
 dem <- elevatr::get_elev_raster(poly_target, z = 14, expand = 0.01)
@@ -49,39 +54,63 @@ slope <- raster::terrain(dem, 'slope', unit = "tangent")*100
 wcs_mukey <- mukey.wcs(aoi = poly_target)
 MUKEY <- unique(wcs_mukey)
 
+# # SOME EXAMPLE HOMEBREWED PROPERTIES FROM SSURGO/SDA
+# #   1. calculate minimum ksat by cokey
+# #   2. calculate surface horizon kw factor by cokey
+# 
 # query some tables from SDA
 mu <- SDA_query(sprintf("SELECT * FROM mapunit WHERE mukey IN %s", format_SQL_in_statement(MUKEY)))
-co <- SDA_query(sprintf("SELECT * FROM component WHERE mukey IN %s", format_SQL_in_statement(MUKEY)))
+co <- SDA_query(sprintf("SELECT * FROM component WHERE mukey IN %s AND majcompflag = 'Yes' AND compkind != 'Miscellaneous area'", format_SQL_in_statement(MUKEY)))
 ch <- SDA_query(sprintf("SELECT * FROM chorizon WHERE cokey IN %s", format_SQL_in_statement(co$cokey)))
 maa <- SDA_query(sprintf("SELECT * FROM muaggatt WHERE mukey IN %s", format_SQL_in_statement(MUKEY)))
-
-# SOME EXAMPLE HOMEBREWED PROPERTIES FROM SSURGO/SDA
-#   1. calculate minimum ksat by cokey
-#   2. calculate surface horizon kw factor by cokey
-
-## data.table approach
+# 
+# ## data.table approach
 cokey_sda_derived <- data.table(ch)[, list(min_ksat = ksat_r[ksat_r == min(ksat_r, na.rm = TRUE)][1],
                                            surface_kw = kwfact[hzdept_r == min(hzdept_r, na.rm = TRUE)][1]),
                                     by = cokey]
 
 # table of dominant cokey per mukey joined to SSURGO attributes of interest
 co <- data.table(co)
-dominant_components <- co[, list(comppct_max = max(comppct_r), # calculate dominant component
+dominant_components <- co[, list(comppct_max = max(comppct_r, na.rm=T), # calculate dominant component
                                  cokey = cokey[which.max(comppct_r)[1]]),
                           by = mukey][maa, on = "mukey"][cokey_sda_derived, on = "cokey"]
-                          #           ^^^                      ^^^ join to other tables
-
-# merge into raster attribute table
+dominant_components <- subset(dominant_components, !is.na(mukey))
+                          #           ^^^                      ^^^ join to other tables merge into raster attribute table
 levels(wcs_mukey) <- merge(levels(wcs_mukey)[[1]],
                            dominant_components,
                            by.x = "ID",
                            by.y = "mukey",
                            all.x = TRUE)
 
+# derived from a not-yet-live NASIS SSURGO export
+# source("../soilDB/misc/NASIS-ssurgo-export-tools/ssurgo-export.R")
+# co <- .get_SSURGO_export_interp_reasons_by_mrulename("E:/workspace/Cochran_InterpCompare/SWR template/SWR template.mdb", 
+#                                                      "FOR - Mechanical Site Preparation (Surface)")
+# 
+# dominant_components <- data.table::as.data.table(co)[, list(comppct_max = max(comppct_r), # calculate dominant component
+#                                  coiid = coiid[which.max(comppct_r)[1]]),
+#                           by = mukey]
+# co_sub <- subset(co, coiid %in% dominant_components$coiid)
+# coiid_nasis_derived <- dominant_components[co_sub, on = "coiid"]
+#                           #           ^^^                      ^^^ join to other tables
+#                                   
+# 
+# #                           #           ^^^                      ^^^ join to other tables
+# # merge into raster attribute table
+# levels(wcs_mukey) <- merge(levels(wcs_mukey)[[1]],
+#                            coiid_nasis_derived,
+#                            by.x = "ID",
+#                            by.y = "i.mukey",
+#                            all.x = TRUE)
+# 
+# ras_siteprep_surface <- deratify(wcs_mukey, "interphr")
+# names(ras_siteprep_surface) <- "siteprep_surface_hr"
+# writeRaster(ras_siteprep_surface, filename = "sitepreptestraster.tif")
+
 # inspect ratified raster
-plot(wcs_mukey, "min_ksat")
-plot(wcs_mukey, "surface_kw")
-plot(wcs_mukey, "wtdepannmin")
+# plot(wcs_mukey, "min_ksat")
+# plot(wcs_mukey, "surface_kw")
+# plot(wcs_mukey, "wtdepannmin")
 
 # deratify individual raster layers (TODO: vectorize)
 ras_muaggatt_hsg <- deratify(wcs_mukey, "hydgrpdcd")

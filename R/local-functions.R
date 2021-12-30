@@ -165,8 +165,13 @@ getPropertySet <- function(x) {
 #' @importFrom graphics grid abline lines
 plotEvaluation <- function(x, xlim=NULL, resolution=100, ...) {
   
-  ## TODO: need higher-level checking: crisp expressions require a very different interface
+  # most evaluation curves return an approxfun() function
   res <- extractEvalCurve(x)
+  
+  # crisp expressions return a function of x that can return a logical vector
+  if (!is.null(attr(res, 'CrispExpression'))) {
+    stop("Cannot plot CrispExpression: ", attr(res, 'CrispExpression'), call. = FALSE)
+  }
   
   # default sequence attempts to use min/max range from eval
   # this isn't always useful, as min/max might be way too wide
@@ -296,8 +301,10 @@ extractEvalCurve <- function(evalrec, resolution=250, sig.scale = 1) { ### edite
     ## need a reliable characteristic to use another approach
     # some crisp evaluations are logical expressions that don't utilize thresholds
     if(is.na(evalrec$propmin) & is.na(evalrec$propmax)) {
-      warning("curve type not yet supported", call. = FALSE)
-      return(function(evalrec) {return(NULL)})
+      res <- extractCrispExpression(evalrec$eval, invert=invert.eval)
+      warning("Evaluating CrispExpression (", attr(res, "CrispExpression"),") has only experimental support", call. = FALSE)
+      return(res)
+      # return(function(evalrec) {return(NULL)})
     }
     
     # use the defined min / max values
@@ -324,7 +331,7 @@ extractEvalCurve <- function(evalrec, resolution=250, sig.scale = 1) { ### edite
 #   Gauss
 #   Triangle
 #   PI
-  warning("curve type not yet supported", call. = FALSE)
+  warning("extractEvalCurve: curve type not yet supported", call. = FALSE)
   return(function(evalrec) {return(NULL)})
 }
 
@@ -439,7 +446,10 @@ extractArbitraryLinearCurveEval <- function(x, invert) {
 #' @export
 #' @importFrom stats plogis
 #' @importFrom stats approxfun
-extractSigmoidCurveEval <- function(x, invert, res, sig.scale = 1) {
+extractSigmoidCurveEval <- function(x, invert, res, sig.scale = NULL) {
+  
+  if (!missing(sig.scale))
+    .Deprecated(msg = "sig.scale argument is now calculated from the width of the domain (difference of upper and lower asymptotes)")
   
   ### test in global params because bad programmer
   # if(1==0){
@@ -449,10 +459,11 @@ extractSigmoidCurveEval <- function(x, invert, res, sig.scale = 1) {
   # }
   
   l <- xmlChunkParse(x)
+  
   # get the lower and upper asymptotes
   dp <- as.numeric(as.vector(unlist(l$DomainPoints)))
   
-  # ### added jrb 2021-02-16 in response to sigmoid curves sometimes having weird breaks between the fuzz space and the fixed val space
+    # ### added jrb 2021-02-16 in response to sigmoid curves sometimes having weird breaks between the fuzz space and the fixed val space
   # # if the domain starts at a whole number, adjust it to start at a slightly wider range, that overlaps with hard space
   # if(dp[1]%%1 == 0){
   #   dp[1] <- dp[1] - 0.01
@@ -466,7 +477,7 @@ extractSigmoidCurveEval <- function(x, invert, res, sig.scale = 1) {
   domain <- seq(from=dp[1], to=dp[2], length.out=11)
 
   # create sigmoid curve
-  sig.loc <- (dp[1] + dp[2])/2 # location parameter is center of range
+  sig.loc <- (dp[1] + dp[2]) / 2 # location parameter is center of range
   
   #sig.scale <- 1 #### THIS NEEDS TO VARY WITH THE FUNCTION, NOT DEFAULT TO 1!! 
   ## No idea how to fit this to so many difft eval functions, so now its an input param passed aaaallll the way up to evalbyeid
@@ -531,11 +542,11 @@ extractSigmoidCurveEval <- function(x, invert, res, sig.scale = 1) {
   # plot(rating2 ~ domain2)
   # 
   # 
-  
+           
   ## not sure about this, can it happen?
-#   # if the first value is > second, then swap direction
-#   if(dp[2] < dp[1])
-#     rating <- 1 - rating
+  #   # if the first value is > second, then swap direction
+  #   if(dp[2] < dp[1])
+  #     rating <- 1 - rating
 
   # invert?
   if(invert == 1)
@@ -640,6 +651,59 @@ extractCrispCurveEval <- function(x, invert, res, dmin, dmax) {
   # create interpolator
   af <- approxfun(domain, rating, method = 'linear', rule=2, yleft = yl, yright = yr)
   return(af)
+}
+
+#' Extract Crisp Expression Logic as R function
+#'
+#' @param x evaluation XML content containing a CrispExpression
+#' @param invert invert logic with `!`? Default: `FALSE`
+#' @param asString return un-parsed function (for debugging/inspection) Default: `FALSE`
+#'
+#' @return a generated function of an input variable `x` 
+#' @details The generated function returns a logical value (converted to numeric) when the relevant property data are supplied.
+#' @export
+#'
+#' @examples
+extractCrispExpression <- function(x, invert = FALSE, asString = FALSE) {
+  l <- xmlChunkParse(x)
+  expr <- l$CrispExpression
+  if (length(expr) == 0) expr <- ""
+  .crispExpressionGenerator(expr, invert = invert, asString = asString)
+}
+
+.crispExpressionGenerator <- function(x, invert = FALSE, asString = FALSE) {
+  # wildcards matches/imatches
+  step1 <- gsub("i?matches \"([^\"]*)\"", "grepl(\"^\\1$\", x, ignore.case = TRUE)", 
+                gsub("\" or i?matches \"", "$|^", x, ignore.case = TRUE), ignore.case = TRUE)
+  step2 <- gsub("*", ".*", step1, fixed = TRUE)
+  
+  # (in)equality  
+  step3 <- gsub(" x  grepl", "grepl", gsub("^([><=]*) ?(\")?|(and|or) ([><=]*)? ?(\")?", "\\3 x \\1\\4 \\2\\5", step2))
+  
+  # convert = to ==
+  step4 <- gsub("x =? ", "x == ", gsub("\" ?(, ?| or ?)\"", "\" | x == \"", step3, ignore.case = TRUE))
+  
+  # convert and/or to &/|
+  expr <- trimws(gsub(" or ", " | ", gsub(" and ", " & ", step4)))
+  
+  # various !=
+  expr <- gsub("== != \"|== not \"", "!= \"", expr, ignore.case = TRUE)
+  expr <- gsub("== \"any class other than ", "!= \"", expr)
+  
+  # final matches
+  expr <- gsub("== MATCHES ", "== ", expr, ignore.case = TRUE)
+  
+  # many evals just return the property
+  expr[expr == "x =="] <- "x"
+  
+  # logical expression, possibly inverted, then converted to numeric (0/1)
+  # TODO: handle NA via na.rm/na.omit, returning attribute of offending indices
+  res <- sprintf("function(x) { as.numeric(%s(%s)) }", 
+                           ifelse(invert, "!", ""), expr)
+  if (asString) return(res)
+  res <- eval(parse(text = res))
+  attr(res, 'CrispExpression') <- x
+  res
 }
 
 #' serial number added to names
@@ -868,7 +932,7 @@ linkEvaluationFunctions <- function(node) {
     
     # get evaluation function
     # trap errors when an eval function fails
-    f <- try(extractEvalCurve(ev), silent = TRUE)
+    f <- try(extractEvalCurve(ev), silent = FALSE)
     if(class(f) != 'try-error') {
       node$evalFunction <- f
     }
