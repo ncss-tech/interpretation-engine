@@ -215,6 +215,7 @@ extractCrispExpression <- function(x, invert = FALSE, asString = FALSE) {
 # INTERNAL METHODS ----
 
 # internal method for approxfun() linear interpolation
+#' @importFrom stats approxfun 
 .linearInterpolator <- function(x, xlim = NULL, FUN = NULL, invert = FALSE) {
   
   l <- xmlChunkParse(x)
