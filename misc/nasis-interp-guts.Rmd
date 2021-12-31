@@ -50,9 +50,10 @@ kable(sort(table(evals$evaluationtype), decreasing = TRUE))
 
 Sometimes the property min/max values are crazy, you can manually set plot limits with `xlim` argument.
 ```{r, fig.width=6, fig.height=4}
-# arbitrary curve:
+# arbitrary curve (showing control points)
 e <- evals[evals$evalname == '*Storie Factor C Slope 0 to 100%', ]
-plotEvaluation(e, xlim=c(0, 200))
+plotEvaluation(e, xlim = c(0, 200), pch = 3)
+plotEvaluation(e, xlim = c(0, 8), pch = 3)
 
 # get a function to describe the evaluation
 s <- seq(0, 100, length.out = 10)
@@ -63,9 +64,9 @@ cbind(domain = s, fuzzy.rating = f(s))
 e <- evals[evals$evalname == 'SAR, WTD_AVG 0 to 100cm',]
 plotEvaluation(e, xlim = c(0, 25))
 
-# arbitrary linear
+# arbitrary linear (showing control points)
 e <- evals[evals$evalname == 'GRL - EC maximum in depth 25 to 50 cm (NV)',]
-plotEvaluation(e, xlim = c(0, 1000))
+plotEvaluation(e, xlim = c(0, 1000), pch = 3)
 
 # linear
 e <- evals[evals$evalname == 'Slope 0 to >15%', ]
@@ -256,7 +257,7 @@ e <- evals[evals$evalname == 'KSAT MINIMUM IN DEPTH TO 50 cm  or above restricti
 plotEvaluation(e, xlim=c(0, 200))
 
 e <- evals[evals$evalname == 'KARNER-DEPTH TO HIGH WATER TABLE, Growing Season MIN', ]
-plotEvaluation(e, xlim=c(0, 200))
+plotEvaluation(e, xlim=c(0, 200), pch = 3)
 
 e <- evals[evals$evalname == 'KARNER-AWS, 0-50CM OR FIRST RESTRICTIVE LAYER', ]
 plotEvaluation(e, xlim=c(0, 200))

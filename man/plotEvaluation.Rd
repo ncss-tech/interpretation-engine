@@ -4,7 +4,7 @@
 \alias{plotEvaluation}
 \title{Plot Evaluation Curve}
 \usage{
-plotEvaluation(x, xlim = NULL, resolution = 100, ...)
+plotEvaluation(x, xlim = NULL, resolution = 100, pch = NA, ...)
 }
 \arguments{
 \item{x}{data}
@@ -12,6 +12,8 @@ plotEvaluation(x, xlim = NULL, resolution = 100, ...)
 \item{xlim}{\code{plot} xlim default \code{NULL}}
 
 \item{resolution}{number of points (default 100)}
+
+\item{pch}{point character for source domain/range values. Default: \code{NA}}
 
 \item{...}{additional arguments passed to plot}
 }

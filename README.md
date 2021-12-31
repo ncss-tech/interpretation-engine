@@ -4,7 +4,7 @@ To install the alpha version of the "interpretation engine" R package install th
 
 ```r
 # install required packages 
-install.packages(c("RODBC", "XML", "caret", "data.tree", "digest", "doParallel", "dplyr", 
+install.packages(c("XML", "caret", "data.tree", "digest", "doParallel", "dplyr", 
                    "foreach", "plyr", "raster", "soilDB", "forcats", "tidyr", "remotes"))
                    
 # install package from ncss-tech interpretation-engine repository                   
@@ -20,35 +20,24 @@ To have all that data to try, you can download the repository as a static ZIP fi
 There are many reasons for wanting to develop, test, and apply interpretations to soil data outside the context of NASIS. This project aims to create a prototype from existing interpretation rules, evaluations, and properties as managed in NASIS. Once the prototype is complete it should be possible to generate fuzzy ratings from arbitrary sources of soil and environmental data sources.
 
 ## How Does it Work?
-The [data.tree](https://cran.r-project.org/web/packages/data.tree/vignettes/data.tree.html) package defines objects and methods that are well suited to the task of describing the hierachy of rules and evaluations. The mapping between domain vaules and fuzzy membership can be accomplished with `approxfun`.
+The [data.tree](https://cran.r-project.org/web/packages/data.tree/vignettes/data.tree.html) package defines objects and methods that are well suited to the task of describing the hierachy of rules and evaluations. The mapping between domain values and fuzzy membership can be accomplished with `approxfun`.
 
 ## Outline
-1. load all rules, evaluations, properties into R via ODBC as `data.frames` objects [done]
-3. load single rule and (recursively) load sub-rules into a `data.tree` object [done]
-4. load evaluation functions into each terminal node of `data.tree` object [50% done]
+1. load all rules, evaluations, properties into R via ODBC as `data.frame` objects 
+3. load single rule and (recursively) load sub-rules into a `data.tree` object
+4. load evaluation functions into each terminal node of `data.tree` object 
 5. create wrapper function to send properties to evaluation functions
 6. combine fuzzy values via operators and hedges to generate a final fuzzy rating
 
 ## Resources
 1. MO-6: INTERP-Rule Tree Diagram Chart (Interactive) v1.1+
 
-
 ## Things to Figure Out
-* finish evaluation parsing code:
-    + what to do with these: `!= "oxisols" or "gelisols"`
-* need additional functions to handle other [curve types](http://www.nrcs.usda.gov/wps/portal/nrcs/detail/soils/survey/tools/?cid=nrcs142p2_053545):
-    + Trapezoid
-    + Beta
-    + IsNull
-    + Gauss
-    + Triangle
-    + PI
 * convert property NASIS-report language into actual values
 * link properties or insert new data
 * apply logical / arith. operators to nodes
 * how can we get required properties from SDA?
 * some properties return an RV, some {low,RV,high}: all functions must be vectorized
-
 
 ## Examples
 
@@ -60,6 +49,7 @@ The following image was generated from a evaluation curve data from NASIS.
  * http://ncss-tech.github.io/interpretation-engine/misc/D3/tree.html
  
 ![alt text](misc/static-figures/ca-storie-index-slope-eval.png)
+![alt text](misc/static-figures/ca-storie-index-slope-eval-spline-0to8percent.png)
 
 
 ### Rule Trees

@@ -29,7 +29,7 @@ extractEvalCurve <- function(evalrec, resolution = NULL, sig.scale = NULL) {
   domain.min <- evalrec$propmin
   domain.max <- evalrec$propmax
   
-  # TODO: should be some kind of spline interpolation, splinefun() isn't working
+  # spline interpolation
   if (et  == 'ArbitraryCurve') {
     res <- extractArbitraryCurveEval(evalrec$eval, invert=invert.eval)
     return(res)
@@ -129,8 +129,11 @@ extractEvalCurve <- function(evalrec, resolution = NULL, sig.scale = NULL) {
 #' @param x evaluation XML content
 #' @param xlim domain points (see details)
 #' @param invert invert rating values? Default: `FALSE`
+#' @param resolution Number of segments to calculate spline points for, which are then interpolated with `splinefun()`. Used only for `extractArbitraryCurveEval()`. Default `1000`
+#' @param method Passed to `splinefun()`. Used only for `extractArbitraryCurveEval()`. Default `"natural"`
+#' @param bounded Used only for `extractArbitraryCurveEval()`. Used to constrain spline results to `[0,1]`. Default `TRUE`
 #' 
-#' @details Generally the `xlim` argument is a numeric vector of length two that refers to the upper and lower boundaries of the domain (property value range) of interest. In the case of `extractTrapezoidEval()` `xlim` is a vector of length 4 used to specify the x-axis position of left base, two upper "plateau" boundaries, and right base. For arbitrary curves, the `xlim` vector may be any length.
+#' @details Generally the `xlim` argument is a numeric vector of length two that refers to the upper and lower boundaries of the domain (property value range) of interest. In the case of `extractTrapezoidEval()` `xlim` is a vector of length 4 used to specify the x-axis position of left base, two upper "plateau" boundaries, and right base. For arbitrary linear curves, the `xlim` vector may be any length.
 #' 
 #' @export
 #' @rdname EvaluationCurveInterpolators
@@ -140,9 +143,17 @@ extractTrapezoidEval <- function(x, xlim, invert = FALSE) {
 
 #' @export
 #' @rdname EvaluationCurveInterpolators
-extractArbitraryCurveEval <- function(x, xlim = NULL, invert = FALSE) {
-  .linearInterpolator(x, xlim = NULL, FUN = NULL, invert = invert)
-  # TODO: .linearInterpolator is linear but this should be a spline-based interpolator 
+extractArbitraryCurveEval <- function(x,
+                                      resolution = 1000,
+                                      method = 'natural',
+                                      invert = FALSE, 
+                                      bounded = TRUE) {
+  
+  .CVIRSplineInterpolator(x,
+                          resolution = resolution,
+                          method = method,
+                          invert = invert,
+                          bounded = bounded) 
 }
 
 #' @export
@@ -268,13 +279,247 @@ extractCrispExpression <- function(x, invert = FALSE, asString = FALSE) {
   if (invert) {
     rating <- (1 - rating)
   }
-  approxfun(x1, rating, method = 'linear', rule = 2)
+  res <- approxfun(x1, rating, method = 'linear', rule = 2)
+  attr(res, 'domain') <- domain
+  attr(res, 'range') <- rp
+  
+  res
 }
 
-.CVIRSplineInterpolator <- function() {
+
+# ArbitraryCurve
+
+# spline interpolator for arbitrary curves
+# public override double GetFuzzyValue(object propData)
+# {
+#   if (!this.IsValid())
+#   {
+#     return -1.0;
+#   }
+#   double x = (double) propData;
+#   double num2 = 0.0;
+#   int count = base.DomainValues.Count;
+#   if (x <= base.DomainValues[0])
+#   {
+#     num2 = base.RangeValues[0];
+#   }
+#   else if (x >= base.DomainValues[count - 1])
+#   {
+#     num2 = base.RangeValues[count - 1];
+#   }
+#   else
+#   {
+#     for (int i = 1; i < count; i++)
+#     {
+#       if (x < base.DomainValues[i])
+#       {
+#         num2 = this.CalculateSpline(i - 1, i, x);
+#         break;
+#       }
+#     }
+#   }
+#   return num2;
+# }
+#
+#' @importFrom stats splinefun
+.CVIRSplineInterpolator <- function(x,
+                                    resolution = 1000,
+                                    method = "natural",
+                                    invert = FALSE, 
+                                    bounded = TRUE) {
+    
+  
+  l <- xmlChunkParse(x)
+  
+  # get the lower and upper end points
+  domain <- as.numeric(as.vector(unlist(l$DomainPoints)))
+  
+  # get range points (if present)
+  ylim <- as.numeric(as.vector(unlist(l$RangePoints)))
+  
   # emulates non-linear interpolator used for 'arbitrary' curves in NASIS CVIR
-  # TODO
+  #  divides domain into resolution segments, calculates many spline point locations
+  #  then interpolates the resulting points using splinefun() natural splines
+  #  
+  #  the result is an accurate representation of the arbitrary curve that might be
+  #  specified using only ~10 pairs of domain/rating values
+  x1 <- seq(min(domain), max(domain), (max(domain) - min(domain)) / resolution)
+  rating <- vector("numeric", length(x1))
+  
+  dydx <- .CVIRSplineDerivative(domain, ylim)
+  
+  for (j in seq_along(rating)) {
+    if (x1[j] <= domain[1]) {
+      rating[j] <- ylim[1]
+    } else if (x1[j] >= domain[length(domain)]) {
+      rating[j] <- ylim[length(ylim)]
+    } else if (x1[j] %in% domain) {
+      rating[j] <- ylim[which(domain %in% x1[j])]
+    } else {
+      # index of next largest domain point
+      idx <- which(domain >= x1[j])[1]
+      
+      if (!is.na(idx) && idx > 1) {
+        rating[j] <- .CVIRSplinePoint(domain, ylim, dydx, idx - 1, idx, x1[j])
+      }
+    }
+  }
+  
+  # natural splines through the calculated spline points
+  .f0 <- splinefun(x1, rating, method = method)
+  
+  if (bounded){
+    # wrap the resulting function to ensure fuzzy ratings are never outside [0,1]
+    #  NOTE: NASIS does not do this
+    .f <- function(x, deriv = 0) {
+      y <- .f0(x = x, deriv = deriv)
+      if (deriv == 0) {
+        y[y > 1] <- 1
+        y[y < 0] <- 0
+      }
+      y
+    }
+  } else {
+    .f <- .f0
+  }
+  attr(.f, 'domain') <- domain
+  attr(.f, 'range') <- ylim
+  attr(.f, 'bounded') <- bounded
+  attr(.f, 'resolution') <- resolution
+  attr(.f, 'method') <- method
+  
+  .f
 }
+
+# private double CalculateSpline(int i0, int i1, double x)
+# {
+#   double num = base.DomainValues[i0];
+#   double num2 = base.RangeValues[i0];
+#   double num3 = base.RangeValues[i1];
+#   double local1 = base.DomainValues[i1];
+#   double num4 = local1 - num;
+#   double num5 = x - num;
+#   double num6 = local1 - x;
+#   double num7 = num5 / num4;
+#   double num8 = num6 / num4;
+#   double num9 = this.derivative[i1];
+#   return ((((((this.derivative[i0] * ((num8 * num6) - num4)) * num6) + ((num9 * ((num7 * num5) - num4)) * num5)) / 6.0) + (num2 * num8)) + (num3 * num7));
+# }
+.CVIRSplinePoint <- function(domainx, rangey, dydx, i0, i1, x) {
+  num = domainx[i0]
+  num2 = rangey[i0]
+  num3 = rangey[i1]
+  local1 = domainx[i1]
+  num4 = local1 - num
+  num5 = x - num
+  num6 = local1 - x
+  num7 = num5 / num4
+  num8 = num6 / num4
+  num9 = dydx[i1]
+  ((((((dydx[i0] * ((num8 * num6) - num4)) * num6) + ((num9 * ((num7 * num5) - num4)) * num5)) / 6.0) + (num2 * num8)) + (num3 * num7))
+}  
+
+# private void CalculateDerivatives()
+# {
+#   int count = base.DomainValues.Count;
+#   this.derivative = new double[count];
+#   double[] numArray = new double[] { 0.0 };
+#   this.derivative[0] = 0.0;
+#   this.derivative[count - 1] = 0.0;
+#   for (int i = 1; i < (count - 1); i++)
+#   {
+#     double num3 = base.DomainValues[i - 1];
+#     double num4 = base.DomainValues[i];
+#     double num5 = base.RangeValues[i - 1];
+#     double num6 = base.RangeValues[i];
+#     double num7 = base.RangeValues[i + 1];
+#     double num8 = num4 - num3;
+#     double local1 = base.DomainValues[i + 1];
+#     double num9 = local1 - num4;
+#     double num10 = local1 - num3;
+#     double num11 = num8 / num10;
+#     double num12 = 2.0 + (num11 * this.derivative[i - 1]);
+#     this.derivative[i] = (num11 - 1.0) / num12;
+#     numArray[i] = ((num7 - num6) / num9) - ((num6 - num5) / num8);
+#     numArray[i] = (((numArray[i] * 6.0) / num10) - (num11 * numArray[i - 1])) / num12;
+#   }
+#   for (int j = count - 2; j >= 0; j--)
+#   {
+#     this.derivative[j] = numArray[j] + (this.derivative[j] * this.derivative[j + 1]);
+#   }
+# }
+.CVIRSplineDerivative <- function(x, y) {
+  n <- length(x)
+  deriv <- vector("numeric", n)
+  numArray <- deriv
+  for (i in 2:(n - 1)) {
+    num3 = x[i - 1]
+    num4 = x[i]
+    num5 = y[i - 1]
+    num6 = y[i]
+    num7 = y[i + 1]
+    num8 = num4 - num3
+    local1 = x[i + 1]
+    num9 = local1 - num4
+    num10 = local1 - num3
+    num11 = num8 / num10
+    num12 = 2.0 + (num11 * deriv[i - 1])
+    deriv[i] = (num11 - 1.0) / num12
+    numArray[i] = ((num7 - num6) / num9) - ((num6 - num5) / num8)
+    numArray[i] = (((numArray[i] * 6.0) / num10) - (num11 * numArray[i - 1])) / num12
+  }
+  for (j in rev(1:(n - 1))) {
+    deriv[j] <- numArray[j] + (deriv[j] * deriv[j + 1])
+  }
+  deriv
+}
+
+# arbitrary linear
+# public override double GetFuzzyValue(object propData)
+# {
+#   if (!this.IsValid())
+#   {
+#     return -1.0;
+#   }
+#   double num = (double) propData;
+#   double num2 = 0.0;
+#   int count = base.DomainValues.Count;
+#   if (num <= base.DomainValues[0])
+#   {
+#     num2 = base.RangeValues[0];
+#   }
+#   else if (num >= base.DomainValues[count - 1])
+#   {
+#     num2 = base.RangeValues[count - 1];
+#   }
+#   else
+#   {
+#     for (int i = 1; i < count; i++)
+#     {
+#       if ((base.DomainValues[i - 1] <= num) && (num < base.DomainValues[i]))
+#       {
+#         double num5 = (base.RangeValues[i] - base.RangeValues[i - 1]) / (base.DomainValues[i] - base.DomainValues[i - 1]);
+#         double num6 = base.RangeValues[i - 1] - (num5 * base.DomainValues[i - 1]);
+#         num2 = (num5 * num) + num6;
+#         break;
+#       }
+#     }
+#   }
+#   return num2;
+# }
+
+# linear
+# public override double GetFuzzyValue(object propData)
+# {
+#   if (!this.IsValid())
+#   {
+#     return -1.0;
+#   }
+#   double num = (double) propData;
+#   double num3 = base.DomainValues[0];
+#   double num4 = base.DomainValues[1];
+#   return ((num >= num3) ? ((num <= num4) ? ((num - num3) / (num4 - num3)) : 1.0) : 0.0);
+# }
 
 # regex based property crispexpression parser (naive but it works)
 .crispFunctionGenerator <- function(x, invert = FALSE, asString = FALSE) {
