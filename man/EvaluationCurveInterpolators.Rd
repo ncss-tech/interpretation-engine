@@ -15,7 +15,13 @@
 \usage{
 extractTrapezoidEval(x, xlim, invert = FALSE)
 
-extractArbitraryCurveEval(x, xlim = NULL, invert = FALSE)
+extractArbitraryCurveEval(
+  x,
+  resolution = 1000,
+  method = "natural",
+  invert = FALSE,
+  bounded = TRUE
+)
 
 extractArbitraryLinearCurveEval(x, xlim = NULL, invert = FALSE)
 
@@ -39,10 +45,16 @@ extractPICurveEval(x, xlim, invert = FALSE)
 \item{xlim}{domain points (see details)}
 
 \item{invert}{invert rating values? Default: \code{FALSE}}
+
+\item{resolution}{Number of segments to calculate spline points for, which are then interpolated with \code{splinefun()}. Used only for \code{extractArbitraryCurveEval()}. Default \code{1000}}
+
+\item{method}{Passed to \code{splinefun()}. Used only for \code{extractArbitraryCurveEval()}. Default \code{"natural"}}
+
+\item{bounded}{Used only for \code{extractArbitraryCurveEval()}. Used to constrain spline results to \verb{[0,1]}. Default \code{TRUE}}
 }
 \description{
 Function Generators for Interpolating Evaluation Curves
 }
 \details{
-Generally the \code{xlim} argument is a numeric vector of length two that refers to the upper and lower boundaries of the domain (property value range) of interest. In the case of \code{extractTrapezoidEval()} \code{xlim} is a vector of length 4 used to specify the x-axis position of left base, two upper "plateau" boundaries, and right base. For arbitrary curves, the \code{xlim} vector may be any length.
+Generally the \code{xlim} argument is a numeric vector of length two that refers to the upper and lower boundaries of the domain (property value range) of interest. In the case of \code{extractTrapezoidEval()} \code{xlim} is a vector of length 4 used to specify the x-axis position of left base, two upper "plateau" boundaries, and right base. For arbitrary linear curves, the \code{xlim} vector may be any length.
 }
