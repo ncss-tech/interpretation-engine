@@ -7,7 +7,7 @@ y <- rules[rules$rulename == 'FOR - Road Suitability (Natural Surface)', ]
 
 dt <- parseRule(y)
 
-# recusively splice-in sub-rules
+# recursively splice-in sub-rules
 dt$Do(traversal = 'pre-order', fun = linkSubRules)
 
 # splice-in evaluation functions, if possible
