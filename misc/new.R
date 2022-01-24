@@ -26,6 +26,13 @@ dt$Do(traversal = 'pre-order', fun = linkEvaluationFunctions)
 # View(data.frame(a=bad2))
 
 e <- evals[evals$evaliid == 12765,]
+
+# crispexpressions (often) can have a non-numeric input
+plotEvaluation(e)
+
+# specifying xlim creates a boxplot, where x axis is categorical
+plotEvaluation(e, xlim = c("variant", "miscellaneous area", "series", "taxadjunct"))
+
 f.INTERPRETABLE_COMPONENT <- InterpretationEngine:::extractCrispExpression(e$eval, invert = e$invertevaluationresults)
 coiids <- c("642626", "1498364", "1154650", "627824", "1693178", "1419756", 
             "666236", "666657", "720510", "1270409", "642168", "1693202", 

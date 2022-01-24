@@ -56,22 +56,20 @@ dt$Do(function(x) SetNodeStyle(x, shape = 'box', inherit = FALSE),
 
 plot(dt)
 
-
-
-
-
 ## TODO: getting to the evaluation function of each rule is hard work... need to traverse each eval to the baseline function for plugging in properties
 
-ee <- dt$RuleOperator_c451bdee$`Slope 8 to > 15%`$RuleHedge_f060a2d5$`Slopes <8 to >15%`
+ee <- dt$RuleHedge_b228e0ff$RuleOperator_c35dcfe5$RuleOperator_ca2ab76c$`BW: awc limit`$RuleHedge_1f036f08$`BW: awc limit`
 print(ee, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', 'evalType', 'propname', 'propiid', 'propuom', limit=NULL)
 
-e <- evals[evals$evaliid == ee$eval_refid, ]
+e <- evals[evals$evaliid == ee$Get('eval_refid'), ]
+
+# plot using xlim= [e$propmin,e$propmax]
+plotEvaluation(e)
+points(20, ee$Get('evalFunction', 20), col='royalblue', pch=16, cex=2)
+
+# plot using custom xlim= [0,50]
 plotEvaluation(e, xlim = c(0,50))
-
-points(20, ee$evalFunction(20), col='royalblue', pch=16, cex=2)
-
-
-
+points(20, ee$Get('evalFunction', 20), col='royalblue', pch=16, cex=2)
 
 # get unique set of properties required for this interp
 (ps <- getPropertySet(dt))
