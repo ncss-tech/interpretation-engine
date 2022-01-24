@@ -50,9 +50,9 @@ extractEvalCurve <- function(evalrec, resolution = NULL, sig.scale = NULL) {
   }
   
   if (et == 'Crisp') {
-    
+
     # some crisp are logical expressions that don't utilize thresholds of domain
-    if(is.na(domain.min) & is.na(domain.max)) {
+    if (is.na(domain.min) & is.na(domain.max)) {
       res <- extractCrispExpression(evalrec$eval, invert = invert.eval)
       
       warning("Evaluating CrispExpression (", attr(res, "CrispExpression"),") has only experimental support", call. = FALSE)
@@ -253,6 +253,10 @@ extractCrispExpression <- function(x, invert = FALSE, asString = FALSE) {
     x1 <- domain
   } else {
     x1 <- seq(xlim[1], xlim[2], (xlim[2] - xlim[1]) / pmax(100, (xlim[2] - xlim[1]) * 10))
+  }
+  
+  if (length(domain) == 0 && length(rp) == 0) {
+    return(extractCrispExpression(x, invert = invert))
   }
   
   # if x limits not specified, use the domain as is
