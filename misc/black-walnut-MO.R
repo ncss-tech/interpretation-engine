@@ -1,25 +1,7 @@
-library(soilDB)
-library(RODBC)
-library(XML)
-library(data.tree)
-library(digest)
-library(jsonlite)
-library(sharpshootR)
-library(knitr)
-library(furrr)
+library(InterpretationEngine)
 
-## TODO: phase-out this functionality
-library(plyr)
-
-# source local functions
-# source('local-functions.R')
-
-# re-load cached data
-# getAndCacheData()
-
-# load cached data
-load('cached-NASIS-data.Rda')
-
+rules <- InterpretationEngine::NASIS_rules
+evals <- InterpretationEngine::NASIS_evaluations
 
 ## manual init of rules / evals
 

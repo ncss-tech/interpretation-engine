@@ -1,10 +1,8 @@
 library(InterpretationEngine)
 
-# load cached data
-load('cached-NASIS-data.Rda')
-
+rules <- InterpretationEngine::NASIS_rules
+evals <- InterpretationEngine::NASIS_evaluations
 y <- rules[rules$rulename == 'FOR - Road Suitability (Natural Surface)', ]
-
 dt <- parseRule(y)
 
 # recursively splice-in sub-rules
