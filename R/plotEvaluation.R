@@ -17,7 +17,8 @@ plotEvaluation <- function(x, xlim=NULL, resolution=100, pch = NA, ...) {
   # most evaluation curves return an approxfun() function
   res <- extractEvalCurve(x)
   
-
+  plt.xlim <- FALSE
+  
   # default sequence attempts to use min/max range from eval
   # this isn't always useful, as min/max might be way too wide
   if (is.null(xlim)) {
@@ -32,7 +33,6 @@ plotEvaluation <- function(x, xlim=NULL, resolution=100, pch = NA, ...) {
     if (is.numeric(xlim)) {
       s <- seq(xlim[1], xlim[2], length.out = resolution)
       s.range <- range(s)
-      plt.xlim <- FALSE
     } else {
       s <- xlim
       plt.xlim <- TRUE
@@ -43,7 +43,8 @@ plotEvaluation <- function(x, xlim=NULL, resolution=100, pch = NA, ...) {
   if (plt.xlim) {
     # allows for plotting of categorical domains
     plot(res(xlim) ~ factor(xlim),
-         xlab = 'domain',
+         xlab = x.lab,
+         cex.lab = 0.85,
          ylab = 'fuzzy rating',
          main = x$evalname,
          sub = x$evaluationtype,
