@@ -53,10 +53,9 @@ evalbyeid <- function(eid, d, sig.scale = 1) {
 #' @return ruleset
 #' @export
 initRuleset <- function(rulename) {
-  
   rules <- InterpretationEngine::NASIS_rules
   
-  y <- rules[rules$rulename == rulename,]
+  y <- rules[rules$rulename == rulename, ]
   
   dt <- parseRule(y)
   
@@ -84,9 +83,11 @@ getAttributeByEval <- function(x, a) {
   # remove NA and convert to data.frame
   idx <- which(!is.na(p))
   p <- p[idx]
-  as.list(p)
-  d <- ldply(p)
+  d <- do.call('rbind', lapply(seq_along(p), function(i) {
+    data.frame(evaluation = names(p[i]), V1 = p[i])
+  }))
   names(d) <- c('evaluation', a)
+  rownames(d) <- NULL
   return(d)
 }
 
@@ -101,13 +102,12 @@ getAttributeByEval <- function(x, a) {
 #' @return a set of properties
 #' @export
 #'
-#' @importFrom plyr join
 getPropertySet <- function(x) {
   p.1 <- getAttributeByEval(x, 'propname')
   p.2 <- getAttributeByEval(x, 'propiid')
   
   # splice together with left join
-  p <- join(p.1, p.2, by = 'evaluation', type = 'left')
+  p <- merge(p.1, p.2, by = 'evaluation', all.x = TRUE, sort = FALSE)
   return(unique(p))
 }
 
@@ -119,28 +119,37 @@ getPropertySet <- function(x) {
 #' @export
 #' 
 #' @importFrom soilDB uncode dbQueryNASIS NASIS
-#' @importFrom plyr join
 getAndCacheData <- function() {
   
   # get rules, note that "rule" is a reserved word, use [] to protect
   # load ALL rules, even those not ready for use
-  rules <- soilDB::dbQueryNASIS(soilDB::NASIS(), "SELECT rulename, ruledesign, primaryinterp, notratedphrase, ruledbiidref, ruleiid, [rule]
-FROM rule_View_0 ;")
+  rules <- soilDB::dbQueryNASIS(soilDB::NASIS(), 
+                                "SELECT rulename, ruledesign, primaryinterp, notratedphrase, 
+                                        ruledbiidref, ruleiid, [rule]
+                                 FROM rule_View_0")
   
   # get all evaluation curves
-  evals <- soilDB::dbQueryNASIS(soilDB::NASIS(), "SELECT evaliid, evalname, evaldesc, CAST(eval AS text) AS eval, evaluationtype, invertevaluationresults, propiidref AS propiid
-FROM evaluation_View_0 ;")
+  evals <- soilDB::dbQueryNASIS(soilDB::NASIS(), 
+                                "SELECT evaliid, evalname, evaldesc, CAST(eval AS text) AS eval,
+                                        evaluationtype, invertevaluationresults, propiidref AS propiid
+                                 FROM evaluation_View_0")
   
   # get basic property parameters, but not the property definition
-  properties <- soilDB::dbQueryNASIS(soilDB::NASIS(), "SELECT propiid, propuom, propmin, propmax, propmod, propdefval, propname FROM property_View_0")
+  properties <- soilDB::dbQueryNASIS(soilDB::NASIS(), 
+                                     "SELECT propiid, propuom, propmin, propmax, propmod, propdefval,
+                                             propname 
+                                      FROM property_View_0")
   
   # property descriptions and CVIR code
-  property_def <- soilDB::dbQueryNASIS(soilDB::NASIS(), "SELECT propiid, propdesc, prop FROM property_View_0")
+  property_def <- soilDB::dbQueryNASIS(soilDB::NASIS(), 
+                                       "SELECT propiid, propdesc, prop 
+                                        FROM property_View_0")
   
   # uncode
-  rules <- soilDB::uncode(rules, stringsAsFactors = FALSE)
-  evals <- soilDB::uncode(evals, stringsAsFactors = FALSE)
-  properties <- soilDB::uncode(properties, stringsAsFactors = FALSE)
+  rules <- soilDB::uncode(rules)
+  evals <- soilDB::uncode(evals)
+  
+  properties <- soilDB::uncode(properties)
   
   # treat property IDs as characters
   evals$propiid <- as.character(evals$propiid)
@@ -149,10 +158,10 @@ FROM evaluation_View_0 ;")
   
   ## TODO: maybe useful to keep the split?
   # there is only 1 property / evaluation, so join them
-  evals <- merge(evals, properties, by='propiid', all.x=TRUE, sort=FALSE)
+  evals <- merge(evals, properties, by = 'propiid', all.x = TRUE, sort = FALSE)
   
   # save tables for offline testing
-  save(rules, evals, properties, property_def, file='cached-NASIS-data.Rda')
+  save(rules, evals, properties, property_def, file = 'cached-NASIS-data.Rda')
 }
 
 # parse evaluation chunk XML and return as list
@@ -181,32 +190,37 @@ xmlChunkParse <- function(x) {
 #'
 makeNamesUnique <- function(l) {
   l.names <- names(l$Children)
+  
   # multiple children types
   tab <- table(l.names)
   t.names <- names(tab)
   
   # iterate over types
-  for(this.type in seq_along(t.names)) {
+  for (this.type in seq_along(t.names)) {
+    
     # iterate over duplicate names
     # get an index to this type
     idx <- which(l.names == t.names[this.type])
-    for(this.element in seq_along(idx)) {
+    for (this.element in seq_along(idx)) {
       # make a copy of this chunk of the tree
       l.sub <- l$Children[[idx[this.element]]]
+      
       # if this is a terminal leaf then re-name and continue
-      if(is.null(l.sub$Children)) {
+      if (is.null(l.sub$Children)) {
         # print('leaf')
         names(l$Children)[idx[this.element]] <- paste0(t.names[this.type], '_', this.element)
       } else {
+        
         # otherwise re-name and then step into this element and apply recursively
         # print('branch')
         names(l$Children)[idx[this.element]] <- paste0(t.names[this.type], '_', this.element)
+        
         # fix this branch and splice back into tree
         l$Children[[idx[this.element]]] <- makeNamesUnique(l.sub)
       }
     }
   }
-
+  
   return(l)
 }
 
@@ -221,28 +235,30 @@ makeNamesUnique <- function(l) {
 makeNamesUnique2 <- function(l) {
   
   # iterate over list elements
-  for(i in seq_along(l$Children)) {
-    # get curret name
+  for (i in seq_along(l$Children)) {
+    
+    # get current name
     i.name <- names(l$Children)[i]
+    
     # get the contents
     i.contents <- l$Children[[i]]
+    
     # make a new name via digest
-    i.name.new <- paste0(i.name, '_', digest(i.contents, algo = 'xxhash32'))
+    i.name.new <-
+      paste0(i.name, '_', digest(i.contents, algo = 'xxhash32'))
     
     # if this is a terminal leaf then re-name and continue
-    if(is.null(i.contents$Children)) {
+    if (is.null(i.contents$Children)) {
       # print('leaf')
       names(l$Children)[i] <- i.name.new
-    }
-    # otherwise re-name and then step into this element and apply this function recursively
-    else {
+    } else {
       # print('branch')
       names(l$Children)[i] <- i.name.new
       # fix this branch and splice back into tree
       l$Children[[i]] <- makeNamesUnique2(i.contents)
     }
   }
-    
+  
   return(l)
 }
 
@@ -259,50 +275,54 @@ makeNamesUnique2 <- function(l) {
 #'
 #' @importFrom digest digest
 makeNamesUnique3 <- function(l) {
-  
-  evals <- InterpretationEngine::NASIS_evaluations  
-
+  evals <- InterpretationEngine::NASIS_evaluations
   rules <- InterpretationEngine::NASIS_rules
-
+  
   # iterate over list elements
-  for(i in seq_along(l$Children)) {
-    # get curret name
+  for (i in seq_along(l$Children)) {
+    
+    # get current name
     i.name <- names(l$Children)[i]
+    
     # get the contents
     i.contents <- l$Children[[i]]
     
     # make new name from sub-rule
     # note that ALL rules must be loaded
-    if(grepl('RuleRule', i.name)) {
+    if (grepl('RuleRule', i.name)) {
+      
       # get sub-rule
       i.rid <- i.contents[['RefId']]
-      sr <- rules[rules$ruleiid == i.rid, ]
+      sr <- rules[rules$ruleiid == i.rid,]
       i.name.new <- sr$rulename
+      
       # copy rule reference ID
       l$Children[[i]]$rule_refid <- i.rid
     }
-    if(grepl('RuleEvaluation', i.name)) {
+    
+    if (grepl('RuleEvaluation', i.name)) {
       # get evaluation
       i.eid <- i.contents[['RefId']]
-      re <- evals[evals$evaliid == i.eid, ]
+      re <- evals[evals$evaliid == i.eid,]
       i.name.new <- re$evalname
+      
       # copy rule reference ID
       l$Children[[i]]$eval_refid <- i.eid
     }
+    
     # otherwise use digest
-    if(! grepl('RuleRule|RuleEvaluation', i.name))
+    if (!grepl('RuleRule|RuleEvaluation', i.name))
       i.name.new <- paste0(i.name, '_', digest(i.contents, algo = 'xxhash32'))
     
     # if this is a terminal leaf then re-name and continue
-    if(is.null(i.contents$Children)) {
+    if (is.null(i.contents$Children)) {
       names(l$Children)[i] <- i.name.new
-    }
-    # otherwise re-name and then step into this element and apply this function recursively
-    else {
+    } else { 
+      # otherwise re-name and then step into this element and apply this function recursively
       names(l$Children)[i] <- i.name.new
+      
       # fix this branch and splice back into tree
       l$Children[[i]] <- makeNamesUnique3(i.contents)
-      
     }
   }
   
@@ -317,7 +337,6 @@ makeNamesUnique3 <- function(l) {
 #' @export
 #' @importFrom data.tree FromListExplicit 
 parseRule <- function(x) {
-  
   # parse XML block into list
   l <- xmlChunkParse(x$rule)
   
@@ -325,7 +344,7 @@ parseRule <- function(x) {
   l$RuleStart <- makeNamesUnique3(l$RuleStart)
   
   # convert XML list into data.tree object
-  n <- FromListExplicit(l$RuleStart, nameName=NULL, childrenName='Children')
+  n <- FromListExplicit(l$RuleStart, nameName = NULL, childrenName = 'Children')
   
   # copy interp name to top of tree
   n$name <- x$rulename
@@ -342,13 +361,12 @@ parseRule <- function(x) {
 #' @export
 #'
 linkSubRules <- function(node) {
-  
   rules <- InterpretationEngine::NASIS_rules
   
   # if this is a sub-rule
-  if(!is.null(node$rule_refid)) {
+  if (!is.null(node$rule_refid)) {
     # get sub-rule
-    sr <- rules[rules$ruleiid == node$rule_refid, ]
+    sr <- rules[rules$ruleiid == node$rule_refid,]
     # get sub-rule as a Node
     sr.node <- parseRule(sr)
     ## TEMP HACK: rename sub rule node
@@ -363,11 +381,12 @@ linkSubRules <- function(node) {
     ## TODO: prune the current node
     
     ### 2. splice the children of the sub-rule to the current node [seems better]
-    for(i in seq_along(sr.node$count)) node$AddChildNode(sr.node$children[[i]])
+    for (i in seq_along(sr.node$count)) {
+      node$AddChildNode(sr.node$children[[i]])
+    }
   }
 }
 
-# this will break if there are errors in extractEvalCurve
 #' Link Evaluation Functions
 #'
 #' @param node a data.tree node
@@ -376,12 +395,13 @@ linkSubRules <- function(node) {
 #' @export
 #'
 linkEvaluationFunctions <- function(node) {
-  evals <- InterpretationEngine::NASIS_evaluations  
+  evals <- InterpretationEngine::NASIS_evaluations
   
   # only operate on evaluations
-  if(!is.null(node$eval_refid)) {
+  if (!is.null(node$eval_refid)) {
+    
     # get eval record
-    ev <- evals[evals$evaliid == node$eval_refid, ]
+    ev <- evals[evals$evaliid == node$eval_refid,]
     
     # assign eval metadata
     node$evalType <- ev$evaluationtype
@@ -392,15 +412,13 @@ linkEvaluationFunctions <- function(node) {
     # get evaluation function
     # trap errors when an eval function fails
     f <- try(extractEvalCurve(ev), silent = FALSE)
-    if(class(f) != 'try-error') {
-      node$evalFunction <- f
-    }
     
-    ## come back and figure out what is wrong in evalXXX function
-    else
-      node$evalFunction <- function(x) return(NULL)
+    if (class(f) != 'try-error') {
+      node$evalFunction <- f
+    } else {
+      node$evalFunction <- function(x) {
+        return(NULL)
+      }
+    }
   }
 }
-
-
-
