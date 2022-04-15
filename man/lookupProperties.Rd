@@ -12,8 +12,8 @@ lookupProperties(coiid, propIDs)
 \item{propIDs}{Vector of property IDs}
 }
 \value{
-properties?
+A data.frame containing \code{propiid}, \code{coiid}, \code{comp_name}, \code{comp_pct} and the representative value for the property (\code{rv}).
 }
 \description{
-This function uses \code{WEB-PROPERY-COMPONENT_property} NASIS Web Report to lookup property data
+This function uses \code{WEB-PROPERY-COMPONENT_property} NASIS Web Report to look up component property data
 }

@@ -76,8 +76,6 @@ initRuleset <- function(rulename) {
 #'
 #' @return attribute
 #' @export
-#'
-#' @importFrom plyr ldply
 getAttributeByEval <- function(x, a) {
   p <- x$Get(a)
   # remove NA and convert to data.frame
@@ -254,6 +252,7 @@ makeNamesUnique2 <- function(l) {
     } else {
       # print('branch')
       names(l$Children)[i] <- i.name.new
+      
       # fix this branch and splice back into tree
       l$Children[[i]] <- makeNamesUnique2(i.contents)
     }
