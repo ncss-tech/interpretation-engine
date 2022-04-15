@@ -14,10 +14,10 @@
 #' @export
 extractEvalCurve <- function(evalrec, resolution = NULL, sig.scale = NULL) {
   if (!missing(resolution))
-    .Deprecated(msg = "extractEvalCurve resolution argument is no longer used") 
+    .Deprecated(msg = "extractEvalCurve `resolution` argument is no longer used") 
   
   if (!missing(sig.scale))
-    .Deprecated(msg = "extractEvalCurve sig.scale argument is no longer used")
+    .Deprecated(msg = "extractEvalCurve `sig.scale` argument is no longer used")
   
   # type
   et <- evalrec$evaluationtype
@@ -31,7 +31,7 @@ extractEvalCurve <- function(evalrec, resolution = NULL, sig.scale = NULL) {
   
   # spline interpolation
   if (et  == 'ArbitraryCurve') {
-    res <- extractArbitraryCurveEval(evalrec$eval, invert=invert.eval)
+    res <- extractArbitraryCurveEval(evalrec$eval, invert = invert.eval)
     return(res)
   }
   
@@ -55,7 +55,7 @@ extractEvalCurve <- function(evalrec, resolution = NULL, sig.scale = NULL) {
     if (is.na(domain.min) & is.na(domain.max)) {
       res <- extractCrispExpression(evalrec$eval, invert = invert.eval)
       
-      warning("Evaluating CrispExpression (", attr(res, "CrispExpression"),") has only experimental support", call. = FALSE)
+      message("Evaluating CrispExpression (", attr(res, "CrispExpression"),") has only experimental support", call. = FALSE)
       
       return(res)
     }
