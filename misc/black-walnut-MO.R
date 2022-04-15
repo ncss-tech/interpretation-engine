@@ -12,7 +12,7 @@ dt <- parseRule(y)
 # print intermediate results
 print(dt, 'Type', 'Value', 'RefId', 'rule_refid', 'eval_refid', limit=NULL)
 
-# recusively splice-in sub-rules
+# recursively splice-in sub-rules
 dt$Do(traversal='pre-order', fun=linkSubRules)
 
 
