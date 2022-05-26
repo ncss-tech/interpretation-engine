@@ -23,6 +23,7 @@ library(InterpretationEngine)
 library(tidyverse)
 library(rasterVis) # used for currently broken categorical plots
 library(sf)
+library(raster)
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@#
 #@@@@# USER INPUT HERE #@@@@#
