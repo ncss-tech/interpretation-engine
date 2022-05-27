@@ -1,3 +1,6 @@
+[![R-CMD-check](https://github.com/ncss-tech/interpretation-engine/workflows/R-CMD-check/badge.svg)](https://github.com/ncss-tech/interpretation-engine/actions)
+[![InterpretationEngine Manual](https://img.shields.io/badge/docs-HTML-informational)](http://ncss-tech.github.io/interpretation-engine/)
+
 # {InterpretationEngine} (alpha) R package
 
 To install the alpha version of the "interpretation engine" R package install the dependencies, then use `remotes` to get the latest version from GitHub.
