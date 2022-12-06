@@ -2,7 +2,7 @@
 % Please edit documentation in R/local-functions.R
 \name{getAndCacheData}
 \alias{getAndCacheData}
-\title{Cache dataset containing important NASIS data}
+\title{Cache dataset containing important NASIS data, not exported}
 \usage{
 getAndCacheData()
 }

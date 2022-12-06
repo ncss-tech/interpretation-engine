@@ -109,12 +109,11 @@ getPropertySet <- function(x) {
   return(unique(p))
 }
 
-#' Cache dataset containing important NASIS data
+#' Cache dataset containing important NASIS data, not exported
 #' 
 #' soilDB::uncode() used to convert coded -> uncoded values
 #' 
 #' @return cached data
-#' @export
 #' 
 #' @importFrom soilDB uncode dbQueryNASIS NASIS
 getAndCacheData <- function() {
@@ -159,7 +158,7 @@ getAndCacheData <- function() {
   evals <- merge(evals, properties, by = 'propiid', all.x = TRUE, sort = FALSE)
   
   # save tables for offline testing
-  save(rules, evals, properties, property_def, file = 'cached-NASIS-data.Rda')
+  save(rules, evals, properties, property_def, file = 'misc/cached-NASIS-data.Rda')
 }
 
 # parse evaluation chunk XML and return as list

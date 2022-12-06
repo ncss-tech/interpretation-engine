@@ -1,3 +1,8 @@
+
+## re-make cached NASIS data with unexported function
+InterpretationEngine::getAndCacheData()
+
+
 load("misc/cached-NASIS-data.Rda")
 
 source("misc/internal-datasets/SVI/tr.svi.R")
