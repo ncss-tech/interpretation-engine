@@ -12,10 +12,20 @@
 #' @return a plot
 #' @export
 #' @importFrom graphics grid abline lines points
-plotEvaluation <- function(x, xlim=NULL, resolution=100, pch = NA, ...) {
+plotEvaluation <- function(x, xlim = NULL, resolution = 100, pch = NA, ...) {
   
   # most evaluation curves return an approxfun() function
-  res <- extractEvalCurve(x)
+  res <- extractEvalCurve(x, xlim = xlim)
+  
+  ## TODO: this work-around may fail with some evaluation curve types
+  # propmin and propmax are sometimes missing
+  # get from domain
+  if(is.na(x$propmin) && is.na(x$propmax)) {
+    .domain <- attr(res, 'domain')
+    x$propmin <- .domain[1]
+    x$propmax <- .domain[2]
+  }
+  
   
   plt.xlim <- FALSE
   
@@ -24,7 +34,7 @@ plotEvaluation <- function(x, xlim=NULL, resolution=100, pch = NA, ...) {
   if (is.null(xlim)) {
     if (is.na(x$propmin) || is.na(x$propmax)) {
       # crisp expressions return a function of x that can return a logical vector
-      stop("Cannot plot CrispExpression: ", attr(res, 'CrispExpression'), " with evaluation propmin/propmax = NA; please specify `xlim`", call. = FALSE)
+      stop("Cannot plot Expression: ", attr(res, 'CrispExpression'), " with evaluation propmin/propmax = NA; please specify `xlim`", call. = FALSE)
     }
     s <- seq(x$propmin, x$propmax, length.out = resolution)
     s.range <- range(s)

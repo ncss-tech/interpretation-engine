@@ -7,12 +7,13 @@
 #' Extract an evaluation curve
 #'
 #' @param evalrec Evaluation record
+#' @param xlim numeric vector, min and max values of fuzzy space
 #' @param resolution not used
 #' @param sig.scale not used
 #' 
 #' @return evaluation curve values
 #' @export
-extractEvalCurve <- function(evalrec, resolution = NULL, sig.scale = NULL) {
+extractEvalCurve <- function(evalrec, xlim = NULL, resolution = NULL, sig.scale = NULL) {
   if (!missing(resolution))
     .Deprecated(msg = "extractEvalCurve `resolution` argument is no longer used") 
   
@@ -25,9 +26,23 @@ extractEvalCurve <- function(evalrec, resolution = NULL, sig.scale = NULL) {
   # invert
   invert.eval <- evalrec$invertevaluationresults
   
-  # use the defined min / max values (if any)
-  domain.min <- evalrec$propmin
-  domain.max <- evalrec$propmax
+  
+  # use the defined min / max values, if available
+  if(is.null(xlim)) {
+    # these are not always defined!
+    domain.min <- evalrec$propmin
+    domain.max <- evalrec$propmax
+    
+    # if missing, encode as NULL for .linearInterpolator()
+    if(is.na(domain.min) || is.na(domain.max)) {
+      domain.min <- NULL
+      domain.max <- NULL
+    }
+  } else {
+    # override fuzzy domain with xlim argument
+    domain.min <- xlim[1]
+    domain.max <- xlim[2]
+  }
   
   # spline interpolation
   if (et  == 'ArbitraryCurve') {
@@ -50,12 +65,12 @@ extractEvalCurve <- function(evalrec, resolution = NULL, sig.scale = NULL) {
   }
   
   if (et == 'Crisp') {
-
+    
     # some crisp are logical expressions that don't utilize thresholds of domain
-    if (is.na(domain.min) & is.na(domain.max)) {
+    if (is.null(domain.min) | is.null(domain.max)) {
       res <- extractCrispExpression(evalrec$eval, invert = invert.eval)
       
-      message("Evaluating CrispExpression (", attr(res, "CrispExpression"),") has only experimental support", call. = FALSE)
+      message("Evaluating CrispExpression (", attr(res, "CrispExpression"),") has only experimental support")
       
       return(res)
     }
@@ -250,9 +265,23 @@ extractCrispExpression <- function(x, invert = FALSE, asString = FALSE) {
   }
   
   if (is.null(xlim)) {
-    x1 <- domain
+    # if domain is two points, add some more
+    if(length(domain) == 2) {
+      x1 <- seq(
+        from = domain[1], 
+        to = domain[2], 
+        by = (domain[2] - domain[1]) / pmax(100, (domain[2] - domain[1]) * 10)
+      )
+    } else {
+      # use as-is
+      x1 <- domain
+    }
   } else {
-    x1 <- seq(xlim[1], xlim[2], (xlim[2] - xlim[1]) / pmax(100, (xlim[2] - xlim[1]) * 10))
+    x1 <- seq(
+      from = xlim[1], 
+      to = xlim[2], 
+      by = (xlim[2] - xlim[1]) / pmax(100, (xlim[2] - xlim[1]) * 10)
+    )
   }
   
   if (length(domain) == 0 && length(rp) == 0) {
@@ -287,7 +316,7 @@ extractCrispExpression <- function(x, invert = FALSE, asString = FALSE) {
   attr(res, 'domain') <- domain
   attr(res, 'range') <- rp
   
-  res
+  return(res)
 }
 
 
