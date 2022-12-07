@@ -72,6 +72,40 @@ points(20, ee$Get('evalFunction', 20), col='royalblue', pch=16, cex=2)
 # get unique set of properties required for this interp
 (ps <- getPropertySet(dt))
 
+
+## further investigation
+properties <- InterpretationEngine::NASIS_properties
+
+properties[properties$propiid %in% ps$propiid, ]
+
+
+## NASIS property used to estimate PET
+# POTENTIAL EVAPOTRANSPIRATION (HAMON), MM/YEAR (REVISED)
+
+# This property uses Hamon 1963 to find potential evapotranspiration.  It uses the Latitude Estimator to find the declination.  Mean annual air temperature is used in calculating the vapor pressure.  The monthly mean temperature  is estimated using the Latitude Estimator and Continentality.
+# 
+# Calculates an approximation of PET using Hamon (1963).
+# 
+# PET= k*0.165*217.7*N*(es/(T+273.3))
+# where,
+# PET= potential evapotranspiration [mm day-1]
+# k= proportionality coefficient = 11 [unitless]
+# N= daytime length [x/12 hours]
+# N = (24/pi)*w
+# es= saturation vapor pressure [mb]
+# T= average monthly temperature [C]
+# es = saturation vapor pressure
+# es=6.108e(17.27T/(T+273.3))
+# w = invcos(-tan(d)tan(phi))
+# phi = latitude in radians
+# d = declination in radians
+# d= 1 + 0.033cos(2*pi*j/365)
+# j is julian day of the year
+# 
+
+
+
+
 # init additional cores
 # plan(multisession)
 
