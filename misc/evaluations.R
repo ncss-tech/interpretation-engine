@@ -9,14 +9,27 @@ library(sharpshootR)
 library(knitr)
 
 # source local functions
-source('local-functions.R')
+# source('local-functions.R')
 
 # re-load cached data
 # getAndCacheData()
 
 # load cached data
-load('cached-NASIS-data.Rda')
+data("NASIS_evaluations")
+data("NASIS_properties")
+data("NASIS_property_def")
 
+.idx <- grep('isotic', NASIS_evaluations$evaldesc, ignore.case = TRUE)
+NASIS_evaluations[.idx, ]
+
+
+.idx <- grep('isotic', NASIS_property_def$prop, ignore.case = TRUE)
+.pid <- NASIS_property_def$propiid[.idx]
+
+NASIS_properties[which(NASIS_properties$propiid %in% .pid), ]
+
+
+evals <- NASIS_evaluations
 
 # how many of each
 knitr::kable(t(sort(prop.table(table(evals$evaluationtype)), decreasing = TRUE)), digits = 3)
