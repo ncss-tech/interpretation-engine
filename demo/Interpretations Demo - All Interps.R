@@ -10,6 +10,7 @@
 ## move factoring code into the functions
 ## demo layer substitution
 ## demo with tabular and vector data
+## demo with tabular and vector data
 #### HSG & SVI
 ## Faster as raster math? Data trees as preferred structure didn't pan out for DWB and VF
 ## tree_eval : Improve parallelization

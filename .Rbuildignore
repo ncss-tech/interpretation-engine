@@ -6,3 +6,6 @@
 ^\.Rproj\.user$
 ^cached-NASIS-data\.Rda$
 ^\.github$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

@@ -8,6 +8,13 @@
 \description{
 InterpretationEngine contains tools to develop, test, and apply interpretations to soil data outside the context of NASIS. This project aims to create a prototype from existing interpretation rules, evaluations, and properties as managed in NASIS. Once the prototype is complete it should be possible to generate fuzzy ratings from arbitrary sources of soil and environmental data sources.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{http://ncss-tech.github.io/interpretation-engine/}
+}
+
+}
 \author{
 \strong{Maintainer}: Dylan Beaudette \email{dylan.beaudette@usda.gov}
 

@@ -34,7 +34,7 @@
 #' @return SDA table result
 #' @export
 #' @importFrom soilDB  SDA_query
-#' @importFrom dplyr select `%>%`
+#' @importFrom dplyr select %>%
 pull_SDA_compup <- function(asym, fun = "in"){
   ls.tables.sda <- list()
   

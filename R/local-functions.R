@@ -411,7 +411,7 @@ linkEvaluationFunctions <- function(node) {
     # trap errors when an eval function fails
     f <- try(extractEvalCurve(ev), silent = FALSE)
     
-    if (class(f) != 'try-error') {
+    if (!inherits(f, 'try-error')) {
       node$evalFunction <- f
     } else {
       node$evalFunction <- function(x) {

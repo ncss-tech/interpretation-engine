@@ -4,10 +4,12 @@
 \alias{extractEvalCurve}
 \title{Extract an evaluation curve}
 \usage{
-extractEvalCurve(evalrec, resolution = NULL, sig.scale = NULL)
+extractEvalCurve(evalrec, xlim = NULL, resolution = NULL, sig.scale = NULL)
 }
 \arguments{
 \item{evalrec}{Evaluation record}
+
+\item{xlim}{numeric vector, min and max values of fuzzy space}
 
 \item{resolution}{not used}
 

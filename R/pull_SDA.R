@@ -37,8 +37,8 @@
 #' @author Joseph Brehm
 #' @return SDA table result
 #' @export
-#' @importFrom soilDB  SDA_query
-#' @importFrom dplyr select `%>%`
+#' @importFrom soilDB SDA_query
+#' @importFrom dplyr select %>%
 pull_SDA <- function(asym, fun = "in"){
   ls.tables.sda <- list()
   

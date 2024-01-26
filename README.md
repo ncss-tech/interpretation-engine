@@ -1,5 +1,7 @@
-[![R-CMD-check](https://github.com/ncss-tech/interpretation-engine/workflows/R-CMD-check/badge.svg)](https://github.com/ncss-tech/interpretation-engine/actions)
+ <!-- badges: start -->
+  [![R-CMD-check](https://github.com/ncss-tech/interpretation-engine/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ncss-tech/interpretation-engine/actions/workflows/R-CMD-check.yaml)
 [![InterpretationEngine Manual](https://img.shields.io/badge/docs-HTML-informational)](http://ncss-tech.github.io/interpretation-engine/)
+  <!-- badges: end -->
 
 # {InterpretationEngine} (alpha) R package
 

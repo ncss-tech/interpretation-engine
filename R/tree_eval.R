@@ -138,9 +138,10 @@ tree_eval <- function(
   
   out <- unlist(outlist)
   
-  if(inclass %in% c("RasterBrick", "RasterStack")) {
+  if (inclass %in% c("RasterBrick", "RasterStack")) {
     
-    if(class(out) == "character") out <- factor(out)
+    if (is.character(out)) 
+      out <- factor(out)
     
     r.out <- indata[[1]]
     r.out[!is.na(r.out)] <- out
@@ -182,7 +183,7 @@ svi_calc <- function(indata, ncores = 1) {
 #' @author Joseph Brehm
 #' @return evaluation result
 #' @export
-#' @importFrom dplyr select `%>%` if_else
+#' @importFrom dplyr select %>% if_else
 #' @importFrom raster setValues brick
 #' @importFrom tidyr replace_na
 vf_calc <- function(indata, 
@@ -344,7 +345,7 @@ vf_calc <- function(indata,
 #'
 #' @return evaluation result
 #' @export
-#' @importFrom dplyr select `%>%` if_else
+#' @importFrom dplyr select %>% if_else
 #' @importFrom tidyr replace_na
 #' @importFrom raster brick setValues
 dwb_calc <- function(indata){
