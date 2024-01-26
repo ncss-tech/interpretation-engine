@@ -1,126 +1,126 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>/404.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/404.html</loc>
   </url>
   <url>
-    <loc>/LICENSE.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/LICENSE.html</loc>
   </url>
   <url>
-    <loc>/authors.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/authors.html</loc>
   </url>
   <url>
-    <loc>/index.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/index.html</loc>
   </url>
   <url>
-    <loc>/news/index.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/news/index.html</loc>
   </url>
   <url>
-    <loc>/reference/CVIRCurve.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/CVIRCurve.html</loc>
   </url>
   <url>
-    <loc>/reference/EvaluationCurveInterpolators.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/EvaluationCurveInterpolators.html</loc>
   </url>
   <url>
-    <loc>/reference/InterpretationEngine-package.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/InterpretationEngine-package.html</loc>
   </url>
   <url>
-    <loc>/reference/NASIS_evaluations.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/NASIS_evaluations.html</loc>
   </url>
   <url>
-    <loc>/reference/NASIS_properties.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/NASIS_properties.html</loc>
   </url>
   <url>
-    <loc>/reference/NASIS_property_def.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/NASIS_property_def.html</loc>
   </url>
   <url>
-    <loc>/reference/NASIS_rules.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/NASIS_rules.html</loc>
   </url>
   <url>
-    <loc>/reference/cm_refactor.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/cm_refactor.html</loc>
   </url>
   <url>
-    <loc>/reference/datatree_hsg.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/datatree_hsg.html</loc>
   </url>
   <url>
-    <loc>/reference/datatree_svi.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/datatree_svi.html</loc>
   </url>
   <url>
-    <loc>/reference/dwb_calc.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/dwb_calc.html</loc>
   </url>
   <url>
-    <loc>/reference/evalByEID.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/evalByEID.html</loc>
   </url>
   <url>
-    <loc>/reference/extractCrispExpression.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/extractCrispExpression.html</loc>
   </url>
   <url>
-    <loc>/reference/extractEvalCurve.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/extractEvalCurve.html</loc>
   </url>
   <url>
-    <loc>/reference/getAndCacheData.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/getAndCacheData.html</loc>
   </url>
   <url>
-    <loc>/reference/getAttributeByEval.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/getAttributeByEval.html</loc>
   </url>
   <url>
-    <loc>/reference/getPropertySet.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/getPropertySet.html</loc>
   </url>
   <url>
-    <loc>/reference/index.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/initRuleset.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/initRuleset.html</loc>
   </url>
   <url>
-    <loc>/reference/linkEvaluationFunctions.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/linkEvaluationFunctions.html</loc>
   </url>
   <url>
-    <loc>/reference/linkSubRules.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/linkSubRules.html</loc>
   </url>
   <url>
-    <loc>/reference/lookupProperties.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/lookupProperties.html</loc>
   </url>
   <url>
-    <loc>/reference/lookupRatingClass.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/lookupRatingClass.html</loc>
   </url>
   <url>
-    <loc>/reference/makeNamesUnique.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/makeNamesUnique.html</loc>
   </url>
   <url>
-    <loc>/reference/makeNamesUnique2.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/makeNamesUnique2.html</loc>
   </url>
   <url>
-    <loc>/reference/makeNamesUnique3.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/makeNamesUnique3.html</loc>
   </url>
   <url>
-    <loc>/reference/parseRule.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/parseRule.html</loc>
   </url>
   <url>
-    <loc>/reference/plotEvaluation.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/plotEvaluation.html</loc>
   </url>
   <url>
-    <loc>/reference/propByPropname.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/propByPropname.html</loc>
   </url>
   <url>
-    <loc>/reference/propdefByPropname.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/propdefByPropname.html</loc>
   </url>
   <url>
-    <loc>/reference/pull_SDA.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/pull_SDA.html</loc>
   </url>
   <url>
-    <loc>/reference/pull_SDA_compup.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/pull_SDA_compup.html</loc>
   </url>
   <url>
-    <loc>/reference/ruleByRulename.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/ruleByRulename.html</loc>
   </url>
   <url>
-    <loc>/reference/tree_eval.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/tree_eval.html</loc>
   </url>
   <url>
-    <loc>/reference/vf_calc.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/vf_calc.html</loc>
   </url>
   <url>
-    <loc>/reference/xmlChunkParse.html</loc>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/xmlChunkParse.html</loc>
   </url>
 </urlset>
