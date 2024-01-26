@@ -265,17 +265,7 @@ extractCrispExpression <- function(x, invert = FALSE, asString = FALSE) {
   }
   
   if (is.null(xlim)) {
-    # if domain is two points, add some more
-    if(length(domain) == 2) {
-      x1 <- seq(
-        from = domain[1], 
-        to = domain[2], 
-        by = (domain[2] - domain[1]) / pmax(100, (domain[2] - domain[1]) * 10)
-      )
-    } else {
-      # use as-is
       x1 <- domain
-    }
   } else {
     x1 <- seq(
       from = xlim[1], 
