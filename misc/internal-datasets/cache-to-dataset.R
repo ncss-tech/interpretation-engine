@@ -1,7 +1,5 @@
-
 ## re-make cached NASIS data with unexported function
-InterpretationEngine::getAndCacheData()
-
+InterpretationEngine:::getAndCacheData()
 
 load("misc/cached-NASIS-data.Rda")
 
