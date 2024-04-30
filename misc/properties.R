@@ -16,7 +16,7 @@ library(stringr)
 # getAndCacheData()
 
 # load cached data
-load('cached-NASIS-data.Rda')
+# load('cached-NASIS-data.Rda')
 
 # quick check
 properties[which(properties$propname == 'UNIFIED BOTTOM LAYER'), ]
