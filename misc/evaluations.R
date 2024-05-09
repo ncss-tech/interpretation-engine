@@ -36,9 +36,15 @@ knitr::kable(t(sort(prop.table(table(evals$evaluationtype)), decreasing = TRUE))
 
 
 # trapezoid
-e <- evals[evals$evalname == 'American Optimum Average pH (1:1 H2O) 0-150 cm', ]
+e <- evals[evals$evalname == 'NCCPI - pH 0-20cm (Corn and Soybeans)', ]
 plotEvaluation(e)
 plotEvaluation(e, xlim = c(3, 9))
+
+
+e <- evals[evals$evalname == 'NCCPI - EC 0-10cm Germination Adverse', ]
+plotEvaluation(e)
+plotEvaluation(e, xlim = c(0, 16))
+
 
 
 
