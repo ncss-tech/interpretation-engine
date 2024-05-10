@@ -38,10 +38,10 @@ tree_eval <- function(
   
   if (inclass %in% c("RasterBrick", "RasterStack")) {
     prepdata <- raster::as.data.frame(indata)
-    prepdata <- prepdata[rowSums(is.na(prepdata)) != ncol(prepdata), ]
+    prepdata <- prepdata[rowSums(is.na(prepdata)) != ncol(prepdata), , drop = FALSE]
     
   } else {
-    prepdata <- indata[rowSums(is.na(indata)) != ncol(indata), ]
+    prepdata <- indata[rowSums(is.na(indata)) != ncol(indata), , drop = FALSE]
   }
   #### last minute patch 3/19. Fix the above lines, something is very wrong there
   prepdata <- indata
@@ -49,7 +49,7 @@ tree_eval <- function(
   
   ### set up paralellization
   # auto core counting: use n cores in computer, minus 2
-  if(ncores == "auto") {
+  if (ncores == "auto") {
     if(parallel::detectCores() == 2) { # just in case there's a dual core machine out there
       ncores = 1
     } else {

@@ -70,7 +70,7 @@ extractEvalCurve <- function(evalrec, xlim = NULL, resolution = NULL, sig.scale 
     if (is.null(domain.min) | is.null(domain.max)) {
       res <- extractCrispExpression(evalrec$eval, invert = invert.eval)
       
-      message("Evaluating CrispExpression (", attr(res, "CrispExpression"),") has only experimental support")
+      # message("Evaluating CrispExpression (", attr(res, "CrispExpression"),") has only experimental support")
       
       return(res)
     }

@@ -10,10 +10,10 @@
 #' ruleByRulename("Erodibility Factor Maximum")
 ruleByRulename <- function(rulename) {
   rules <- InterpretationEngine::NASIS_rules
-  
   r <- InterpretationEngine::parseRule(rules[rules$rulename == rulename,][1,])
-  r$Do(traversal = 'pre-order', fun = InterpretationEngine::linkSubRules)
-  r$Do(traversal = 'pre-order', fun = InterpretationEngine::linkEvaluationFunctions)
+  r$Do(traversal = 'pre-order', fun = linkSubRules)
+  r$Do(traversal = 'pre-order', fun = linkEvaluationFunctions)
+  r$Do(traversal = 'pre-order', fun = linkHedgeOperatorFunctions)
   r
 }
 

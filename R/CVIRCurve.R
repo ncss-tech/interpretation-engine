@@ -232,7 +232,7 @@ CVIRPI <- function(x, xlim) {
 #' y <- CVIRLinear(x, c(4, 1))
 #' plot(y ~ x)
 CVIRLinear <- function(x, xlim=NULL) {
-  if (!is.null(xlim))
+  if (!is.null(xlim) && length(xlim) == 2 && (xlim[1] != x[1] || xlim[2] != x[length(x)]))
     warning('CVIRLinear xlim argument is ignored', call. = FALSE)
   y <- seq(min(x), max(x), (max(x) - min(x)) / (length(x) - 1))
   (y - min(y)) / max(y)
