@@ -228,12 +228,25 @@ CVIRPI <- function(x, xlim) {
 #' @export
 #' @rdname CVIRCurve
 #' @examples
-#' x <- seq(0, 10, 0.01) 
-#' y <- CVIRLinear(x, c(4, 1))
+#' x <- seq(-1, 10, 0.01) 
+#' y <- CVIRLinear(x, c(0.5, 3))
 #' plot(y ~ x)
-CVIRLinear <- function(x, xlim=NULL) {
-  if (!is.null(xlim) && length(xlim) == 2 && (xlim[1] != x[1] || xlim[2] != x[length(x)]))
-    warning('CVIRLinear xlim argument is ignored', call. = FALSE)
-  y <- seq(min(x), max(x), (max(x) - min(x)) / (length(x) - 1))
-  (y - min(y)) / max(y)
+CVIRLinear <- function(x, xlim = NULL, ylim = c(0, 1)) {
+  if (is.null(ylim) && length(ylim) != 2) {
+    ylim <- c(0, 1)
+  }
+  if (!is.null(xlim) && length(xlim) == 2) {
+    minx <- xlim[1]
+    maxx <- xlim[2]
+  } else {
+    minx <- min(x)
+    maxx <- max(x)
+  }
+  y <- rep(0, length(x))
+  idx <- which(x >= minx & x < maxx)
+  y[x < minx] <- ylim[1]
+  if (length(idx) > 1)
+    y[idx] <- seq(0, 1, 1 / (length(idx) - 1))
+  y[x >= maxx] <- ylim[2]
+  y
 }
