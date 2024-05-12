@@ -61,10 +61,8 @@ initRuleset <- function(rulename) {
   
   # recursively splice-in sub-rules
   dt$Do(traversal = 'pre-order', fun = linkSubRules)
-  
-  ## TODO: is this working?
-  # splice-in evaluation functions, if possible
   dt$Do(traversal = 'pre-order', fun = linkEvaluationFunctions)
+  dt$Do(traversal = 'pre-order', fun = linkHedgeOperatorFunctions)
   
   return(dt)
 }

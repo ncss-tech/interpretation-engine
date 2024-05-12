@@ -4,10 +4,12 @@
 #' @importFrom stats na.omit
 .NULL_HEDGE <- function(x, null.value = NULL, na.rm = FALSE) {
   if (na.rm) x <- na.omit(x)
-  x[is.null(x) | ((is.na(x) | !is.finite(x)) & !is.nan(x))] <- null.value
+  if (!is.list(x)) {
+    x[is.null(x) | (is.na(x) & !is.nan(x))] <- null.value
+  }
   x
 }
-
+ 
 .NULL_NOT_RATED <- function(x, na.rm = FALSE) {
   # NULL NOT RATED hedge: if NULL data in `x` then `NaN`, else `x`
   .NULL_HEDGE(x, null.value = NaN, na.rm = na.rm)

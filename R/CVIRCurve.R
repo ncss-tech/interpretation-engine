@@ -231,10 +231,8 @@ CVIRPI <- function(x, xlim) {
 #' x <- seq(-1, 10, 0.01) 
 #' y <- CVIRLinear(x, c(0.5, 3))
 #' plot(y ~ x)
-CVIRLinear <- function(x, xlim = NULL, ylim = c(0, 1)) {
-  if (is.null(ylim) && length(ylim) != 2) {
-    ylim <- c(0, 1)
-  }
+CVIRLinear <- function(x, xlim = NULL) {
+  ylim <- c(0, 1)
   if (!is.null(xlim) && length(xlim) == 2) {
     minx <- xlim[1]
     maxx <- xlim[2]

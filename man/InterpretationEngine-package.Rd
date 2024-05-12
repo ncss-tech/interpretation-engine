@@ -21,11 +21,7 @@ Useful links:
 Authors:
 \itemize{
   \item Joseph Brehm \email{jrbrehm@nmsu.edu}
-}
-
-Other contributors:
-\itemize{
-  \item Andrew Brown \email{andrew.g.brown@usda.gov} [contributor]
+  \item Andrew Brown \email{andrew.g.brown@usda.gov}
 }
 
 }

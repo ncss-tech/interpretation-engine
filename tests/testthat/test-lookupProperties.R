@@ -1,4 +1,4 @@
-test_that("multiplication works", {
+test_that("lookupProperties works", {
   
   skip_if_offline()
   skip_on_cran()

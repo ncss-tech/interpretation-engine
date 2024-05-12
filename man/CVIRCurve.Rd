@@ -80,7 +80,7 @@ x <- seq(0, 10, 0.01)
 y <- CVIRPI(x, c(4, 1))
 plot(y ~ x)
 
-x <- seq(0, 10, 0.01) 
-y <- CVIRLinear(x, c(4, 1))
+x <- seq(-1, 10, 0.01) 
+y <- CVIRLinear(x, c(0.5, 3))
 plot(y ~ x)
 }

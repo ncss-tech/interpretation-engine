@@ -1,6 +1,6 @@
 library(InterpretationEngine)
 
-r <- ruleByRulename("Soil Mass Movement Risk")
+r <- initRuleset("Soil Mass Movement Risk")
 
 my_data <- expand.grid(
   `SLOPE` = seq(0, 100, 5),
@@ -56,7 +56,7 @@ rgl::plot3d(
   col = hcl.colors(12)[my_data$WET.SOIL.MONTHS...COUNT]
 )
 
-r <- ruleByRulename("Soil Mass Movement Risk")
+r <- initRuleset("Soil Mass Movement Risk")
 
 # p <- getPropertySet(r)
 # p2 <- unique(p[,c("propiid","propname")])
@@ -64,7 +64,6 @@ r <- ruleByRulename("Soil Mass Movement Risk")
 comp <- openxlsx::read.xlsx("D:/DebrisFlow/CA_soil_mass_movement_interp_3_2023/CA_all_soiil_mass_movement_interp_3_2023.xlsx")
 mu <- sf::st_read('D:/DebrisFlow/mosquito.gpkg')
 comp2 <- subset(comp, mukey %in% mu$mukey)
-comp2 <- merge(comp2, soilDB::get_SDA_coecoclass(mukeys = comp$mukey))
 
 # prop <- do.call('rbind', lapply(comp2$coiid, lookupProperties, unique(p$propiid)))
 # prop2 <- merge(p2, prop, by = "propiid")
@@ -289,14 +288,14 @@ legend(
 table(my_data2$TWO.DIMENSIONAL.SURFACE.MORPHOMETRY, useNA = "ifany")
 
 # my_data2 <- head(my_data2[!is.na(my_data2$coiid), ])
-
 my_data <- my_data2[!is.na(my_data2$SLOPE),]
 
 # profvis::profvis(
   tt <- system.time(r$Do(traversal = "post-order", evalNodes, my_data))
 # )
-tt
-nrow(my_data) / tt[3]
+
+# tt
+# nrow(my_data) / tt[3]
 
 # data.tree::ToDataFrameTree(r, "name", "Type", "Value", "rating") |> View()
 # my_data2[c(1:4, grep("_sr$", colnames(my_data)))] |> View()

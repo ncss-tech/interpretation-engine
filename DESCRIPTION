@@ -19,8 +19,24 @@ Description: InterpretationEngine contains tools to develop, test, and apply int
 License: GPL (>= 3)
 Encoding: UTF-8
 Depends: R (>= 3.5.0)
-Imports: XML, caret, data.tree, digest, doParallel, dplyr, foreach, raster, soilDB, forcats, tidyr
+Imports: 
+  methods,
+  data.tree, 
+  data.table,
+  parallel,
+  digest, 
+  soilDB, 
+  terra,
+  XML, 
+  caret,
+  doParallel,
+  dplyr, 
+  foreach, 
+  raster, 
+  forcats,
+  tidyr
 LazyData: true
+LazyDataCompression: xz
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Suggests: testthat (>= 3.0.0)
