@@ -209,12 +209,12 @@ vf_calc <- function(indata,
   
   ## 1 - chemical subrule
   
-  outdata$fuzzsar <- evalbyeid(42999, indata$sar, sig.scale = 5) %>% replace_na(0)
-  outdata$fuzzgypsumcontent <- evalbyeid(42991, indata$gypsumcontent) ^ (0.5) %>% replace_na(0)
+  outdata$fuzzsar <- evalByEID(42999, indata$sar, sig.scale = 5) %>% replace_na(0)
+  outdata$fuzzgypsumcontent <- evalByEID(42991, indata$gypsumcontent) ^ (0.5) %>% replace_na(0)
   
   
-  outdata$fuzzec <- evalbyeid(43000, indata$ec) %>% replace_na(0)
-  outdata$fuzzph <- evalbyeid(42985, indata$ph, sig.scale = 0.125) %>% replace_na(0)
+  outdata$fuzzec <- evalByEID(43000, indata$ec) %>% replace_na(0)
+  outdata$fuzzph <- evalByEID(42985, indata$ph, sig.scale = 0.125) %>% replace_na(0)
   
   outdata$fuzzchem <- 
     do.call(pmax, c(outdata[,c('fuzzsar', 'fuzzec', 'fuzzgypsumcontent', 'fuzzph')], na.rm = T))
@@ -226,10 +226,10 @@ vf_calc <- function(indata,
     if(!doxeric) {indata$xeric <- 0}
   }
   
-  outdata$fuzzprecipX <- evalbyeid(42997, indata$map)
-  outdata$fuzzprecipNX <- evalbyeid(42998, indata$map)
+  outdata$fuzzprecipX <- evalByEID(42997, indata$map)
+  outdata$fuzzprecipNX <- evalByEID(42998, indata$map)
   
-  outdata$fuzzalbedo <- evalbyeid(43047, 1 - indata$albedo)
+  outdata$fuzzalbedo <- evalByEID(43047, 1 - indata$albedo)
   
   indata$aspectfactor = if_else( ## this is translated from cvir "VALLEY FEVER ASPECT FACTOR", property 35987
     is.na(indata$aspect), 0,
@@ -242,8 +242,8 @@ vf_calc <- function(indata,
     )
   )
   
-  outdata$fuzzslopeheatload <- evalbyeid(43048, indata$slope)
-  outdata$fuzzaspect <- evalbyeid(43049, indata$aspectfactor)
+  outdata$fuzzslopeheatload <- evalByEID(43048, indata$slope)
+  outdata$fuzzaspect <- evalByEID(43049, indata$aspectfactor)
   outdata$fuzzheatingfactor <- 
     outdata$fuzzalbedo *
     outdata$fuzzslopeheatload *
@@ -253,11 +253,11 @@ vf_calc <- function(indata,
   outdata$airtempchopperX <- indata$airtemp / 16
   outdata$airtempchopperNX <- indata$airtemp / 18.5
   
-  outdata$fuzzsurftempX <- evalbyeid(43050, outdata$airtempchopperX)
-  outdata$fuzzsurftempNX <- evalbyeid(43051, outdata$airtempchopperNX) 
+  outdata$fuzzsurftempX <- evalByEID(43050, outdata$airtempchopperX)
+  outdata$fuzzsurftempNX <- evalByEID(43051, outdata$airtempchopperNX) 
   
-  outdata$fuzzairtempX <- evalbyeid(42995, indata$airtemp)
-  outdata$fuzzairtempNX <- evalbyeid(42996, indata$airtemp)
+  outdata$fuzzairtempX <- evalByEID(42995, indata$airtemp)
+  outdata$fuzzairtempNX <- evalByEID(42996, indata$airtemp)
   
   ### combine all the x/nx rows together
   outdata$fuzzprecip <-
@@ -285,12 +285,12 @@ vf_calc <- function(indata,
     (outdata$fuzzheatingfactor * outdata$fuzzsurftemp + outdata$fuzzairtemp) * outdata$fuzzprecip
   
   ## 3 others 
-  outdata$fuzzwrd <- evalbyeid(42987, indata$wrd, sig.scale = 2)
-  outdata$fuzzwatergatheringsurface <- evalbyeid(42988, sqrt(indata$watergatheringsurface))
-  outdata$fuzzom <- evalbyeid(42990, indata$om)
+  outdata$fuzzwrd <- evalByEID(42987, indata$wrd, sig.scale = 2)
+  outdata$fuzzwatergatheringsurface <- evalByEID(42988, sqrt(indata$watergatheringsurface))
+  outdata$fuzzom <- evalByEID(42990, indata$om)
   
-  outdata$fuzzsaturation <- evalbyeid(63800, indata$saturationmonths)
-  outdata$fuzzflood <- evalbyeid(63801, indata$floodmonths) #### this is not used?
+  outdata$fuzzsaturation <- evalByEID(63800, indata$saturationmonths)
+  outdata$fuzzflood <- evalByEID(63801, indata$floodmonths) #### this is not used?
   outdata$fuzzsurfsat <- 
     do.call(pmin, c(outdata[,c('fuzzsaturation', 'fuzzflood')], na.rm = T))
   
@@ -365,7 +365,7 @@ dwb_calc <- function(indata){
   # 1 - depth to permafrost
   outdata$fuzzpermdepth <-
     pmax(
-      evalbyeid(10356, indata$permdepth) %>% replace_na(0), ### case 1: fuzzy logic eval
+      evalByEID(10356, indata$permdepth) %>% replace_na(0), ### case 1: fuzzy logic eval
       indata$pftex %>% as.integer() %>% replace_na(0) # T when there is a pf code in either texinlieu or texmod      
     )
   
@@ -374,7 +374,7 @@ dwb_calc <- function(indata){
     indata$ponding %>% as.integer() %>% replace_na(0)
   
   # 3 - slope
-  outdata$fuzzslope <- evalbyeid(10125, indata$slope_r) #%>% replace_na(0) # null goes to NR
+  outdata$fuzzslope <- evalByEID(10125, indata$slope_r) #%>% replace_na(0) # null goes to NR
   
   # 4 - subsidence(cm)
   # this is secretly a crisp eval
@@ -385,30 +385,30 @@ dwb_calc <- function(indata){
     indata$flooding %>% as.integer() %>% replace_na(0)
   
   # 6 - depth to water table
-  outdata$fuzzwt <- evalbyeid(299, indata$wt) %>% replace_na(0)
+  outdata$fuzzwt <- evalByEID(299, indata$wt) %>% replace_na(0)
   
   # 7 - shrink-swell
-  outdata$fuzzshrinkswell <- evalbyeid(18502, indata$lep) %>% replace_na(0)
+  outdata$fuzzshrinkswell <- evalByEID(18502, indata$lep) %>% replace_na(0)
   
   # 8 - om content class of the last layer above bedrock / deepest layer
   outdata$fuzzomlim <- 
     indata$organicsoil %>% as.integer() %>% replace_na(0)
   
   # 9 - depth to bedrock (hard)
-  outdata$fuzzdepbrockhard <- evalbyeid(18503, indata$depbrockhard) %>% replace_na(0)
+  outdata$fuzzdepbrockhard <- evalByEID(18503, indata$depbrockhard) %>% replace_na(0)
   
   # 10 - depth to bedrock (soft)
-  outdata$fuzzdepbrocksoft <- evalbyeid(18504, indata$depbrocksoft) %>% replace_na(0)
+  outdata$fuzzdepbrocksoft <- evalByEID(18504, indata$depbrocksoft) %>% replace_na(0)
   
   # 11 - large stone content
-  outdata$fuzzlgstone <- evalbyeid(267, indata$fragvol_wmn) # %>% replace_na(0) #### null goes to not rated
+  outdata$fuzzlgstone <- evalByEID(267, indata$fragvol_wmn) # %>% replace_na(0) #### null goes to not rated
   
   # 12 - depth to cemented pan (thick)
-  outdata$fuzzdepcementthick <- evalbyeid(18505, indata$depcementthick) %>% replace_na(0) ### the fuzzy space here is not whats in the notes
+  outdata$fuzzdepcementthick <- evalByEID(18505, indata$depcementthick) %>% replace_na(0) ### the fuzzy space here is not whats in the notes
   #outdata$fuzzdepcementthick[indata$noncemented] <- 0
   
   # 13 - depth to cemented pan (thin)
-  outdata$fuzzdepcementthin <- evalbyeid(18501, indata$depcementthin) %>% replace_na(0)
+  outdata$fuzzdepcementthin <- evalByEID(18501, indata$depcementthin) %>% replace_na(0)
   #outdata$fuzzdepcementthin[indata$noncemented] <- 0
   
   # 14 - unstable fill
@@ -416,7 +416,7 @@ dwb_calc <- function(indata){
     indata$unstablefill %>% as.integer() %>% replace_na(0)
   
   # 15 - subsidence due to gypsum
-  outdata$fuzzgypsum <- evalbyeid(16254, indata$gypsum) # %>% replace_na(0) ## null to not rated
+  outdata$fuzzgypsum <- evalByEID(16254, indata$gypsum) # %>% replace_na(0) ## null to not rated
   
   # 16 impaction
   outdata$fuzzimpaction <- 
