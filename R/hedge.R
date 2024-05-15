@@ -39,6 +39,10 @@
   matrix(as.numeric(x), ncol = ncol(x)) ^ a
 }
 
+.NOT <- function(x, a, na.rm = FALSE) {
+  1 - matrix(as.numeric(x), ncol = ncol(x))
+}
+
 .PROD <- function(x, na.rm = FALSE) {
   if (!is.matrix(x) && !is.list(x)) {
     x <- list(x)
@@ -59,6 +63,16 @@
   apply(matrix(as.numeric(x), ncol = ncol(x)), 1, max, na.rm = na.rm)
 }
 
+.AND_MIN <- function(x, na.rm = FALSE) {
+  if (!is.matrix(x) && !is.list(x)) {
+    x <- list(x)
+  }
+  if (!is.matrix(x)) {
+    x <- do.call('cbind', x)
+  }
+  apply(matrix(as.numeric(x), ncol = ncol(x)), 1, min, na.rm = na.rm)
+}
+
 .SUM <- function(x, na.rm = FALSE) {
   if (!is.matrix(x) && !is.list(x)) {
     x <- list(x)
@@ -77,8 +91,11 @@ functionHedgeOp <- function(hedge_type) {
          "NOT_NULL_AND" = .NOT_NULL_AND,
          "NULL_OR" = .NULL_OR,
          "MULTIPLY" = .MULT,
+         "WEIGHT" = .MULT,
          "PRODUCT" = .PROD,
+         "NOT" = .NOT,
          "OR" = .OR_MAX,
+         "AND" = .AND_MIN,
          "SUM" = .SUM,
          "POWER" = .POWER)
 }
