@@ -37,10 +37,16 @@ setGeneric("interpret", function(x, propdata, ...) {
 #' @param cache logical. Save input property data in data.tree object? Default: `FALSE`
 #' @export
 #' @rdname interpret
-setMethod("interpret", signature = c("Node", "data.frame"), 
+setMethod("interpret", signature = c("Node", "data.frame"),
           function(x, propdata, cache = FALSE, ...) {
-  .interpret(x, propdata, cache = cache, ...)
-})
+            .interpret(x, propdata, cache = cache, ...)
+          })
+
+setMethod("interpret", signature = c("character", "data.frame"),
+          function(x, propdata, cache = FALSE, ...) {
+            r <- initRuleset(x)
+            .interpret(r, propdata, cache = cache, ...)
+          })
 
 #' @param cores integer. Default `1` core.
 #' @param core_thresh integer. Default `25000` cells.
@@ -58,8 +64,20 @@ setMethod("interpret", signature = c("Node", "SpatRaster"),
                    nrows = nrow(propdata) / (terra::ncell(propdata) / core_thresh),
                    overwrite = TRUE,
                    ...) {
-            
             .interpretRast(x, propdata, cores = cores, core_thresh = 25000, ...)
+          })
+
+setMethod("interpret", signature = c("character", "SpatRaster"), 
+          function(x,
+                   propdata,
+                   cores = 1,
+                   core_thresh = 25000,
+                   file = paste0(tempfile(), ".tif"),
+                   nrows = nrow(propdata) / (terra::ncell(propdata) / core_thresh),
+                   overwrite = TRUE,
+                   ...) {
+            r <- initRuleset(x)
+            .interpretRast(r, propdata, cores = cores, core_thresh = 25000, ...)
           })
 
 # workhorse data.frame method
@@ -77,6 +95,7 @@ setMethod("interpret", signature = c("Node", "SpatRaster"),
     
   } else if (!is.null(x$propname)) {
     # extract data from `evaldata`
+    
     x_data <- propdata[, make.names(x$propname)]
     
     # TODO: generalize methods for naming `evaldata`, use of propiid
