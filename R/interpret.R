@@ -64,7 +64,7 @@ setMethod("interpret", signature = c("Node", "SpatRaster"),
                    nrows = nrow(propdata) / (terra::ncell(propdata) / core_thresh),
                    overwrite = TRUE,
                    ...) {
-            .interpretRast(x, propdata, cores = cores, core_thresh = 25000, ...)
+            .interpretRast(x, propdata, cores = cores, core_thresh = core_thresh, ...)
           })
 
 setMethod("interpret", signature = c("character", "SpatRaster"), 
@@ -77,7 +77,7 @@ setMethod("interpret", signature = c("character", "SpatRaster"),
                    overwrite = TRUE,
                    ...) {
             r <- initRuleset(x)
-            .interpretRast(r, propdata, cores = cores, core_thresh = 25000, ...)
+            .interpretRast(r, propdata, cores = cores, core_thresh = core_thresh, ...)
           })
 
 # workhorse data.frame method
