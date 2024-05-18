@@ -4,7 +4,7 @@
 #' 
 #' The user must supply a _data.frame_ object or SpatRaster object with property data as input. 
 #' The column names should be named using `make.names(propname)` where `propname` is the property name from
-#' `[NASIS_properties]` data object in this package.
+#' [NASIS_properties] data object in this package.
 #'  
 #' @param x A _data.tree_ Object containing Rule tree (e.g. from [initRuleset()])
 #' @param propdata A data.frame or SpatRaster object
@@ -61,7 +61,7 @@ setMethod("interpret", signature = c("Node", "SpatRaster"),
           function(x,
                    propdata,
                    cores = 1,
-                   core_thresh = 25000,
+                   core_thresh = 250000L,
                    file = paste0(tempfile(), ".tif"),
                    nrows = nrow(propdata) / (terra::ncell(propdata) / core_thresh),
                    overwrite = TRUE,
@@ -75,7 +75,7 @@ setMethod("interpret", signature = c("character", "SpatRaster"),
           function(x,
                    propdata,
                    cores = 1,
-                   core_thresh = 25000,
+                   core_thresh = 250000L,
                    file = paste0(tempfile(), ".tif"),
                    nrows = nrow(propdata) / (terra::ncell(propdata) / core_thresh),
                    overwrite = TRUE,

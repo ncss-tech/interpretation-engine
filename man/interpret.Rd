@@ -18,7 +18,7 @@ interpret(x, propdata, ...)
   x,
   propdata,
   cores = 1,
-  core_thresh = 25000,
+  core_thresh = 250000L,
   file = paste0(tempfile(), ".tif"),
   nrows = nrow(propdata)/(terra::ncell(propdata)/core_thresh),
   overwrite = TRUE,
@@ -29,7 +29,7 @@ interpret(x, propdata, ...)
   x,
   propdata,
   cores = 1,
-  core_thresh = 25000,
+  core_thresh = 250000L,
   file = paste0(tempfile(), ".tif"),
   nrows = nrow(propdata)/(terra::ncell(propdata)/core_thresh),
   overwrite = TRUE,
@@ -64,7 +64,7 @@ Allows for evaluation of a primary rule including subrules, operators, hedges, a
 \details{
 The user must supply a \emph{data.frame} object or SpatRaster object with property data as input.
 The column names should be named using \code{make.names(propname)} where \code{propname} is the property name from
-\verb{[NASIS_properties]} data object in this package.
+\link{NASIS_properties} data object in this package.
 
 \code{cache} argument stores input data in x along with evaluation ratings
 }
