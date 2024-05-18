@@ -3,14 +3,29 @@
 \name{interpret}
 \alias{interpret}
 \alias{interpret,Node,data.frame-method}
+\alias{interpret,character,data.frame-method}
 \alias{interpret,Node,SpatRaster-method}
+\alias{interpret,character,SpatRaster-method}
 \title{Run a Rule on Custom Property Data}
 \usage{
 interpret(x, propdata, ...)
 
 \S4method{interpret}{Node,data.frame}(x, propdata, cache = FALSE, ...)
 
+\S4method{interpret}{character,data.frame}(x, propdata, cache = FALSE, ...)
+
 \S4method{interpret}{Node,SpatRaster}(
+  x,
+  propdata,
+  cores = 1,
+  core_thresh = 25000,
+  file = paste0(tempfile(), ".tif"),
+  nrows = nrow(propdata)/(terra::ncell(propdata)/core_thresh),
+  overwrite = TRUE,
+  ...
+)
+
+\S4method{interpret}{character,SpatRaster}(
   x,
   propdata,
   cores = 1,

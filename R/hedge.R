@@ -44,43 +44,72 @@
 }
 
 .PROD <- function(x, na.rm = FALSE) {
-  if (!is.matrix(x) && !is.list(x)) {
-    x <- list(x)
-  }
   if (!is.matrix(x)) {
+    if (!is.list(x)) {
+      x <- list(x)
+    }
     x <- do.call('cbind', x)
   }
-  apply(matrix(as.numeric(x), ncol = ncol(x)), 1, prod, na.rm = na.rm)
+  nc <- ncol(x)
+  if (nc == 1) { 
+    return(as.numeric(x))
+  }
+  m <- matrix(as.numeric(x), ncol = nc)
+  res <- m[, 1]
+  for (i in 2:ncol(m)) {
+    res <- res * m[, i]
+  }
+  res
+  # matrixStats::rowProds(matrix(as.numeric(x), ncol = ncol(x)), na.rm = na.rm)
+  # apply(matrix(as.numeric(x), ncol = ncol(x)), 1, prod, na.rm = na.rm)
 }
 
+#' @importFrom matrixStats rowMaxs
 .OR_MAX <- function(x, na.rm = FALSE) {
-  if (!is.matrix(x) && !is.list(x)) {
-    x <- list(x)
-  }
   if (!is.matrix(x)) {
+    if (!is.list(x)) {
+      x <- list(x)
+    }
     x <- do.call('cbind', x)
   }
-  apply(matrix(as.numeric(x), ncol = ncol(x)), 1, max, na.rm = na.rm)
+  nc <- ncol(x)
+  if (nc == 1) { 
+    return(as.numeric(x))
+  }
+  matrixStats::rowMaxs(matrix(as.numeric(x), ncol = ncol(x)), na.rm = na.rm)
+  # apply(matrix(as.numeric(x), ncol = ncol(x)), 1, max, na.rm = na.rm)
 }
 
+#' @importFrom matrixStats rowMins
 .AND_MIN <- function(x, na.rm = FALSE) {
-  if (!is.matrix(x) && !is.list(x)) {
-    x <- list(x)
-  }
   if (!is.matrix(x)) {
+    if (!is.list(x)) {
+      x <- list(x)
+    }
     x <- do.call('cbind', x)
   }
-  apply(matrix(as.numeric(x), ncol = ncol(x)), 1, min, na.rm = na.rm)
+  nc <- ncol(x)
+  if (nc == 1) { 
+    return(as.numeric(x))
+  }
+  matrixStats::rowMins(matrix(as.numeric(x), ncol = ncol(x)), na.rm = na.rm)
+  # apply(matrix(as.numeric(x), ncol = ncol(x)), 1, min, na.rm = na.rm)
 }
 
+#' @importFrom matrixStats rowSums2
 .SUM <- function(x, na.rm = FALSE) {
-  if (!is.matrix(x) && !is.list(x)) {
-    x <- list(x)
-  }
   if (!is.matrix(x)) {
+    if (!is.list(x)) {
+      x <- list(x)
+    }
     x <- do.call('cbind', x)
   }
-  apply(matrix(as.numeric(x), ncol = ncol(x)), 1, sum, na.rm = na.rm)
+  nc <- ncol(x)
+  if (nc == 1) { 
+    return(as.numeric(x))
+  }
+  matrixStats::rowSums2(matrix(as.numeric(x), ncol = ncol(x)), na.rm = na.rm)
+  # apply(matrix(as.numeric(x), ncol = ncol(x)), 1, sum, na.rm = na.rm)
 }
 
 # return a function to apply hedge_type to the values in x

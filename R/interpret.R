@@ -42,6 +42,8 @@ setMethod("interpret", signature = c("Node", "data.frame"),
             .interpret(x, propdata, cache = cache, ...)
           })
 
+#' @export
+#' @rdname interpret
 setMethod("interpret", signature = c("character", "data.frame"),
           function(x, propdata, cache = FALSE, ...) {
             r <- initRuleset(x)
@@ -67,6 +69,8 @@ setMethod("interpret", signature = c("Node", "SpatRaster"),
             .interpretRast(x, propdata, cores = cores, core_thresh = core_thresh, ...)
           })
 
+#' @export
+#' @rdname interpret
 setMethod("interpret", signature = c("character", "SpatRaster"), 
           function(x,
                    propdata,
@@ -80,10 +84,62 @@ setMethod("interpret", signature = c("character", "SpatRaster"),
             .interpretRast(r, propdata, cores = cores, core_thresh = core_thresh, ...)
           })
 
-# workhorse data.frame method
-.interpret <- function(x, propdata, cache = FALSE, ...) {
-  x$Do(traversal = "post-order", .interpretNode, propdata, cache = cache)
-  data.frame(rating = x$rating)
+### .interpret: workhorse data.frame method
+#  mode = "table" (default) simply returns a data.frame of rating values
+#  mode = "node" performs calculations in the data.tree object, 
+#                optionally storing inputs when cache=TRUE, and 
+#                returns a data.frame of rating values
+.interpret <- function(x, propdata, mode = "table", cache = FALSE, ...) {
+  # TODO: option for argument for sub-rating values
+  if (tolower(mode) == "node") {
+    # this modifies the input Node x in place (slower, useful for inspection)
+    x$Do(traversal = "post-order", .interpretNode, propdata, cache = cache)
+    return(data.frame(rating = x$rating))
+  } else if (tolower(mode) == "table")
+    # this returns a data.frame after extracting info from input Node x
+   .interpretDataFrame(x, propdata, ...)
+}
+
+.interpretDataFrame <- function(x, propdata, ...) {
+   test <- list()
+   names <- character()
+   
+   .extractNode <- function(x) {
+     names <<- c(names, x$name)
+     children <- sapply(x$children, function(y) y$name)
+     if (length(children) == 0) {
+       children <- x$propname
+     }
+     ef <- x$evalFunction
+     if (is.null(ef))
+       ef <- function(x) x
+     if (!is.null(children))
+       attr(ef, 'children') <- children
+     test <<- c(test, ef)
+   }
+   
+   x$Do(traversal = "post-order", .extractNode)
+   
+   names(test) <- make.names(names)
+   nt <- names(test)
+   
+   for (i in seq_along(test)) {
+     ti <- test[[i]]
+     nti <- nt[i]
+     if (is.function(ti)) {
+       child <- make.names(attr(ti, "children"))
+       if (length(child) == 1) {
+         d <- propdata[[child]]
+         if (!is.null(d))
+           propdata[[nti]] <- ti(matrix(d, ncol = 1))
+         else print(nti)
+       } else if (length(child) > 1) {
+         d <- propdata[child]
+         propdata[[nti]] <- ti(as.matrix(d))
+       }
+     }
+   }
+   data.frame(rating = propdata[[nt[i]]])
 }
 
 .interpretNode <- function(x, propdata, cache = FALSE) {
@@ -95,8 +151,10 @@ setMethod("interpret", signature = c("character", "SpatRaster"),
     
   } else if (!is.null(x$propname)) {
     # extract data from `evaldata`
-    
-    x_data <- propdata[, make.names(x$propname)]
+    nm <- make.names(x$propname)
+    if (!nm %in% colnames(propdata))
+      stop(sprintf("column '%s' not found in `propdata`", nm), call. = FALSE)
+    x_data <- propdata[, nm]
     
     # TODO: generalize methods for naming `evaldata`, use of propiid
     
@@ -129,7 +187,7 @@ setMethod("interpret", signature = c("character", "SpatRaster"),
 .interpretRast <- function(x,
                            propdata,
                            cores = 1,
-                           core_thresh = 25000L,
+                           core_thresh = 250000L,
                            file = paste0(tempfile(), ".tif"),
                            nrows = nrow(propdata) / (terra::ncell(propdata) / core_thresh),
                            overwrite = TRUE) {

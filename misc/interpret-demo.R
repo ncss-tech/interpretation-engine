@@ -3,8 +3,8 @@ library(InterpretationEngine)
 r <- initRuleset("Soil Mass Movement Risk")
 
 my_data <- expand.grid(
-  `SLOPE` = seq(0, 100, 1),
-  `KSAT DIFFERENTIAL DEPTH` = seq(0, 200, 2),
+  `SLOPE` = seq(0, 100, 0.1),
+  `KSAT DIFFERENTIAL DEPTH` = seq(0, 200, 0.2),
   `DEPTH TO FIRST RESTRICTIVE LAYER, NONE IS NULL` = 85,
   `DEPTH OF ISOTROPIC SOIL` = 25,
   `TWO-DIMENSIONAL SURFACE MORPHOMETRY` = "backslope", 
@@ -34,7 +34,10 @@ for (i in colnames(my_data)) {
   x[[i]] <- my_data[[i]]
 }
 
-res <- interpret(r, x)
+t1 <- system.time(res <- interpret(r, x))
+
+# cells per second
+ncell(res) / t1[3]
 
 par(mar = c(5, 5, 5, 5))
 plot(res, 

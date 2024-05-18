@@ -20,21 +20,22 @@ License: GPL (>= 3)
 Encoding: UTF-8
 Depends: R (>= 3.5.0)
 Imports: 
-  methods,
-  data.tree, 
-  data.table,
-  parallel,
-  digest, 
-  soilDB, 
-  terra,
-  XML, 
-  caret,
-  doParallel,
-  dplyr, 
-  foreach, 
-  raster, 
-  forcats,
-  tidyr
+    methods,
+    data.tree,
+    data.table,
+    parallel,
+    digest,
+    soilDB,
+    terra,
+    XML,
+    caret,
+    doParallel,
+    dplyr,
+    foreach,
+    raster,
+    forcats,
+    tidyr,
+    matrixStats
 LazyData: true
 LazyDataCompression: xz
 Roxygen: list(markdown = TRUE)
