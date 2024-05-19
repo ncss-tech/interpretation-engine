@@ -10,15 +10,16 @@
 \usage{
 interpret(x, propdata, ...)
 
-\S4method{interpret}{Node,data.frame}(x, propdata, cache = FALSE, ...)
+\S4method{interpret}{Node,data.frame}(x, propdata, mode = "node", cache = FALSE, ...)
 
-\S4method{interpret}{character,data.frame}(x, propdata, cache = FALSE, ...)
+\S4method{interpret}{character,data.frame}(x, propdata, mode = "node", cache = FALSE, ...)
 
 \S4method{interpret}{Node,SpatRaster}(
   x,
   propdata,
+  mode = "node",
   cores = 1,
-  core_thresh = 250000L,
+  core_thresh = 25000L,
   file = paste0(tempfile(), ".tif"),
   nrows = nrow(propdata)/(terra::ncell(propdata)/core_thresh),
   overwrite = TRUE,
@@ -28,8 +29,9 @@ interpret(x, propdata, ...)
 \S4method{interpret}{character,SpatRaster}(
   x,
   propdata,
+  mode = "node",
   cores = 1,
-  core_thresh = 250000L,
+  core_thresh = 25000L,
   file = paste0(tempfile(), ".tif"),
   nrows = nrow(propdata)/(terra::ncell(propdata)/core_thresh),
   overwrite = TRUE,
@@ -37,17 +39,19 @@ interpret(x, propdata, ...)
 )
 }
 \arguments{
-\item{x}{A \emph{data.tree} Object containing Rule tree (e.g. from \code{\link[=initRuleset]{initRuleset()}})}
+\item{x}{A \emph{data.tree} object containing rule tree, or a \emph{character} giving the rule name to load with  \code{\link[=initRuleset]{initRuleset()}}.}
 
-\item{propdata}{A data.frame or SpatRaster object}
+\item{propdata}{\emph{data.frame} or \emph{SpatRaster} object with column names corresponding to input properties. The column names should be named using \code{make.names(propname)} where \code{propname} is the property name from \link{NASIS_properties} data object.}
 
 \item{...}{Additional arguments}
+
+\item{mode}{character. Either \code{"table"} or \code{"node"} (default) . Controls back-end rating calculation method using base R or data.tree, respectively.}
 
 \item{cache}{logical. Save input property data in data.tree object? Default: \code{FALSE}}
 
 \item{cores}{integer. Default \code{1} core.}
 
-\item{core_thresh}{integer. Default \code{25000} cells.}
+\item{core_thresh}{integer. Default \code{250000} cells.}
 
 \item{file}{character. Path to output raster file. Defaults to a temporary GeoTIFF.}
 
@@ -56,17 +60,13 @@ interpret(x, propdata, ...)
 \item{overwrite}{logical. Overwrite \code{file} if it exists?}
 }
 \value{
-\emph{data.frame} containing \code{"rating"}
+\emph{data.frame} containing \code{"rating"}. When \code{mode="node"} the input object \code{x} is modified in place as a side effect with \code{"rating"} values. When \code{cache=TRUE} the input \code{"data"} values are also stored within each node.
 }
 \description{
 Allows for evaluation of a primary rule including subrules, operators, hedges, and evaluations.
 }
 \details{
 The user must supply a \emph{data.frame} object or SpatRaster object with property data as input.
-The column names should be named using \code{make.names(propname)} where \code{propname} is the property name from
-\link{NASIS_properties} data object in this package.
-
-\code{cache} argument stores input data in x along with evaluation ratings
 }
 \examples{
 

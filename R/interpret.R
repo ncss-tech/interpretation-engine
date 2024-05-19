@@ -3,15 +3,16 @@
 #' Allows for evaluation of a primary rule including subrules, operators, hedges, and evaluations. 
 #' 
 #' The user must supply a _data.frame_ object or SpatRaster object with property data as input. 
-#' The column names should be named using `make.names(propname)` where `propname` is the property name from
-#' [NASIS_properties] data object in this package.
+#' 
 #'  
-#' @param x A _data.tree_ Object containing Rule tree (e.g. from [initRuleset()])
-#' @param propdata A data.frame or SpatRaster object
+#' @param x A _data.tree_ object containing rule tree, or a _character_ giving the rule name to load with  [initRuleset()].
+#' @param propdata _data.frame_ or _SpatRaster_ object with column names corresponding to input properties. The column names should be named using `make.names(propname)` where `propname` is the property name from [NASIS_properties] data object.
+#' @param mode character. Either `"table"` or `"node"` (default) . Controls back-end rating calculation method using base R or data.tree, respectively.
+#' @param cache logical. Store input `"data"` column in `x` along with evaluation `"rating"`. Default: `FALSE`. Only used when `propdata` is a _data.frame_.
 #' @param ... Additional arguments
-#' @details `cache` argument stores input data in x along with evaluation ratings
 #'
-#' @return _data.frame_ containing `"rating"`
+#' @return _data.frame_ containing `"rating"`. When `mode="node"` the input object `x` is modified in place as a side effect with `"rating"` values. When `cache=TRUE` the input `"data"` values are also stored within each node.
+#' 
 #' @export
 #' @rdname interpret
 #'
@@ -38,20 +39,20 @@ setGeneric("interpret", function(x, propdata, ...) {
 #' @export
 #' @rdname interpret
 setMethod("interpret", signature = c("Node", "data.frame"),
-          function(x, propdata, cache = FALSE, ...) {
-            .interpret(x, propdata, cache = cache, ...)
+          function(x, propdata, mode = "node", cache = FALSE, ...) {
+            .interpret(x, propdata, mode = mode, cache = cache, ...)
           })
 
 #' @export
 #' @rdname interpret
 setMethod("interpret", signature = c("character", "data.frame"),
-          function(x, propdata, cache = FALSE, ...) {
+          function(x, propdata, mode = "node", cache = FALSE, ...) {
             r <- initRuleset(x)
-            .interpret(r, propdata, cache = cache, ...)
+            .interpret(r, propdata, mode = mode, cache = cache, ...)
           })
 
 #' @param cores integer. Default `1` core.
-#' @param core_thresh integer. Default `25000` cells.
+#' @param core_thresh integer. Default `250000` cells.
 #' @param file character. Path to output raster file. Defaults to a temporary GeoTIFF.
 #' @param nrows integer. Default `nrow(propdata) / (terra::ncell(propdata) / core_thresh)`
 #' @param overwrite logical. Overwrite `file` if it exists?
@@ -60,8 +61,9 @@ setMethod("interpret", signature = c("character", "data.frame"),
 setMethod("interpret", signature = c("Node", "SpatRaster"), 
           function(x,
                    propdata,
+                   mode = "node",
                    cores = 1,
-                   core_thresh = 250000L,
+                   core_thresh = 25000L,
                    file = paste0(tempfile(), ".tif"),
                    nrows = nrow(propdata) / (terra::ncell(propdata) / core_thresh),
                    overwrite = TRUE,
@@ -74,8 +76,9 @@ setMethod("interpret", signature = c("Node", "SpatRaster"),
 setMethod("interpret", signature = c("character", "SpatRaster"), 
           function(x,
                    propdata,
+                   mode = "node",
                    cores = 1,
-                   core_thresh = 250000L,
+                   core_thresh = 25000L,
                    file = paste0(tempfile(), ".tif"),
                    nrows = nrow(propdata) / (terra::ncell(propdata) / core_thresh),
                    overwrite = TRUE,
@@ -85,23 +88,35 @@ setMethod("interpret", signature = c("character", "SpatRaster"),
           })
 
 ### .interpret: workhorse data.frame method
-#  mode = "table" (default) simply returns a data.frame of rating values
+#  mode = "table" simply returns a data.frame of rating values
 #  mode = "node" performs calculations in the data.tree object, 
 #                optionally storing inputs when cache=TRUE, and 
 #                returns a data.frame of rating values
-.interpret <- function(x, propdata, mode = "table", cache = FALSE, ...) {
+.interpret <- function(x, propdata, mode = "node", cache = FALSE, ...) {
+  
   # TODO: option for argument for sub-rating values
+  
+  if (nrow(propdata) == 0) {
+    return(data.frame(rating = numeric(0L)))
+  }
+  
   if (tolower(mode) == "node") {
-    # this modifies the input Node x in place (slower, useful for inspection)
+    # this modifies the input Node x in place
     x$Do(traversal = "post-order", .interpretNode, propdata, cache = cache)
     return(data.frame(rating = x$rating))
-  } else if (tolower(mode) == "table")
+  } else if (tolower(mode) == "table") {
     # this returns a data.frame after extracting info from input Node x
-   .interpretDataFrame(x, propdata, ...)
+    .interpretDataFrame(x, propdata, ...)
+  }
 }
 
+# experimental method that does evaluation outside of data.tree
+# eval functions and children are extracted from the tree, and iterated
+# 
+# eventually may be able to construct a more efficient function from input
+# rather than brute forcing and being somewhat slower than data.tree
 .interpretDataFrame <- function(x, propdata, ...) {
-   test <- list()
+   y <- list()
    names <- character()
    
    .extractNode <- function(x) {
@@ -115,27 +130,28 @@ setMethod("interpret", signature = c("character", "SpatRaster"),
        ef <- function(x) x
      if (!is.null(children))
        attr(ef, 'children') <- children
-     test <<- c(test, ef)
+     y <<- c(y, ef)
    }
    
    x$Do(traversal = "post-order", .extractNode)
    
-   names(test) <- make.names(names)
-   nt <- names(test)
+   names(y) <- make.names(names)
+   nt <- names(y)
    
-   for (i in seq_along(test)) {
-     ti <- test[[i]]
+   for (i in seq_along(y)) {
+     FUN <- y[[i]]
      nti <- nt[i]
-     if (is.function(ti)) {
-       child <- make.names(attr(ti, "children"))
+     if (is.function(FUN)) {
+       child <- make.names(attr(FUN, "children"))
        if (length(child) == 1) {
          d <- propdata[[child]]
          if (!is.null(d))
-           propdata[[nti]] <- ti(matrix(d, ncol = 1))
-         else print(nti)
+           propdata[[nti]] <- FUN(matrix(d, ncol = 1))
+         else stop("No data found for '", child, "' while evaluating '", 
+                   nti, "'", call. = FALSE) 
        } else if (length(child) > 1) {
          d <- propdata[child]
-         propdata[[nti]] <- ti(as.matrix(d))
+         propdata[[nti]] <- FUN(as.matrix(d))
        }
      }
    }
@@ -186,8 +202,9 @@ setMethod("interpret", signature = c("character", "SpatRaster"),
 #' @importFrom data.table rbindlist 
 .interpretRast <- function(x,
                            propdata,
+                           mode = "node",
                            cores = 1,
-                           core_thresh = 250000L,
+                           core_thresh = 25000L,
                            file = paste0(tempfile(), ".tif"),
                            nrows = nrow(propdata) / (terra::ncell(propdata) / core_thresh),
                            overwrite = TRUE) {
@@ -239,7 +256,7 @@ setMethod("interpret", signature = c("character", "SpatRaster"),
                                               each = sz)[1:length(cids)])
             r <- data.table::rbindlist(
               parallel::clusterApply(cls, X, function(y) {
-                .interpret(x, y)
+                .interpret(x, y, mode = mode, cache = FALSE, ...)
               }),
               use.names = TRUE,
               fill = TRUE
