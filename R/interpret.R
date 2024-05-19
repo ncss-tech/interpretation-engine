@@ -245,7 +245,7 @@ setMethod("interpret", signature = c("character", "SpatRaster"),
           skip.idx <- which(is.na(blockdata[[1]]))
           
           if (length(skip.idx) > 0) {
-            blockcomplete <- blockdata[-skip.idx,]
+            blockcomplete <- blockdata[-skip.idx, , drop = FALSE]
           } else blockcomplete <- blockdata
           
           if (nrow(blockcomplete) > 0) {
@@ -299,7 +299,7 @@ setMethod("interpret", signature = c("character", "SpatRaster"),
           skip.idx <- which(is.na(dataall[[1]]))
           
           if (length(skip.idx) > 0) {
-            datacomplete <- dataall[-skip.idx,]
+            datacomplete <- dataall[-skip.idx, , drop = FALSE]
           } else datacomplete <- dataall
           
           r2 <- .interpret(x, datacomplete)
