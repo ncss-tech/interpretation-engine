@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="index.html">InterpretationEngine</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,20 +53,13 @@
   </div>
 </nav><div class="container template-home">
 <div class="row">
-  <main id="main" class="col-md-9"><p><!-- badges: start --> <a href="https://github.com/ncss-tech/interpretation-engine/actions/workflows/R-CMD-check.yml" class="external-link"><img src="https://github.com/ncss-tech/interpretation-engine/actions/workflows/R-CMD-check.yml/badge.svg" alt="R-CMD-check"></a> <a href="http://ncss-tech.github.io/interpretation-engine/"><img src="https://img.shields.io/badge/docs-HTML-informational" alt="InterpretationEngine Manual"></a> <!-- badges: end --></p>
+  <main id="main" class="col-md-9">
 <div class="section level1">
 <div class="page-header"><h1 id="interpretationengine-alpha-r-package">{InterpretationEngine} (alpha) R package<a class="anchor" aria-label="anchor" href="#interpretationengine-alpha-r-package"></a>
 </h1></div>
-<p>To install the alpha version of the “interpretation engine” R package install the dependencies, then use <code>remotes</code> to get the latest version from GitHub.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install required packages </span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"XML"</span>, <span class="st">"caret"</span>, <span class="st">"data.tree"</span>, <span class="st">"digest"</span>, <span class="st">"doParallel"</span>, <span class="st">"dplyr"</span>, </span>
-<span>                   <span class="st">"foreach"</span>, <span class="st">"plyr"</span>, <span class="st">"raster"</span>, <span class="st">"soilDB"</span>, <span class="st">"forcats"</span>, <span class="st">"tidyr"</span>, <span class="st">"remotes"</span><span class="op">)</span><span class="op">)</span></span>
-<span>                   </span>
-<span><span class="co"># install package from ncss-tech interpretation-engine repository                   </span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">'ncss-tech/interpretation-engine'</span><span class="op">)</span></span></code></pre></div>
-<p>Input data for @josephbrehm’s demonstration and other demonstrations can be found in the <code>inst/extdata</code> portion of this repository. A demonstration script and input boundary files can be found in <code>/demo</code> folder.</p>
-<p>To have all that data to try, you can download the repository as a static ZIP file, or “clone” with <code>git</code> it so you can keep up with the changes that are coming!</p>
+<p>To install the alpha version of the “interpretation engine” R package use {remotes} to get the latest version from GitHub. This will install all dependencies.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># install package from ncss-tech interpretation-engine repository                   </span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">'ncss-tech/interpretation-engine'</span>)</span></code></pre></div>
 </div>
 <div class="section level1">
 <h1 id="interpretations-outside-of-nasis">Interpretations Outside of NASIS<a class="anchor" aria-label="anchor" href="#interpretations-outside-of-nasis"></a>
@@ -75,18 +68,715 @@
 <div class="section level2">
 <h2 id="how-does-it-work">How Does it Work?<a class="anchor" aria-label="anchor" href="#how-does-it-work"></a>
 </h2>
-<p>The <a href="https://cran.r-project.org/web/packages/data.tree/vignettes/data.tree.html" class="external-link">data.tree</a> package defines objects and methods that are well suited to the task of describing the hierachy of rules and evaluations. The mapping between domain values and fuzzy membership can be accomplished with <code>approxfun</code>.</p>
+<p>The <a href="https://cran.r-project.org/web/packages/data.tree/vignettes/data.tree.html" class="external-link">data.tree</a> package defines objects and methods that are well suited to the task of describing the hierarchy of rules and evaluations. NASIS evaluations utilize definitions of shape functions and cubic splines, which are further interpolated using <code><a href="https://rdrr.io/r/stats/approxfun.html" class="external-link">approxfun()</a></code> and <code><a href="https://rdrr.io/r/stats/splinefun.html" class="external-link">splinefun()</a></code>. NASIS hedges and operators perform arithmetic operations on numeric matrices to facilitate combining multiple properties and evaluations into rules.</p>
 </div>
 <div class="section level2">
 <h2 id="outline">Outline<a class="anchor" aria-label="anchor" href="#outline"></a>
 </h2>
 <ol style="list-style-type: decimal">
-<li>load all rules, evaluations, properties into R via ODBC as <code>data.frame</code> objects</li>
-<li>load single rule and (recursively) load sub-rules into a <code>data.tree</code> object</li>
-<li>load evaluation functions into each terminal node of <code>data.tree</code> object</li>
-<li>create wrapper function to send properties to evaluation functions</li>
-<li>combine fuzzy values via operators and hedges to generate a final fuzzy rating</li>
+<li>Load all rules, evaluations, properties into R via ODBC as <code>data.frame</code> objects</li>
+<li>Load single rule and (recursively) load sub-rules into a <code>data.tree</code> object</li>
+<li>Load evaluation functions into each terminal node of <code>data.tree</code> object</li>
+<li>Load hedge and operator functions into each decision node of <code>data.tree</code> object</li>
+<li>Use wrapper function (<code><a href="reference/interpret.html">interpret()</a></code>) to:
+<ul>
+<li>Send properties to evaluation functions</li>
+<li>Combine fuzzy values via operators and hedges to generate a final fuzzy rating</li>
+</ul>
+</li>
 </ol>
+</div>
+<div class="section level2">
+<h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
+</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(InterpretationEngine)</span></code></pre></div>
+<div class="section level3">
+<h3 id="evaluation-curves">Evaluation Curves<a class="anchor" aria-label="anchor" href="#evaluation-curves"></a>
+</h3>
+<p>The following images show the output of an evaluation function for slope (<code>"*Storie Factor C Slope 0 to 100%"</code>) in NASIS.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>eval <span class="ot">&lt;-</span> <span class="fu">subset</span>(NASIS_evaluations, evalname <span class="sc">==</span> <span class="st">"*Storie Factor C Slope 0 to 100%"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">plotEvaluation</span>(eval, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">100</span>))</span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-2-1.png" width="100%"></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># zoom in on  custom shape in [0, 8]% slope range</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="fu">plotEvaluation</span>(eval, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">8</span>))</span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-2-2.png" width="100%"></p>
+</div>
+<div class="section level3">
+<h3 id="rule-trees">Rule Trees<a class="anchor" aria-label="anchor" href="#rule-trees"></a>
+</h3>
+<p>The following examples generate data.frame representation of the <code>data.tree</code> objects in terms of an input property list, and the hierarchy of rules, operators, hedges, evaluations and properties that define a “primary rule” or interpretation.</p>
+<p><strong>Dust PM10 and PM2.5 Generation</strong></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># use initRuleset() to parse a rule by name</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">initRuleset</span>(<span class="st">"Dust PM10 and PM2.5 Generation"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co"># view input properties</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="fu">getPropertySet</span>(r)</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt;                                              evaluation</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt; 1                                Dryness Index 0.5 to 3</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt; 2              Dust from Gypsum Content 2 to 15 Percent</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co">#&gt; 3 Dust from Silt and Clay Content 20 to 70 Percent Sand</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co">#&gt;                                                 propname propiid</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt; 1                                          DRYNESS INDEX   15302</span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt; 2             WTD_AVG GYPSUM 0-50cm OR ABOVE RESTRICTION   15300</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt; 3 WTD_AVG SAND CONTENT 0-50cm OR ABOVE RESTRICTION, NO O   15301</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co"># view rule tree</span></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a>data.tree<span class="sc">::</span><span class="fu">ToDataFrameTree</span>(r, <span class="st">"Type"</span>, <span class="st">"Value"</span>, <span class="st">"RefId"</span>, <span class="st">"rule_refid"</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="co">#&gt;                                                                        levelName</span></span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a><span class="co">#&gt; 1  Dust PM10 and PM2.5 Generation                                               </span></span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a><span class="co">#&gt; 2   °--RuleHedge_de473ab5                                                       </span></span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a><span class="co">#&gt; 3       °--RuleOperator_0a397761                                                </span></span>
+<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a><span class="co">#&gt; 4           ¦--Dryness Index 0.5 to 3                                           </span></span>
+<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a><span class="co">#&gt; 5           °--RuleOperator_7025ab26                                            </span></span>
+<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a><span class="co">#&gt; 6               ¦--Dust Due to Gypsum                                           </span></span>
+<span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a><span class="co">#&gt; 7               ¦   °--RuleHedge_5c18cb73                                       </span></span>
+<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a><span class="co">#&gt; 8               ¦       °--Dust from Gypsum Content 2 to 15 Percent             </span></span>
+<span id="cb5-27"><a href="#cb5-27" tabindex="-1"></a><span class="co">#&gt; 9               °--Dust Due to Silt and Clay                                    </span></span>
+<span id="cb5-28"><a href="#cb5-28" tabindex="-1"></a><span class="co">#&gt; 10                  °--RuleHedge_caf7e2e0                                       </span></span>
+<span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a><span class="co">#&gt; 11                      °--Dust from Silt and Clay Content 20 to 70 Percent Sand</span></span>
+<span id="cb5-30"><a href="#cb5-30" tabindex="-1"></a><span class="co">#&gt;              Type Value RefId rule_refid</span></span>
+<span id="cb5-31"><a href="#cb5-31" tabindex="-1"></a><span class="co">#&gt; 1            &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb5-32"><a href="#cb5-32" tabindex="-1"></a><span class="co">#&gt; 2        multiply   0.5  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb5-33"><a href="#cb5-33" tabindex="-1"></a><span class="co">#&gt; 3         product  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb5-34"><a href="#cb5-34" tabindex="-1"></a><span class="co">#&gt; 4            &lt;NA&gt;  &lt;NA&gt; 18448       &lt;NA&gt;</span></span>
+<span id="cb5-35"><a href="#cb5-35" tabindex="-1"></a><span class="co">#&gt; 5             sum  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb5-36"><a href="#cb5-36" tabindex="-1"></a><span class="co">#&gt; 6            &lt;NA&gt;  &lt;NA&gt; 23659      23659</span></span>
+<span id="cb5-37"><a href="#cb5-37" tabindex="-1"></a><span class="co">#&gt; 7    not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb5-38"><a href="#cb5-38" tabindex="-1"></a><span class="co">#&gt; 8            &lt;NA&gt;  &lt;NA&gt; 18446       &lt;NA&gt;</span></span>
+<span id="cb5-39"><a href="#cb5-39" tabindex="-1"></a><span class="co">#&gt; 9            &lt;NA&gt;  &lt;NA&gt; 23661      23661</span></span>
+<span id="cb5-40"><a href="#cb5-40" tabindex="-1"></a><span class="co">#&gt; 10 null_not_rated     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb5-41"><a href="#cb5-41" tabindex="-1"></a><span class="co">#&gt; 11           &lt;NA&gt;  &lt;NA&gt; 18447       &lt;NA&gt;</span></span></code></pre></div>
+<p><strong>California Storie Index</strong></p>
+<p>Using the <code>data.tree</code> representation of the California Storie Index primary rule, we can extract the entire set of evaluations and required properties:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">initRuleset</span>(<span class="st">"AGR - California Revised Storie Index (CA)"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co"># view input properties</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="fu">getPropertySet</span>(r)</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co">#&gt;                                                      evaluation</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co">#&gt; 1           *Storie Factor A Pedon Group not rated taxonomy rev</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co">#&gt; 2               *Storie Factor A Pedon Group 1 and 2 soil depth</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co">#&gt; 6                      *Storie Factor A Pedon Group 1 suborders</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co">#&gt; 7                   *Storie Factor A Pedon Group 1 great groups</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co">#&gt; 8                      *Storie Factor A Pedon Group 1 subgroups</span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="co">#&gt; 9                 *Storie Factor A Pedon Group 7, 8, 9 landform</span></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="co">#&gt; 58  *Storie Factor A Pedon Group 2 suborders Arents and Cambids</span></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co">#&gt; 59                  *Storie Factor A Pedon Group 2 great groups</span></span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="co">#&gt; 60                  *Storie Factor A Pedon Group 3 great groups</span></span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="co">#&gt; 61                *Storie Factor A Pedon Group 4/6 great groups</span></span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="co">#&gt; 65                    *Storie featkind = abrupt textural change</span></span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="co">#&gt; 69             Component restriction = "abrupt textural change"</span></span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a><span class="co">#&gt; 73                    *Storie Factor A Pedon Group 3 soil depth</span></span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a><span class="co">#&gt; 74                    *Storie Factor A Pedon Group 5 soil depth</span></span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a><span class="co">#&gt; 75                        *Storie Factor A Pedon Group 5 durids</span></span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="co">#&gt; 76                  *Storie Factor A Pedon Group 5 great groups</span></span>
+<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a><span class="co">#&gt; 77                     *Storie Factor A Pedon Group 5 subgroups</span></span>
+<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a><span class="co">#&gt; 78  *Storie Factor A Pedon Group 4/6 depth abrupt text featkind</span></span>
+<span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a><span class="co">#&gt; 79    *Storie Factor A Pedon Group 4/6 depth abrupt tex reskind</span></span>
+<span id="cb6-25"><a href="#cb6-25" tabindex="-1"></a><span class="co">#&gt; 80              *Storie Factor A Pedon Group 7 and 8 soil depth</span></span>
+<span id="cb6-26"><a href="#cb6-26" tabindex="-1"></a><span class="co">#&gt; 81                    *Storie Factor A Pedon Group 9 soil depth</span></span>
+<span id="cb6-27"><a href="#cb6-27" tabindex="-1"></a><span class="co">#&gt; 82                             *Storie Factor B Surface Texture</span></span>
+<span id="cb6-28"><a href="#cb6-28" tabindex="-1"></a><span class="co">#&gt; 83                    *Storie Factor B rock frag volume 0-25 cm</span></span>
+<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a><span class="co">#&gt; 84                             *Storie Factor C Slope 0 to 100%</span></span>
+<span id="cb6-30"><a href="#cb6-30" tabindex="-1"></a><span class="co">#&gt; 85                 *Storie Factor X Toxicity EC maximum 0-25 cm</span></span>
+<span id="cb6-31"><a href="#cb6-31" tabindex="-1"></a><span class="co">#&gt; 86                *Storie Factor X Toxicity SAR maximum 0-25 cm</span></span>
+<span id="cb6-32"><a href="#cb6-32" tabindex="-1"></a><span class="co">#&gt; 87                 *Storie Factor X Toxicity pH minimum 0-25 cm</span></span>
+<span id="cb6-33"><a href="#cb6-33" tabindex="-1"></a><span class="co">#&gt; 88                 *Storie Factor X Toxicity pH maximum 0-25 cm</span></span>
+<span id="cb6-34"><a href="#cb6-34" tabindex="-1"></a><span class="co">#&gt; 89                 *Storie Factor X drainage class = moderately</span></span>
+<span id="cb6-35"><a href="#cb6-35" tabindex="-1"></a><span class="co">#&gt; 90                   *Storie component local phase is *drained*</span></span>
+<span id="cb6-36"><a href="#cb6-36" tabindex="-1"></a><span class="co">#&gt; 99         *Storie component local phase is *partially drained*</span></span>
+<span id="cb6-37"><a href="#cb6-37" tabindex="-1"></a><span class="co">#&gt; 108           *Storie Factor X drainage class = somewhat poorly</span></span>
+<span id="cb6-38"><a href="#cb6-38" tabindex="-1"></a><span class="co">#&gt; 109       *Storie Factor X drainage class = poor or very poorly</span></span>
+<span id="cb6-39"><a href="#cb6-39" tabindex="-1"></a><span class="co">#&gt; 110                      *Storie Factor X drainage class = well</span></span>
+<span id="cb6-40"><a href="#cb6-40" tabindex="-1"></a><span class="co">#&gt; 111           *Storie Factor X drainage class = all excessively</span></span>
+<span id="cb6-41"><a href="#cb6-41" tabindex="-1"></a><span class="co">#&gt; 112        *Storie Factor X landscape ponding in growing season</span></span>
+<span id="cb6-42"><a href="#cb6-42" tabindex="-1"></a><span class="co">#&gt; 113                                   Landscape Flooding "NONE"</span></span>
+<span id="cb6-43"><a href="#cb6-43" tabindex="-1"></a><span class="co">#&gt; 114       *Storie Factor X landscape flooding in growing season</span></span>
+<span id="cb6-44"><a href="#cb6-44" tabindex="-1"></a><span class="co">#&gt; 115                          *Storie Factor X erosion class = 1</span></span>
+<span id="cb6-45"><a href="#cb6-45" tabindex="-1"></a><span class="co">#&gt; 119                          *Storie Factor X erosion class = 2</span></span>
+<span id="cb6-46"><a href="#cb6-46" tabindex="-1"></a><span class="co">#&gt; 123                          *Storie Factor X erosion class = 3</span></span>
+<span id="cb6-47"><a href="#cb6-47" tabindex="-1"></a><span class="co">#&gt; 127                          *Storie Factor X erosion class = 4</span></span>
+<span id="cb6-48"><a href="#cb6-48" tabindex="-1"></a><span class="co">#&gt; 131                          *Storie Factor X erosion class = 0</span></span>
+<span id="cb6-49"><a href="#cb6-49" tabindex="-1"></a><span class="co">#&gt; 135    *Storie Factor X landscape wetness, grow. season, 25-100</span></span>
+<span id="cb6-50"><a href="#cb6-50" tabindex="-1"></a><span class="co">#&gt; 136                         *Storie Factor X temperature regime</span></span>
+<span id="cb6-51"><a href="#cb6-51" tabindex="-1"></a><span class="co">#&gt;                                                         propname propiid</span></span>
+<span id="cb6-52"><a href="#cb6-52" tabindex="-1"></a><span class="co">#&gt; 1                                                TAXONOMIC ORDER      85</span></span>
+<span id="cb6-53"><a href="#cb6-53" tabindex="-1"></a><span class="co">#&gt; 2       *Storie depth to first restriction for Profile Group 1-3   12184</span></span>
+<span id="cb6-54"><a href="#cb6-54" tabindex="-1"></a><span class="co">#&gt; 6                                             TAXONOMIC SUBORDER      87</span></span>
+<span id="cb6-55"><a href="#cb6-55" tabindex="-1"></a><span class="co">#&gt; 7                                          TAXONOMIC GREAT GROUP      83</span></span>
+<span id="cb6-56"><a href="#cb6-56" tabindex="-1"></a><span class="co">#&gt; 8                                             TAXONOMIC SUBGROUP      86</span></span>
+<span id="cb6-57"><a href="#cb6-57" tabindex="-1"></a><span class="co">#&gt; 9         *Storie landforms in hills and mountains of California   12170</span></span>
+<span id="cb6-58"><a href="#cb6-58" tabindex="-1"></a><span class="co">#&gt; 58                                            TAXONOMIC SUBORDER      87</span></span>
+<span id="cb6-59"><a href="#cb6-59" tabindex="-1"></a><span class="co">#&gt; 59                                         TAXONOMIC GREAT GROUP      83</span></span>
+<span id="cb6-60"><a href="#cb6-60" tabindex="-1"></a><span class="co">#&gt; 60                                         TAXONOMIC GREAT GROUP      83</span></span>
+<span id="cb6-61"><a href="#cb6-61" tabindex="-1"></a><span class="co">#&gt; 61                                         TAXONOMIC GREAT GROUP      83</span></span>
+<span id="cb6-62"><a href="#cb6-62" tabindex="-1"></a><span class="co">#&gt; 65   *Storie where at least one cdfkind = abrupt textural change   12315</span></span>
+<span id="cb6-63"><a href="#cb6-63" tabindex="-1"></a><span class="co">#&gt; 69                                        Component restrictions   11293</span></span>
+<span id="cb6-64"><a href="#cb6-64" tabindex="-1"></a><span class="co">#&gt; 73      *Storie depth to first restriction for Profile Group 1-3   12184</span></span>
+<span id="cb6-65"><a href="#cb6-65" tabindex="-1"></a><span class="co">#&gt; 74                      *Storie depth to pan for Profile Group 5   12164</span></span>
+<span id="cb6-66"><a href="#cb6-66" tabindex="-1"></a><span class="co">#&gt; 75                                            TAXONOMIC SUBORDER      87</span></span>
+<span id="cb6-67"><a href="#cb6-67" tabindex="-1"></a><span class="co">#&gt; 76                                         TAXONOMIC GREAT GROUP      83</span></span>
+<span id="cb6-68"><a href="#cb6-68" tabindex="-1"></a><span class="co">#&gt; 77                                            TAXONOMIC SUBGROUP      86</span></span>
+<span id="cb6-69"><a href="#cb6-69" tabindex="-1"></a><span class="co">#&gt; 78  *Storie depth to featknd abrupt tex change Profile Group 4/6   12376</span></span>
+<span id="cb6-70"><a href="#cb6-70" tabindex="-1"></a><span class="co">#&gt; 79    *Storie depth to reskind abrupt tex change Profile Grp 4/6   12375</span></span>
+<span id="cb6-71"><a href="#cb6-71" tabindex="-1"></a><span class="co">#&gt; 80    *Storie depth to hard bedrock/petro* for Profile Grp 7/8/9   12168</span></span>
+<span id="cb6-72"><a href="#cb6-72" tabindex="-1"></a><span class="co">#&gt; 81  *Storie depth to soft bedrock or densics for Profile Grp 7-9   12186</span></span>
+<span id="cb6-73"><a href="#cb6-73" tabindex="-1"></a><span class="co">#&gt; 82              *Storie texture score - first horizon below duff   42006</span></span>
+<span id="cb6-74"><a href="#cb6-74" tabindex="-1"></a><span class="co">#&gt; 83              ROCK FRAG VOLUME IN DEPTH 0-25 cm OR RESTRICTION   42009</span></span>
+<span id="cb6-75"><a href="#cb6-75" tabindex="-1"></a><span class="co">#&gt; 84                                                     Slope, rv   12042</span></span>
+<span id="cb6-76"><a href="#cb6-76" tabindex="-1"></a><span class="co">#&gt; 85                        EC MAXIMUM IN DEPTH 0-25 CM BELOW DUFF   42002</span></span>
+<span id="cb6-77"><a href="#cb6-77" tabindex="-1"></a><span class="co">#&gt; 86                       SAR MAXIMUM IN DEPTH 0-25 CM BELOW DUFF   42003</span></span>
+<span id="cb6-78"><a href="#cb6-78" tabindex="-1"></a><span class="co">#&gt; 87                        pH MINIMUM IN DEPTH 0-25 CM BELOW DUFF   42000</span></span>
+<span id="cb6-79"><a href="#cb6-79" tabindex="-1"></a><span class="co">#&gt; 88                        pH MAXIMUM IN DEPTH 0-25 CM BELOW DUFF   42001</span></span>
+<span id="cb6-80"><a href="#cb6-80" tabindex="-1"></a><span class="co">#&gt; 89                                            GRL-DRAINAGE CLASS   10345</span></span>
+<span id="cb6-81"><a href="#cb6-81" tabindex="-1"></a><span class="co">#&gt; 90                     **Storie component local phase is drained   12335</span></span>
+<span id="cb6-82"><a href="#cb6-82" tabindex="-1"></a><span class="co">#&gt; 99           **Storie component local phase is partially drained   12334</span></span>
+<span id="cb6-83"><a href="#cb6-83" tabindex="-1"></a><span class="co">#&gt; 108                                           GRL-DRAINAGE CLASS   10345</span></span>
+<span id="cb6-84"><a href="#cb6-84" tabindex="-1"></a><span class="co">#&gt; 109                                           GRL-DRAINAGE CLASS   10345</span></span>
+<span id="cb6-85"><a href="#cb6-85" tabindex="-1"></a><span class="co">#&gt; 110                                           GRL-DRAINAGE CLASS   10345</span></span>
+<span id="cb6-86"><a href="#cb6-86" tabindex="-1"></a><span class="co">#&gt; 111                                           GRL-DRAINAGE CLASS   10345</span></span>
+<span id="cb6-87"><a href="#cb6-87" tabindex="-1"></a><span class="co">#&gt; 112            *Storie ponding interaction max in growing season   12329</span></span>
+<span id="cb6-88"><a href="#cb6-88" tabindex="-1"></a><span class="co">#&gt; 113                       FLOODING FREQUENCY (Maximum Frequency)      28</span></span>
+<span id="cb6-89"><a href="#cb6-89" tabindex="-1"></a><span class="co">#&gt; 114           *Storie flooding interaction max in growing season   12189</span></span>
+<span id="cb6-90"><a href="#cb6-90" tabindex="-1"></a><span class="co">#&gt; 115                             Erosion Class in component table   12377</span></span>
+<span id="cb6-91"><a href="#cb6-91" tabindex="-1"></a><span class="co">#&gt; 119                             Erosion Class in component table   12377</span></span>
+<span id="cb6-92"><a href="#cb6-92" tabindex="-1"></a><span class="co">#&gt; 123                             Erosion Class in component table   12377</span></span>
+<span id="cb6-93"><a href="#cb6-93" tabindex="-1"></a><span class="co">#&gt; 127                             Erosion Class in component table   12377</span></span>
+<span id="cb6-94"><a href="#cb6-94" tabindex="-1"></a><span class="co">#&gt; 131                             Erosion Class in component table   12377</span></span>
+<span id="cb6-95"><a href="#cb6-95" tabindex="-1"></a><span class="co">#&gt; 135      *Storie near surface wetness rv depth in growing season   12584</span></span>
+<span id="cb6-96"><a href="#cb6-96" tabindex="-1"></a><span class="co">#&gt; 136                             *Storie temperature regime score   42014</span></span>
+<span id="cb6-97"><a href="#cb6-97" tabindex="-1"></a></span>
+<span id="cb6-98"><a href="#cb6-98" tabindex="-1"></a></span>
+<span id="cb6-99"><a href="#cb6-99" tabindex="-1"></a><span class="co"># view rule tree</span></span>
+<span id="cb6-100"><a href="#cb6-100" tabindex="-1"></a>data.tree<span class="sc">::</span><span class="fu">ToDataFrameTree</span>(r, <span class="st">"Type"</span>, <span class="st">"Value"</span>, <span class="st">"RefId"</span>, <span class="st">"rule_refid"</span>)</span>
+<span id="cb6-101"><a href="#cb6-101" tabindex="-1"></a><span class="co">#&gt;                                                                                               levelName</span></span>
+<span id="cb6-102"><a href="#cb6-102" tabindex="-1"></a><span class="co">#&gt; 1   AGR - California Revised Storie Index (CA)                                                         </span></span>
+<span id="cb6-103"><a href="#cb6-103" tabindex="-1"></a><span class="co">#&gt; 2    °--RuleOperator_31a1eb65                                                                          </span></span>
+<span id="cb6-104"><a href="#cb6-104" tabindex="-1"></a><span class="co">#&gt; 3        ¦--*Storie Factor A Not Rated Soil Orders rev                                                 </span></span>
+<span id="cb6-105"><a href="#cb6-105" tabindex="-1"></a><span class="co">#&gt; 4        ¦   °--RuleHedge_1193d3c1                                                                     </span></span>
+<span id="cb6-106"><a href="#cb6-106" tabindex="-1"></a><span class="co">#&gt; 5        ¦       °--*Storie Factor A Pedon Group not rated taxonomy rev                                </span></span>
+<span id="cb6-107"><a href="#cb6-107" tabindex="-1"></a><span class="co">#&gt; 6        ¦--*Storie Factor A                                                                           </span></span>
+<span id="cb6-108"><a href="#cb6-108" tabindex="-1"></a><span class="co">#&gt; 7        ¦   °--RuleOperator_01948bb8                                                                  </span></span>
+<span id="cb6-109"><a href="#cb6-109" tabindex="-1"></a><span class="co">#&gt; 8        ¦       ¦--*Storie Factor A Profile Group 1 rev                                               </span></span>
+<span id="cb6-110"><a href="#cb6-110" tabindex="-1"></a><span class="co">#&gt; 9        ¦       ¦   °--RuleOperator_a72ba798                                                          </span></span>
+<span id="cb6-111"><a href="#cb6-111" tabindex="-1"></a><span class="co">#&gt; 10       ¦       ¦       ¦--RuleOperator_b267bf8e                                                      </span></span>
+<span id="cb6-112"><a href="#cb6-112" tabindex="-1"></a><span class="co">#&gt; 11       ¦       ¦       ¦   ¦--*Storie Factor A Profile Group 1 and 2 fuzzy depth                     </span></span>
+<span id="cb6-113"><a href="#cb6-113" tabindex="-1"></a><span class="co">#&gt; 12       ¦       ¦       ¦   ¦   °--RuleHedge_7fad1a79                                                 </span></span>
+<span id="cb6-114"><a href="#cb6-114" tabindex="-1"></a><span class="co">#&gt; 13       ¦       ¦       ¦   ¦       °--*Storie Factor A Pedon Group 1 and 2 soil depth                </span></span>
+<span id="cb6-115"><a href="#cb6-115" tabindex="-1"></a><span class="co">#&gt; 14       ¦       ¦       ¦   °--*Storie Factor A Profile Group 1 taxonomy rev                          </span></span>
+<span id="cb6-116"><a href="#cb6-116" tabindex="-1"></a><span class="co">#&gt; 15       ¦       ¦       ¦       °--RuleOperator_4d1fdd8f                                              </span></span>
+<span id="cb6-117"><a href="#cb6-117" tabindex="-1"></a><span class="co">#&gt; 16       ¦       ¦       ¦           ¦--RuleHedge_44b2d8f3                                             </span></span>
+<span id="cb6-118"><a href="#cb6-118" tabindex="-1"></a><span class="co">#&gt; 17       ¦       ¦       ¦           ¦   °--*Storie Factor A Pedon Group 1 suborders                   </span></span>
+<span id="cb6-119"><a href="#cb6-119" tabindex="-1"></a><span class="co">#&gt; 18       ¦       ¦       ¦           ¦--RuleHedge_f2a5b4ba                                             </span></span>
+<span id="cb6-120"><a href="#cb6-120" tabindex="-1"></a><span class="co">#&gt; 19       ¦       ¦       ¦           ¦   °--*Storie Factor A Pedon Group 1 great groups                </span></span>
+<span id="cb6-121"><a href="#cb6-121" tabindex="-1"></a><span class="co">#&gt; 20       ¦       ¦       ¦           °--RuleHedge_25e606a5                                             </span></span>
+<span id="cb6-122"><a href="#cb6-122" tabindex="-1"></a><span class="co">#&gt; 21       ¦       ¦       ¦               °--*Storie Factor A Pedon Group 1 subgroups                   </span></span>
+<span id="cb6-123"><a href="#cb6-123" tabindex="-1"></a><span class="co">#&gt; 22       ¦       ¦       °--RuleHedge_ea4b1839                                                         </span></span>
+<span id="cb6-124"><a href="#cb6-124" tabindex="-1"></a><span class="co">#&gt; 23       ¦       ¦           °--*Storie Factor A Profile Group 7,8,9 landform                          </span></span>
+<span id="cb6-125"><a href="#cb6-125" tabindex="-1"></a><span class="co">#&gt; 24       ¦       ¦               °--RuleHedge_608f03c8                                                 </span></span>
+<span id="cb6-126"><a href="#cb6-126" tabindex="-1"></a><span class="co">#&gt; 25       ¦       ¦                   °--*Storie Factor A Pedon Group 7, 8, 9 landform                  </span></span>
+<span id="cb6-127"><a href="#cb6-127" tabindex="-1"></a><span class="co">#&gt; 26       ¦       ¦--*Storie Factor A Profile Group 2 rev                                               </span></span>
+<span id="cb6-128"><a href="#cb6-128" tabindex="-1"></a><span class="co">#&gt; 27       ¦       ¦   °--RuleOperator_8a20de79                                                          </span></span>
+<span id="cb6-129"><a href="#cb6-129" tabindex="-1"></a><span class="co">#&gt; 28       ¦       ¦       ¦--RuleOperator_71911310                                                      </span></span>
+<span id="cb6-130"><a href="#cb6-130" tabindex="-1"></a><span class="co">#&gt; 29       ¦       ¦       ¦   ¦--*Storie Factor A Profile Group 1 and 2 fuzzy depth                     </span></span>
+<span id="cb6-131"><a href="#cb6-131" tabindex="-1"></a><span class="co">#&gt; 30       ¦       ¦       ¦   ¦   °--RuleHedge_7fad1a79                                                 </span></span>
+<span id="cb6-132"><a href="#cb6-132" tabindex="-1"></a><span class="co">#&gt; 31       ¦       ¦       ¦   ¦       °--*Storie Factor A Pedon Group 1 and 2 soil depth                </span></span>
+<span id="cb6-133"><a href="#cb6-133" tabindex="-1"></a><span class="co">#&gt; 32       ¦       ¦       ¦   °--*Storie Factor A Profile Group 2 taxonomy                              </span></span>
+<span id="cb6-134"><a href="#cb6-134" tabindex="-1"></a><span class="co">#&gt; 33       ¦       ¦       ¦       °--RuleOperator_0ad34d47                                              </span></span>
+<span id="cb6-135"><a href="#cb6-135" tabindex="-1"></a><span class="co">#&gt; 34       ¦       ¦       ¦           ¦--RuleHedge_698c3a67                                             </span></span>
+<span id="cb6-136"><a href="#cb6-136" tabindex="-1"></a><span class="co">#&gt; 35       ¦       ¦       ¦           ¦   °--*Storie Factor A Pedon Group 2 suborders Arents and Cambids</span></span>
+<span id="cb6-137"><a href="#cb6-137" tabindex="-1"></a><span class="co">#&gt; 36       ¦       ¦       ¦           °--RuleHedge_8fbcb397                                             </span></span>
+<span id="cb6-138"><a href="#cb6-138" tabindex="-1"></a><span class="co">#&gt; 37       ¦       ¦       ¦               °--*Storie Factor A Pedon Group 2 great groups                </span></span>
+<span id="cb6-139"><a href="#cb6-139" tabindex="-1"></a><span class="co">#&gt; 38       ¦       ¦       °--RuleHedge_ea4b1839                                                         </span></span>
+<span id="cb6-140"><a href="#cb6-140" tabindex="-1"></a><span class="co">#&gt; 39       ¦       ¦           °--*Storie Factor A Profile Group 7,8,9 landform                          </span></span>
+<span id="cb6-141"><a href="#cb6-141" tabindex="-1"></a><span class="co">#&gt; 40       ¦       ¦               °--RuleHedge_608f03c8                                                 </span></span>
+<span id="cb6-142"><a href="#cb6-142" tabindex="-1"></a><span class="co">#&gt; 41       ¦       ¦                   °--*Storie Factor A Pedon Group 7, 8, 9 landform                  </span></span>
+<span id="cb6-143"><a href="#cb6-143" tabindex="-1"></a><span class="co">#&gt; 42       ¦       ¦--*Storie Factor A Profile Group 3                                                   </span></span>
+<span id="cb6-144"><a href="#cb6-144" tabindex="-1"></a><span class="co">#&gt; 43       ¦       ¦   °--RuleOperator_a84c18cd                                                          </span></span>
+<span id="cb6-145"><a href="#cb6-145" tabindex="-1"></a><span class="co">#&gt; 44       ¦       ¦       ¦--*Storie Factor A Profile Group 3 taxonomy                                  </span></span>
+<span id="cb6-146"><a href="#cb6-146" tabindex="-1"></a><span class="co">#&gt; 45       ¦       ¦       ¦   °--RuleOperator_c859411b                                                  </span></span>
+<span id="cb6-147"><a href="#cb6-147" tabindex="-1"></a><span class="co">#&gt; 46       ¦       ¦       ¦       ¦--RuleHedge_a14e5a0e                                                 </span></span>
+<span id="cb6-148"><a href="#cb6-148" tabindex="-1"></a><span class="co">#&gt; 47       ¦       ¦       ¦       ¦   °--*Storie Factor A Pedon Group 3 great groups                    </span></span>
+<span id="cb6-149"><a href="#cb6-149" tabindex="-1"></a><span class="co">#&gt; 48       ¦       ¦       ¦       °--RuleOperator_15a86db4                                              </span></span>
+<span id="cb6-150"><a href="#cb6-150" tabindex="-1"></a><span class="co">#&gt; 49       ¦       ¦       ¦           ¦--RuleHedge_da245a09                                             </span></span>
+<span id="cb6-151"><a href="#cb6-151" tabindex="-1"></a><span class="co">#&gt; 50       ¦       ¦       ¦           ¦   °--*Storie Factor A Pedon Group 4/6 great groups              </span></span>
+<span id="cb6-152"><a href="#cb6-152" tabindex="-1"></a><span class="co">#&gt; 51       ¦       ¦       ¦           ¦--RuleHedge_61008193                                             </span></span>
+<span id="cb6-153"><a href="#cb6-153" tabindex="-1"></a><span class="co">#&gt; 52       ¦       ¦       ¦           ¦   °--RuleHedge_1a2fddac                                         </span></span>
+<span id="cb6-154"><a href="#cb6-154" tabindex="-1"></a><span class="co">#&gt; 53       ¦       ¦       ¦           ¦       °--*Storie featkind = abrupt textural change              </span></span>
+<span id="cb6-155"><a href="#cb6-155" tabindex="-1"></a><span class="co">#&gt; 54       ¦       ¦       ¦           °--RuleHedge_214d73a9                                             </span></span>
+<span id="cb6-156"><a href="#cb6-156" tabindex="-1"></a><span class="co">#&gt; 55       ¦       ¦       ¦               °--RuleHedge_137ed382                                         </span></span>
+<span id="cb6-157"><a href="#cb6-157" tabindex="-1"></a><span class="co">#&gt; 56       ¦       ¦       ¦                   °--Component restriction = "abrupt textural change"       </span></span>
+<span id="cb6-158"><a href="#cb6-158" tabindex="-1"></a><span class="co">#&gt; 57       ¦       ¦       °--*Storie Factor A Profile Group 3 fuzzy depth                               </span></span>
+<span id="cb6-159"><a href="#cb6-159" tabindex="-1"></a><span class="co">#&gt; 58       ¦       ¦           °--RuleHedge_725c57d0                                                     </span></span>
+<span id="cb6-160"><a href="#cb6-160" tabindex="-1"></a><span class="co">#&gt; 59       ¦       ¦               °--*Storie Factor A Pedon Group 3 soil depth                          </span></span>
+<span id="cb6-161"><a href="#cb6-161" tabindex="-1"></a><span class="co">#&gt; 60       ¦       ¦--*Storie Factor A Profile Group 5                                                   </span></span>
+<span id="cb6-162"><a href="#cb6-162" tabindex="-1"></a><span class="co">#&gt; 61       ¦       ¦   °--RuleOperator_38a12238                                                          </span></span>
+<span id="cb6-163"><a href="#cb6-163" tabindex="-1"></a><span class="co">#&gt; 62       ¦       ¦       ¦--RuleOperator_1ffc51b2                                                      </span></span>
+<span id="cb6-164"><a href="#cb6-164" tabindex="-1"></a><span class="co">#&gt; 63       ¦       ¦       ¦   ¦--*Storie Factor A Profile Group 5 fuzzy depth                           </span></span>
+<span id="cb6-165"><a href="#cb6-165" tabindex="-1"></a><span class="co">#&gt; 64       ¦       ¦       ¦   ¦   °--RuleHedge_a4df1747                                                 </span></span>
+<span id="cb6-166"><a href="#cb6-166" tabindex="-1"></a><span class="co">#&gt; 65       ¦       ¦       ¦   ¦       °--*Storie Factor A Pedon Group 5 soil depth                      </span></span>
+<span id="cb6-167"><a href="#cb6-167" tabindex="-1"></a><span class="co">#&gt; 66       ¦       ¦       ¦   °--*Storie Factor A Profile Group 5 taxonomy                              </span></span>
+<span id="cb6-168"><a href="#cb6-168" tabindex="-1"></a><span class="co">#&gt; 67       ¦       ¦       ¦       °--RuleOperator_d8ea2331                                              </span></span>
+<span id="cb6-169"><a href="#cb6-169" tabindex="-1"></a><span class="co">#&gt; 68       ¦       ¦       ¦           ¦--RuleHedge_aba67333                                             </span></span>
+<span id="cb6-170"><a href="#cb6-170" tabindex="-1"></a><span class="co">#&gt; 69       ¦       ¦       ¦           ¦   °--*Storie Factor A Pedon Group 5 durids                      </span></span>
+<span id="cb6-171"><a href="#cb6-171" tabindex="-1"></a><span class="co">#&gt; 70       ¦       ¦       ¦           ¦--RuleHedge_a831076b                                             </span></span>
+<span id="cb6-172"><a href="#cb6-172" tabindex="-1"></a><span class="co">#&gt; 71       ¦       ¦       ¦           ¦   °--*Storie Factor A Pedon Group 5 great groups                </span></span>
+<span id="cb6-173"><a href="#cb6-173" tabindex="-1"></a><span class="co">#&gt; 72       ¦       ¦       ¦           °--RuleHedge_7954eb2b                                             </span></span>
+<span id="cb6-174"><a href="#cb6-174" tabindex="-1"></a><span class="co">#&gt; 73       ¦       ¦       ¦               °--*Storie Factor A Pedon Group 5 subgroups                   </span></span>
+<span id="cb6-175"><a href="#cb6-175" tabindex="-1"></a><span class="co">#&gt; 74       ¦       ¦       °--RuleHedge_ea4b1839                                                         </span></span>
+<span id="cb6-176"><a href="#cb6-176" tabindex="-1"></a><span class="co">#&gt; 75       ¦       ¦           °--*Storie Factor A Profile Group 7,8,9 landform                          </span></span>
+<span id="cb6-177"><a href="#cb6-177" tabindex="-1"></a><span class="co">#&gt; 76       ¦       ¦               °--RuleHedge_608f03c8                                                 </span></span>
+<span id="cb6-178"><a href="#cb6-178" tabindex="-1"></a><span class="co">#&gt; 77       ¦       ¦                   °--*Storie Factor A Pedon Group 7, 8, 9 landform                  </span></span>
+<span id="cb6-179"><a href="#cb6-179" tabindex="-1"></a><span class="co">#&gt; 78       ¦       ¦--*Storie Factor A Profile Group 4/6                                                 </span></span>
+<span id="cb6-180"><a href="#cb6-180" tabindex="-1"></a><span class="co">#&gt; 79       ¦       ¦   °--RuleOperator_867650f1                                                          </span></span>
+<span id="cb6-181"><a href="#cb6-181" tabindex="-1"></a><span class="co">#&gt; 80       ¦       ¦       ¦--*Storie Factor A Profile Group 4/6 fuzzy depth                             </span></span>
+<span id="cb6-182"><a href="#cb6-182" tabindex="-1"></a><span class="co">#&gt; 81       ¦       ¦       ¦   °--RuleOperator_804837c6                                                  </span></span>
+<span id="cb6-183"><a href="#cb6-183" tabindex="-1"></a><span class="co">#&gt; 82       ¦       ¦       ¦       ¦--RuleHedge_74ec3ef6                                                 </span></span>
+<span id="cb6-184"><a href="#cb6-184" tabindex="-1"></a><span class="co">#&gt; 83       ¦       ¦       ¦       ¦   °--*Storie Factor A Pedon Group 4/6 depth abrupt text featkind    </span></span>
+<span id="cb6-185"><a href="#cb6-185" tabindex="-1"></a><span class="co">#&gt; 84       ¦       ¦       ¦       °--RuleHedge_5d562f5b                                                 </span></span>
+<span id="cb6-186"><a href="#cb6-186" tabindex="-1"></a><span class="co">#&gt; 85       ¦       ¦       ¦           °--*Storie Factor A Pedon Group 4/6 depth abrupt tex reskind      </span></span>
+<span id="cb6-187"><a href="#cb6-187" tabindex="-1"></a><span class="co">#&gt; 86       ¦       ¦       °--*Storie Factor A Profile Group 4/6 taxonomy w/ abrupt text                 </span></span>
+<span id="cb6-188"><a href="#cb6-188" tabindex="-1"></a><span class="co">#&gt; 87       ¦       ¦           °--RuleOperator_d7eb1bf2                                                  </span></span>
+<span id="cb6-189"><a href="#cb6-189" tabindex="-1"></a><span class="co">#&gt; 88       ¦       ¦               ¦--*Storie Factor A Pedon Group 4/6 great groups                      </span></span>
+<span id="cb6-190"><a href="#cb6-190" tabindex="-1"></a><span class="co">#&gt; 89       ¦       ¦               °--RuleOperator_55f9f74b                                              </span></span>
+<span id="cb6-191"><a href="#cb6-191" tabindex="-1"></a><span class="co">#&gt; 90       ¦       ¦                   ¦--*Storie featkind = abrupt textural change                      </span></span>
+<span id="cb6-192"><a href="#cb6-192" tabindex="-1"></a><span class="co">#&gt; 91       ¦       ¦                   °--Component restriction = "abrupt textural change"               </span></span>
+<span id="cb6-193"><a href="#cb6-193" tabindex="-1"></a><span class="co">#&gt; 92       ¦       °--*Storie Factor A Profile Groups 7, 8 or 9                                          </span></span>
+<span id="cb6-194"><a href="#cb6-194" tabindex="-1"></a><span class="co">#&gt; 93       ¦           °--RuleOperator_e9966d4d                                                          </span></span>
+<span id="cb6-195"><a href="#cb6-195" tabindex="-1"></a><span class="co">#&gt; 94       ¦               ¦--RuleOperator_48460ff8                                                      </span></span>
+<span id="cb6-196"><a href="#cb6-196" tabindex="-1"></a><span class="co">#&gt; 95       ¦               ¦   ¦--*Storie Factor A Profile Group 7,8,9 landform                          </span></span>
+<span id="cb6-197"><a href="#cb6-197" tabindex="-1"></a><span class="co">#&gt; 96       ¦               ¦   ¦   °--RuleHedge_608f03c8                                                 </span></span>
+<span id="cb6-198"><a href="#cb6-198" tabindex="-1"></a><span class="co">#&gt; 97       ¦               ¦   ¦       °--*Storie Factor A Pedon Group 7, 8, 9 landform                  </span></span>
+<span id="cb6-199"><a href="#cb6-199" tabindex="-1"></a><span class="co">#&gt; 98       ¦               ¦   °--*Storie Factor A Profile Groups 7, 8, 9 fuzzy depth (hard)             </span></span>
+<span id="cb6-200"><a href="#cb6-200" tabindex="-1"></a><span class="co">#&gt; 99       ¦               ¦       °--RuleHedge_62ac73b3                                                 </span></span>
+<span id="cb6-201"><a href="#cb6-201" tabindex="-1"></a><span class="co">#&gt; 100      ¦               ¦           °--*Storie Factor A Pedon Group 7 and 8 soil depth                </span></span>
+<span id="cb6-202"><a href="#cb6-202" tabindex="-1"></a><span class="co">#&gt; 101      ¦               °--RuleOperator_9ffcd0a2                                                      </span></span>
+<span id="cb6-203"><a href="#cb6-203" tabindex="-1"></a><span class="co">#&gt; 102      ¦                   ¦--*Storie Factor A Profile Group 7,8,9 landform                          </span></span>
+<span id="cb6-204"><a href="#cb6-204" tabindex="-1"></a><span class="co">#&gt; 103      ¦                   ¦   °--RuleHedge_608f03c8                                                 </span></span>
+<span id="cb6-205"><a href="#cb6-205" tabindex="-1"></a><span class="co">#&gt; 104      ¦                   ¦       °--*Storie Factor A Pedon Group 7, 8, 9 landform                  </span></span>
+<span id="cb6-206"><a href="#cb6-206" tabindex="-1"></a><span class="co">#&gt; 105      ¦                   °--*Storie Factor A Profile Group 7, 8 and 9 fuzzy depth (soft)           </span></span>
+<span id="cb6-207"><a href="#cb6-207" tabindex="-1"></a><span class="co">#&gt; 106      ¦                       °--RuleHedge_c0fd8926                                                 </span></span>
+<span id="cb6-208"><a href="#cb6-208" tabindex="-1"></a><span class="co">#&gt; 107      ¦                           °--*Storie Factor A Pedon Group 9 soil depth                      </span></span>
+<span id="cb6-209"><a href="#cb6-209" tabindex="-1"></a><span class="co">#&gt; 108      ¦--*Storie Factor B rev                                                                       </span></span>
+<span id="cb6-210"><a href="#cb6-210" tabindex="-1"></a><span class="co">#&gt; 109      ¦   °--RuleOperator_21467f0e                                                                  </span></span>
+<span id="cb6-211"><a href="#cb6-211" tabindex="-1"></a><span class="co">#&gt; 110      ¦       ¦--*Storie Factor B surface texture rev                                               </span></span>
+<span id="cb6-212"><a href="#cb6-212" tabindex="-1"></a><span class="co">#&gt; 111      ¦       ¦   °--RuleHedge_14c104e8                                                             </span></span>
+<span id="cb6-213"><a href="#cb6-213" tabindex="-1"></a><span class="co">#&gt; 112      ¦       ¦       °--*Storie Factor B Surface Texture                                           </span></span>
+<span id="cb6-214"><a href="#cb6-214" tabindex="-1"></a><span class="co">#&gt; 113      ¦       °--*Storie Factor B surface rock fragments rev                                        </span></span>
+<span id="cb6-215"><a href="#cb6-215" tabindex="-1"></a><span class="co">#&gt; 114      ¦           °--*Storie Factor B rock frag volume 0-25 cm                                      </span></span>
+<span id="cb6-216"><a href="#cb6-216" tabindex="-1"></a><span class="co">#&gt; 115      ¦--*Storie Factor C Slope fuzzy                                                               </span></span>
+<span id="cb6-217"><a href="#cb6-217" tabindex="-1"></a><span class="co">#&gt; 116      ¦   °--RuleHedge_d4054451                                                                     </span></span>
+<span id="cb6-218"><a href="#cb6-218" tabindex="-1"></a><span class="co">#&gt; 117      ¦       °--*Storie Factor C Slope 0 to 100%                                                   </span></span>
+<span id="cb6-219"><a href="#cb6-219" tabindex="-1"></a><span class="co">#&gt; 118      ¦--*Storie Factor X (all chemistry) rev                                                       </span></span>
+<span id="cb6-220"><a href="#cb6-220" tabindex="-1"></a><span class="co">#&gt; 119      ¦   °--RuleOperator_12d91bc8                                                                  </span></span>
+<span id="cb6-221"><a href="#cb6-221" tabindex="-1"></a><span class="co">#&gt; 120      ¦       ¦--*Storie Factor X (toxicity EC) rev                                                 </span></span>
+<span id="cb6-222"><a href="#cb6-222" tabindex="-1"></a><span class="co">#&gt; 121      ¦       ¦   °--RuleHedge_7334ea83                                                             </span></span>
+<span id="cb6-223"><a href="#cb6-223" tabindex="-1"></a><span class="co">#&gt; 122      ¦       ¦       °--*Storie Factor X Toxicity EC maximum 0-25 cm                               </span></span>
+<span id="cb6-224"><a href="#cb6-224" tabindex="-1"></a><span class="co">#&gt; 123      ¦       ¦--*Storie Factor X (toxicity SAR) rev                                                </span></span>
+<span id="cb6-225"><a href="#cb6-225" tabindex="-1"></a><span class="co">#&gt; 124      ¦       ¦   °--RuleHedge_70d0ed1f                                                             </span></span>
+<span id="cb6-226"><a href="#cb6-226" tabindex="-1"></a><span class="co">#&gt; 125      ¦       ¦       °--*Storie Factor X Toxicity SAR maximum 0-25 cm                              </span></span>
+<span id="cb6-227"><a href="#cb6-227" tabindex="-1"></a><span class="co">#&gt; 126      ¦       °--*Storie Factor X (toxicity pH) rev                                                 </span></span>
+<span id="cb6-228"><a href="#cb6-228" tabindex="-1"></a><span class="co">#&gt; 127      ¦           °--RuleHedge_dea55415                                                             </span></span>
+<span id="cb6-229"><a href="#cb6-229" tabindex="-1"></a><span class="co">#&gt; 128      ¦               °--RuleOperator_37d7e82f                                                      </span></span>
+<span id="cb6-230"><a href="#cb6-230" tabindex="-1"></a><span class="co">#&gt; 129      ¦                   ¦--*Storie Factor X Toxicity pH minimum 0-25 cm                           </span></span>
+<span id="cb6-231"><a href="#cb6-231" tabindex="-1"></a><span class="co">#&gt; 130      ¦                   °--*Storie Factor X Toxicity pH maximum 0-25 cm                           </span></span>
+<span id="cb6-232"><a href="#cb6-232" tabindex="-1"></a><span class="co">#&gt; 131      ¦--*Storie Factor X (all hydrologic and erosion features)                                     </span></span>
+<span id="cb6-233"><a href="#cb6-233" tabindex="-1"></a><span class="co">#&gt; 132      ¦   °--RuleOperator_e5feb45e                                                                  </span></span>
+<span id="cb6-234"><a href="#cb6-234" tabindex="-1"></a><span class="co">#&gt; 133      ¦       ¦--*Storie Factor X (drainage class)                                                  </span></span>
+<span id="cb6-235"><a href="#cb6-235" tabindex="-1"></a><span class="co">#&gt; 134      ¦       ¦   °--RuleOperator_3be6bd57                                                          </span></span>
+<span id="cb6-236"><a href="#cb6-236" tabindex="-1"></a><span class="co">#&gt; 135      ¦       ¦       ¦--RuleOperator_fb03758e                                                      </span></span>
+<span id="cb6-237"><a href="#cb6-237" tabindex="-1"></a><span class="co">#&gt; 136      ¦       ¦       ¦   ¦--RuleHedge_773dd408                                                     </span></span>
+<span id="cb6-238"><a href="#cb6-238" tabindex="-1"></a><span class="co">#&gt; 137      ¦       ¦       ¦   ¦   °--*Storie Factor X drainage = moderately well                        </span></span>
+<span id="cb6-239"><a href="#cb6-239" tabindex="-1"></a><span class="co">#&gt; 138      ¦       ¦       ¦   ¦       °--RuleHedge_cacbefaa                                             </span></span>
+<span id="cb6-240"><a href="#cb6-240" tabindex="-1"></a><span class="co">#&gt; 139      ¦       ¦       ¦   ¦           °--*Storie Factor X drainage class = moderately               </span></span>
+<span id="cb6-241"><a href="#cb6-241" tabindex="-1"></a><span class="co">#&gt; 140      ¦       ¦       ¦   °--RuleOperator_bff68afb                                                  </span></span>
+<span id="cb6-242"><a href="#cb6-242" tabindex="-1"></a><span class="co">#&gt; 141      ¦       ¦       ¦       ¦--RuleHedge_60689286                                                 </span></span>
+<span id="cb6-243"><a href="#cb6-243" tabindex="-1"></a><span class="co">#&gt; 142      ¦       ¦       ¦       ¦   °--*Storie Factor X local phase is "drained"                      </span></span>
+<span id="cb6-244"><a href="#cb6-244" tabindex="-1"></a><span class="co">#&gt; 143      ¦       ¦       ¦       ¦       °--RuleHedge_be509db7                                         </span></span>
+<span id="cb6-245"><a href="#cb6-245" tabindex="-1"></a><span class="co">#&gt; 144      ¦       ¦       ¦       ¦           °--*Storie component local phase is *drained*             </span></span>
+<span id="cb6-246"><a href="#cb6-246" tabindex="-1"></a><span class="co">#&gt; 145      ¦       ¦       ¦       °--RuleHedge_9acf6418                                                 </span></span>
+<span id="cb6-247"><a href="#cb6-247" tabindex="-1"></a><span class="co">#&gt; 146      ¦       ¦       ¦           °--*Storie Factor X local phase is "partially drained"            </span></span>
+<span id="cb6-248"><a href="#cb6-248" tabindex="-1"></a><span class="co">#&gt; 147      ¦       ¦       ¦               °--RuleHedge_a792a01a                                         </span></span>
+<span id="cb6-249"><a href="#cb6-249" tabindex="-1"></a><span class="co">#&gt; 148      ¦       ¦       ¦                   °--*Storie component local phase is *partially drained*   </span></span>
+<span id="cb6-250"><a href="#cb6-250" tabindex="-1"></a><span class="co">#&gt; 149      ¦       ¦       ¦--RuleOperator_b07fd13d                                                      </span></span>
+<span id="cb6-251"><a href="#cb6-251" tabindex="-1"></a><span class="co">#&gt; 150      ¦       ¦       ¦   ¦--RuleHedge_4f74ec66                                                     </span></span>
+<span id="cb6-252"><a href="#cb6-252" tabindex="-1"></a><span class="co">#&gt; 151      ¦       ¦       ¦   ¦   °--*Storie Factor X drainage = somewhat poorly                        </span></span>
+<span id="cb6-253"><a href="#cb6-253" tabindex="-1"></a><span class="co">#&gt; 152      ¦       ¦       ¦   ¦       °--RuleHedge_72e64559                                             </span></span>
+<span id="cb6-254"><a href="#cb6-254" tabindex="-1"></a><span class="co">#&gt; 153      ¦       ¦       ¦   ¦           °--*Storie Factor X drainage class = somewhat poorly          </span></span>
+<span id="cb6-255"><a href="#cb6-255" tabindex="-1"></a><span class="co">#&gt; 154      ¦       ¦       ¦   °--RuleOperator_fac62418                                                  </span></span>
+<span id="cb6-256"><a href="#cb6-256" tabindex="-1"></a><span class="co">#&gt; 155      ¦       ¦       ¦       ¦--RuleHedge_7c3c6ede                                                 </span></span>
+<span id="cb6-257"><a href="#cb6-257" tabindex="-1"></a><span class="co">#&gt; 156      ¦       ¦       ¦       ¦   °--*Storie Factor X local phase is "drained"                      </span></span>
+<span id="cb6-258"><a href="#cb6-258" tabindex="-1"></a><span class="co">#&gt; 157      ¦       ¦       ¦       ¦       °--RuleHedge_be509db7                                         </span></span>
+<span id="cb6-259"><a href="#cb6-259" tabindex="-1"></a><span class="co">#&gt; 158      ¦       ¦       ¦       ¦           °--*Storie component local phase is *drained*             </span></span>
+<span id="cb6-260"><a href="#cb6-260" tabindex="-1"></a><span class="co">#&gt; 159      ¦       ¦       ¦       °--RuleHedge_b1c9b07e                                                 </span></span>
+<span id="cb6-261"><a href="#cb6-261" tabindex="-1"></a><span class="co">#&gt; 160      ¦       ¦       ¦           °--*Storie Factor X local phase is "partially drained"            </span></span>
+<span id="cb6-262"><a href="#cb6-262" tabindex="-1"></a><span class="co">#&gt; 161      ¦       ¦       ¦               °--RuleHedge_a792a01a                                         </span></span>
+<span id="cb6-263"><a href="#cb6-263" tabindex="-1"></a><span class="co">#&gt; 162      ¦       ¦       ¦                   °--*Storie component local phase is *partially drained*   </span></span>
+<span id="cb6-264"><a href="#cb6-264" tabindex="-1"></a><span class="co">#&gt; 163      ¦       ¦       ¦--RuleOperator_f2cb68fb                                                      </span></span>
+<span id="cb6-265"><a href="#cb6-265" tabindex="-1"></a><span class="co">#&gt; 164      ¦       ¦       ¦   ¦--RuleHedge_80a214a1                                                     </span></span>
+<span id="cb6-266"><a href="#cb6-266" tabindex="-1"></a><span class="co">#&gt; 165      ¦       ¦       ¦   ¦   °--RuleHedge_f60f0b26                                                 </span></span>
+<span id="cb6-267"><a href="#cb6-267" tabindex="-1"></a><span class="co">#&gt; 166      ¦       ¦       ¦   ¦       °--*Storie Factor X drainage = poorly or very poorly              </span></span>
+<span id="cb6-268"><a href="#cb6-268" tabindex="-1"></a><span class="co">#&gt; 167      ¦       ¦       ¦   ¦           °--RuleHedge_9edb6995                                         </span></span>
+<span id="cb6-269"><a href="#cb6-269" tabindex="-1"></a><span class="co">#&gt; 168      ¦       ¦       ¦   ¦               °--*Storie Factor X drainage class = poor or very poorly  </span></span>
+<span id="cb6-270"><a href="#cb6-270" tabindex="-1"></a><span class="co">#&gt; 169      ¦       ¦       ¦   °--RuleOperator_799a4c22                                                  </span></span>
+<span id="cb6-271"><a href="#cb6-271" tabindex="-1"></a><span class="co">#&gt; 170      ¦       ¦       ¦       ¦--RuleHedge_711817c6                                                 </span></span>
+<span id="cb6-272"><a href="#cb6-272" tabindex="-1"></a><span class="co">#&gt; 171      ¦       ¦       ¦       ¦   °--*Storie Factor X local phase is "drained"                      </span></span>
+<span id="cb6-273"><a href="#cb6-273" tabindex="-1"></a><span class="co">#&gt; 172      ¦       ¦       ¦       ¦       °--RuleHedge_be509db7                                         </span></span>
+<span id="cb6-274"><a href="#cb6-274" tabindex="-1"></a><span class="co">#&gt; 173      ¦       ¦       ¦       ¦           °--*Storie component local phase is *drained*             </span></span>
+<span id="cb6-275"><a href="#cb6-275" tabindex="-1"></a><span class="co">#&gt; 174      ¦       ¦       ¦       °--RuleHedge_b1c9b07e                                                 </span></span>
+<span id="cb6-276"><a href="#cb6-276" tabindex="-1"></a><span class="co">#&gt; 175      ¦       ¦       ¦           °--*Storie Factor X local phase is "partially drained"            </span></span>
+<span id="cb6-277"><a href="#cb6-277" tabindex="-1"></a><span class="co">#&gt; 176      ¦       ¦       ¦               °--RuleHedge_a792a01a                                         </span></span>
+<span id="cb6-278"><a href="#cb6-278" tabindex="-1"></a><span class="co">#&gt; 177      ¦       ¦       ¦                   °--*Storie component local phase is *partially drained*   </span></span>
+<span id="cb6-279"><a href="#cb6-279" tabindex="-1"></a><span class="co">#&gt; 178      ¦       ¦       ¦--*Storie Factor X drainage = well drained                                   </span></span>
+<span id="cb6-280"><a href="#cb6-280" tabindex="-1"></a><span class="co">#&gt; 179      ¦       ¦       ¦   °--RuleHedge_80e2e2c3                                                     </span></span>
+<span id="cb6-281"><a href="#cb6-281" tabindex="-1"></a><span class="co">#&gt; 180      ¦       ¦       ¦       °--*Storie Factor X drainage class = well                             </span></span>
+<span id="cb6-282"><a href="#cb6-282" tabindex="-1"></a><span class="co">#&gt; 181      ¦       ¦       °--RuleHedge_c0debf92                                                         </span></span>
+<span id="cb6-283"><a href="#cb6-283" tabindex="-1"></a><span class="co">#&gt; 182      ¦       ¦           °--*Storie Factor X drainage = all excessively                            </span></span>
+<span id="cb6-284"><a href="#cb6-284" tabindex="-1"></a><span class="co">#&gt; 183      ¦       ¦               °--RuleHedge_2347996a                                                 </span></span>
+<span id="cb6-285"><a href="#cb6-285" tabindex="-1"></a><span class="co">#&gt; 184      ¦       ¦                   °--*Storie Factor X drainage class = all excessively              </span></span>
+<span id="cb6-286"><a href="#cb6-286" tabindex="-1"></a><span class="co">#&gt; 185      ¦       ¦--*Storie Factor X (flooding and ponding)                                            </span></span>
+<span id="cb6-287"><a href="#cb6-287" tabindex="-1"></a><span class="co">#&gt; 186      ¦       ¦   °--RuleOperator_dae2aeb4                                                          </span></span>
+<span id="cb6-288"><a href="#cb6-288" tabindex="-1"></a><span class="co">#&gt; 187      ¦       ¦       ¦--*Storie Factor X (ponding interaction)                                     </span></span>
+<span id="cb6-289"><a href="#cb6-289" tabindex="-1"></a><span class="co">#&gt; 188      ¦       ¦       ¦   °--*Storie Factor X landscape ponding in growing season                   </span></span>
+<span id="cb6-290"><a href="#cb6-290" tabindex="-1"></a><span class="co">#&gt; 189      ¦       ¦       °--*Storie Factor X (flooding interaction)                                    </span></span>
+<span id="cb6-291"><a href="#cb6-291" tabindex="-1"></a><span class="co">#&gt; 190      ¦       ¦           °--RuleOperator_fe6380a3                                                  </span></span>
+<span id="cb6-292"><a href="#cb6-292" tabindex="-1"></a><span class="co">#&gt; 191      ¦       ¦               ¦--Landscape Flooding "NONE"                                          </span></span>
+<span id="cb6-293"><a href="#cb6-293" tabindex="-1"></a><span class="co">#&gt; 192      ¦       ¦               °--*Storie Factor X landscape flooding in growing season              </span></span>
+<span id="cb6-294"><a href="#cb6-294" tabindex="-1"></a><span class="co">#&gt; 193      ¦       ¦--*Storie Factor X (erosion)                                                         </span></span>
+<span id="cb6-295"><a href="#cb6-295" tabindex="-1"></a><span class="co">#&gt; 194      ¦       ¦   °--RuleOperator_435f004a                                                          </span></span>
+<span id="cb6-296"><a href="#cb6-296" tabindex="-1"></a><span class="co">#&gt; 195      ¦       ¦       ¦--*Storie Factor X (erosion in uplands)                                      </span></span>
+<span id="cb6-297"><a href="#cb6-297" tabindex="-1"></a><span class="co">#&gt; 196      ¦       ¦       ¦   °--RuleOperator_2be43cb6                                                  </span></span>
+<span id="cb6-298"><a href="#cb6-298" tabindex="-1"></a><span class="co">#&gt; 197      ¦       ¦       ¦       ¦--*Storie Factor A Profile Group 7,8,9 landform                      </span></span>
+<span id="cb6-299"><a href="#cb6-299" tabindex="-1"></a><span class="co">#&gt; 198      ¦       ¦       ¦       ¦   °--RuleHedge_608f03c8                                             </span></span>
+<span id="cb6-300"><a href="#cb6-300" tabindex="-1"></a><span class="co">#&gt; 199      ¦       ¦       ¦       ¦       °--*Storie Factor A Pedon Group 7, 8, 9 landform              </span></span>
+<span id="cb6-301"><a href="#cb6-301" tabindex="-1"></a><span class="co">#&gt; 200      ¦       ¦       ¦       °--*Storie Factor X (erosion class)                                   </span></span>
+<span id="cb6-302"><a href="#cb6-302" tabindex="-1"></a><span class="co">#&gt; 201      ¦       ¦       ¦           °--RuleOperator_3ecc937e                                          </span></span>
+<span id="cb6-303"><a href="#cb6-303" tabindex="-1"></a><span class="co">#&gt; 202      ¦       ¦       ¦               ¦--RuleHedge_d47e12df                                         </span></span>
+<span id="cb6-304"><a href="#cb6-304" tabindex="-1"></a><span class="co">#&gt; 203      ¦       ¦       ¦               ¦   °--*Storie Factor X erosion class = 1                     </span></span>
+<span id="cb6-305"><a href="#cb6-305" tabindex="-1"></a><span class="co">#&gt; 204      ¦       ¦       ¦               ¦       °--RuleHedge_be73ca0c                                 </span></span>
+<span id="cb6-306"><a href="#cb6-306" tabindex="-1"></a><span class="co">#&gt; 205      ¦       ¦       ¦               ¦           °--*Storie Factor X erosion class = 1             </span></span>
+<span id="cb6-307"><a href="#cb6-307" tabindex="-1"></a><span class="co">#&gt; 206      ¦       ¦       ¦               ¦--RuleHedge_62c7497e                                         </span></span>
+<span id="cb6-308"><a href="#cb6-308" tabindex="-1"></a><span class="co">#&gt; 207      ¦       ¦       ¦               ¦   °--*Storie Factor X erosion class = 2                     </span></span>
+<span id="cb6-309"><a href="#cb6-309" tabindex="-1"></a><span class="co">#&gt; 208      ¦       ¦       ¦               ¦       °--RuleHedge_5c67fdf4                                 </span></span>
+<span id="cb6-310"><a href="#cb6-310" tabindex="-1"></a><span class="co">#&gt; 209      ¦       ¦       ¦               ¦           °--*Storie Factor X erosion class = 2             </span></span>
+<span id="cb6-311"><a href="#cb6-311" tabindex="-1"></a><span class="co">#&gt; 210      ¦       ¦       ¦               ¦--RuleHedge_16378273                                         </span></span>
+<span id="cb6-312"><a href="#cb6-312" tabindex="-1"></a><span class="co">#&gt; 211      ¦       ¦       ¦               ¦   °--*Storie Factor X erosion class = 3                     </span></span>
+<span id="cb6-313"><a href="#cb6-313" tabindex="-1"></a><span class="co">#&gt; 212      ¦       ¦       ¦               ¦       °--RuleHedge_c65bf0da                                 </span></span>
+<span id="cb6-314"><a href="#cb6-314" tabindex="-1"></a><span class="co">#&gt; 213      ¦       ¦       ¦               ¦           °--*Storie Factor X erosion class = 3             </span></span>
+<span id="cb6-315"><a href="#cb6-315" tabindex="-1"></a><span class="co">#&gt; 214      ¦       ¦       ¦               ¦--RuleHedge_68a3b3e6                                         </span></span>
+<span id="cb6-316"><a href="#cb6-316" tabindex="-1"></a><span class="co">#&gt; 215      ¦       ¦       ¦               ¦   °--*Storie Factor X erosion class = 4                     </span></span>
+<span id="cb6-317"><a href="#cb6-317" tabindex="-1"></a><span class="co">#&gt; 216      ¦       ¦       ¦               ¦       °--RuleHedge_772054de                                 </span></span>
+<span id="cb6-318"><a href="#cb6-318" tabindex="-1"></a><span class="co">#&gt; 217      ¦       ¦       ¦               ¦           °--*Storie Factor X erosion class = 4             </span></span>
+<span id="cb6-319"><a href="#cb6-319" tabindex="-1"></a><span class="co">#&gt; 218      ¦       ¦       ¦               °--*Storie Factor X erosion class = 0                         </span></span>
+<span id="cb6-320"><a href="#cb6-320" tabindex="-1"></a><span class="co">#&gt; 219      ¦       ¦       ¦                   °--RuleHedge_b3c4b963                                     </span></span>
+<span id="cb6-321"><a href="#cb6-321" tabindex="-1"></a><span class="co">#&gt; 220      ¦       ¦       ¦                       °--*Storie Factor X erosion class = 0                 </span></span>
+<span id="cb6-322"><a href="#cb6-322" tabindex="-1"></a><span class="co">#&gt; 221      ¦       ¦       °--*Storie Factor X (erosion in valley)                                       </span></span>
+<span id="cb6-323"><a href="#cb6-323" tabindex="-1"></a><span class="co">#&gt; 222      ¦       ¦           °--RuleOperator_9fee9122                                                  </span></span>
+<span id="cb6-324"><a href="#cb6-324" tabindex="-1"></a><span class="co">#&gt; 223      ¦       ¦               ¦--*Storie Factor X (erosion class)                                   </span></span>
+<span id="cb6-325"><a href="#cb6-325" tabindex="-1"></a><span class="co">#&gt; 224      ¦       ¦               ¦   °--RuleOperator_3ecc937e                                          </span></span>
+<span id="cb6-326"><a href="#cb6-326" tabindex="-1"></a><span class="co">#&gt; 225      ¦       ¦               ¦       ¦--RuleHedge_d47e12df                                         </span></span>
+<span id="cb6-327"><a href="#cb6-327" tabindex="-1"></a><span class="co">#&gt; 226      ¦       ¦               ¦       ¦   °--*Storie Factor X erosion class = 1                     </span></span>
+<span id="cb6-328"><a href="#cb6-328" tabindex="-1"></a><span class="co">#&gt; 227      ¦       ¦               ¦       ¦       °--RuleHedge_be73ca0c                                 </span></span>
+<span id="cb6-329"><a href="#cb6-329" tabindex="-1"></a><span class="co">#&gt; 228      ¦       ¦               ¦       ¦           °--*Storie Factor X erosion class = 1             </span></span>
+<span id="cb6-330"><a href="#cb6-330" tabindex="-1"></a><span class="co">#&gt; 229      ¦       ¦               ¦       ¦--RuleHedge_62c7497e                                         </span></span>
+<span id="cb6-331"><a href="#cb6-331" tabindex="-1"></a><span class="co">#&gt; 230      ¦       ¦               ¦       ¦   °--*Storie Factor X erosion class = 2                     </span></span>
+<span id="cb6-332"><a href="#cb6-332" tabindex="-1"></a><span class="co">#&gt; 231      ¦       ¦               ¦       ¦       °--RuleHedge_5c67fdf4                                 </span></span>
+<span id="cb6-333"><a href="#cb6-333" tabindex="-1"></a><span class="co">#&gt; 232      ¦       ¦               ¦       ¦           °--*Storie Factor X erosion class = 2             </span></span>
+<span id="cb6-334"><a href="#cb6-334" tabindex="-1"></a><span class="co">#&gt; 233      ¦       ¦               ¦       ¦--RuleHedge_16378273                                         </span></span>
+<span id="cb6-335"><a href="#cb6-335" tabindex="-1"></a><span class="co">#&gt; 234      ¦       ¦               ¦       ¦   °--*Storie Factor X erosion class = 3                     </span></span>
+<span id="cb6-336"><a href="#cb6-336" tabindex="-1"></a><span class="co">#&gt; 235      ¦       ¦               ¦       ¦       °--RuleHedge_c65bf0da                                 </span></span>
+<span id="cb6-337"><a href="#cb6-337" tabindex="-1"></a><span class="co">#&gt; 236      ¦       ¦               ¦       ¦           °--*Storie Factor X erosion class = 3             </span></span>
+<span id="cb6-338"><a href="#cb6-338" tabindex="-1"></a><span class="co">#&gt; 237      ¦       ¦               ¦       ¦--RuleHedge_68a3b3e6                                         </span></span>
+<span id="cb6-339"><a href="#cb6-339" tabindex="-1"></a><span class="co">#&gt; 238      ¦       ¦               ¦       ¦   °--*Storie Factor X erosion class = 4                     </span></span>
+<span id="cb6-340"><a href="#cb6-340" tabindex="-1"></a><span class="co">#&gt; 239      ¦       ¦               ¦       ¦       °--RuleHedge_772054de                                 </span></span>
+<span id="cb6-341"><a href="#cb6-341" tabindex="-1"></a><span class="co">#&gt; 240      ¦       ¦               ¦       ¦           °--*Storie Factor X erosion class = 4             </span></span>
+<span id="cb6-342"><a href="#cb6-342" tabindex="-1"></a><span class="co">#&gt; 241      ¦       ¦               ¦       °--*Storie Factor X erosion class = 0                         </span></span>
+<span id="cb6-343"><a href="#cb6-343" tabindex="-1"></a><span class="co">#&gt; 242      ¦       ¦               ¦           °--RuleHedge_b3c4b963                                     </span></span>
+<span id="cb6-344"><a href="#cb6-344" tabindex="-1"></a><span class="co">#&gt; 243      ¦       ¦               ¦               °--*Storie Factor X erosion class = 0                 </span></span>
+<span id="cb6-345"><a href="#cb6-345" tabindex="-1"></a><span class="co">#&gt; 244      ¦       ¦               °--RuleHedge_ea4b1839                                                 </span></span>
+<span id="cb6-346"><a href="#cb6-346" tabindex="-1"></a><span class="co">#&gt; 245      ¦       ¦                   °--*Storie Factor A Profile Group 7,8,9 landform                  </span></span>
+<span id="cb6-347"><a href="#cb6-347" tabindex="-1"></a><span class="co">#&gt; 246      ¦       ¦                       °--RuleHedge_608f03c8                                         </span></span>
+<span id="cb6-348"><a href="#cb6-348" tabindex="-1"></a><span class="co">#&gt; 247      ¦       ¦                           °--*Storie Factor A Pedon Group 7, 8, 9 landform          </span></span>
+<span id="cb6-349"><a href="#cb6-349" tabindex="-1"></a><span class="co">#&gt; 248      ¦       °--*Storie Factor X (wetness in growing season, 25-100cm)                             </span></span>
+<span id="cb6-350"><a href="#cb6-350" tabindex="-1"></a><span class="co">#&gt; 249      ¦           °--RuleHedge_7981f6f4                                                             </span></span>
+<span id="cb6-351"><a href="#cb6-351" tabindex="-1"></a><span class="co">#&gt; 250      ¦               °--*Storie Factor X landscape wetness, grow. season, 25-100                   </span></span>
+<span id="cb6-352"><a href="#cb6-352" tabindex="-1"></a><span class="co">#&gt; 251      °--*Storie Factor X (temperature regime)                                                      </span></span>
+<span id="cb6-353"><a href="#cb6-353" tabindex="-1"></a><span class="co">#&gt; 252          °--*Storie Factor X temperature regime                                                    </span></span>
+<span id="cb6-354"><a href="#cb6-354" tabindex="-1"></a><span class="co">#&gt;               Type Value RefId rule_refid</span></span>
+<span id="cb6-355"><a href="#cb6-355" tabindex="-1"></a><span class="co">#&gt; 1             &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-356"><a href="#cb6-356" tabindex="-1"></a><span class="co">#&gt; 2          product  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-357"><a href="#cb6-357" tabindex="-1"></a><span class="co">#&gt; 3             &lt;NA&gt;  &lt;NA&gt; 49446      49446</span></span>
+<span id="cb6-358"><a href="#cb6-358" tabindex="-1"></a><span class="co">#&gt; 4          null_or     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-359"><a href="#cb6-359" tabindex="-1"></a><span class="co">#&gt; 5             &lt;NA&gt;  &lt;NA&gt; 50481       &lt;NA&gt;</span></span>
+<span id="cb6-360"><a href="#cb6-360" tabindex="-1"></a><span class="co">#&gt; 6             &lt;NA&gt;  &lt;NA&gt; 15976      15976</span></span>
+<span id="cb6-361"><a href="#cb6-361" tabindex="-1"></a><span class="co">#&gt; 7               or  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-362"><a href="#cb6-362" tabindex="-1"></a><span class="co">#&gt; 8             &lt;NA&gt;  &lt;NA&gt; 49448      49448</span></span>
+<span id="cb6-363"><a href="#cb6-363" tabindex="-1"></a><span class="co">#&gt; 9              and  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-364"><a href="#cb6-364" tabindex="-1"></a><span class="co">#&gt; 10           times  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-365"><a href="#cb6-365" tabindex="-1"></a><span class="co">#&gt; 11            &lt;NA&gt;  &lt;NA&gt; 15967      15967</span></span>
+<span id="cb6-366"><a href="#cb6-366" tabindex="-1"></a><span class="co">#&gt; 12    not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-367"><a href="#cb6-367" tabindex="-1"></a><span class="co">#&gt; 13            &lt;NA&gt;  &lt;NA&gt; 12916       &lt;NA&gt;</span></span>
+<span id="cb6-368"><a href="#cb6-368" tabindex="-1"></a><span class="co">#&gt; 14            &lt;NA&gt;  &lt;NA&gt; 49447      49447</span></span>
+<span id="cb6-369"><a href="#cb6-369" tabindex="-1"></a><span class="co">#&gt; 15              or  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-370"><a href="#cb6-370" tabindex="-1"></a><span class="co">#&gt; 16    not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-371"><a href="#cb6-371" tabindex="-1"></a><span class="co">#&gt; 17            &lt;NA&gt;  &lt;NA&gt; 12914       &lt;NA&gt;</span></span>
+<span id="cb6-372"><a href="#cb6-372" tabindex="-1"></a><span class="co">#&gt; 18    not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-373"><a href="#cb6-373" tabindex="-1"></a><span class="co">#&gt; 19            &lt;NA&gt;  &lt;NA&gt; 12915       &lt;NA&gt;</span></span>
+<span id="cb6-374"><a href="#cb6-374" tabindex="-1"></a><span class="co">#&gt; 20    not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-375"><a href="#cb6-375" tabindex="-1"></a><span class="co">#&gt; 21            &lt;NA&gt;  &lt;NA&gt; 13092       &lt;NA&gt;</span></span>
+<span id="cb6-376"><a href="#cb6-376" tabindex="-1"></a><span class="co">#&gt; 22             not     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-377"><a href="#cb6-377" tabindex="-1"></a><span class="co">#&gt; 23            &lt;NA&gt;  &lt;NA&gt; 15974      15974</span></span>
+<span id="cb6-378"><a href="#cb6-378" tabindex="-1"></a><span class="co">#&gt; 24    not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-379"><a href="#cb6-379" tabindex="-1"></a><span class="co">#&gt; 25            &lt;NA&gt;  &lt;NA&gt; 12917       &lt;NA&gt;</span></span>
+<span id="cb6-380"><a href="#cb6-380" tabindex="-1"></a><span class="co">#&gt; 26            &lt;NA&gt;  &lt;NA&gt; 49428      49428</span></span>
+<span id="cb6-381"><a href="#cb6-381" tabindex="-1"></a><span class="co">#&gt; 27             and  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-382"><a href="#cb6-382" tabindex="-1"></a><span class="co">#&gt; 28           times  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-383"><a href="#cb6-383" tabindex="-1"></a><span class="co">#&gt; 29            &lt;NA&gt;  &lt;NA&gt; 15967      15967</span></span>
+<span id="cb6-384"><a href="#cb6-384" tabindex="-1"></a><span class="co">#&gt; 30    not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-385"><a href="#cb6-385" tabindex="-1"></a><span class="co">#&gt; 31            &lt;NA&gt;  &lt;NA&gt; 12916       &lt;NA&gt;</span></span>
+<span id="cb6-386"><a href="#cb6-386" tabindex="-1"></a><span class="co">#&gt; 32            &lt;NA&gt;  &lt;NA&gt; 15991      15991</span></span>
+<span id="cb6-387"><a href="#cb6-387" tabindex="-1"></a><span class="co">#&gt; 33              or  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-388"><a href="#cb6-388" tabindex="-1"></a><span class="co">#&gt; 34    not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-389"><a href="#cb6-389" tabindex="-1"></a><span class="co">#&gt; 35            &lt;NA&gt;  &lt;NA&gt; 12929       &lt;NA&gt;</span></span>
+<span id="cb6-390"><a href="#cb6-390" tabindex="-1"></a><span class="co">#&gt; 36    not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-391"><a href="#cb6-391" tabindex="-1"></a><span class="co">#&gt; 37            &lt;NA&gt;  &lt;NA&gt; 12927       &lt;NA&gt;</span></span>
+<span id="cb6-392"><a href="#cb6-392" tabindex="-1"></a><span class="co">#&gt; 38             not     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-393"><a href="#cb6-393" tabindex="-1"></a><span class="co">#&gt; 39            &lt;NA&gt;  &lt;NA&gt; 15974      15974</span></span>
+<span id="cb6-394"><a href="#cb6-394" tabindex="-1"></a><span class="co">#&gt; 40    not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-395"><a href="#cb6-395" tabindex="-1"></a><span class="co">#&gt; 41            &lt;NA&gt;  &lt;NA&gt; 12917       &lt;NA&gt;</span></span>
+<span id="cb6-396"><a href="#cb6-396" tabindex="-1"></a><span class="co">#&gt; 42            &lt;NA&gt;  &lt;NA&gt; 16017      16017</span></span>
+<span id="cb6-397"><a href="#cb6-397" tabindex="-1"></a><span class="co">#&gt; 43             and  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-398"><a href="#cb6-398" tabindex="-1"></a><span class="co">#&gt; 44            &lt;NA&gt;  &lt;NA&gt; 15992      15992</span></span>
+<span id="cb6-399"><a href="#cb6-399" tabindex="-1"></a><span class="co">#&gt; 45              or  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-400"><a href="#cb6-400" tabindex="-1"></a><span class="co">#&gt; 46    not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-401"><a href="#cb6-401" tabindex="-1"></a><span class="co">#&gt; 47            &lt;NA&gt;  &lt;NA&gt; 12931       &lt;NA&gt;</span></span>
+<span id="cb6-402"><a href="#cb6-402" tabindex="-1"></a><span class="co">#&gt; 48             and  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-403"><a href="#cb6-403" tabindex="-1"></a><span class="co">#&gt; 49    not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-404"><a href="#cb6-404" tabindex="-1"></a><span class="co">#&gt; 50            &lt;NA&gt;  &lt;NA&gt; 12934       &lt;NA&gt;</span></span>
+<span id="cb6-405"><a href="#cb6-405" tabindex="-1"></a><span class="co">#&gt; 51             not     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-406"><a href="#cb6-406" tabindex="-1"></a><span class="co">#&gt; 52    not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-407"><a href="#cb6-407" tabindex="-1"></a><span class="co">#&gt; 53            &lt;NA&gt;  &lt;NA&gt; 13106       &lt;NA&gt;</span></span>
+<span id="cb6-408"><a href="#cb6-408" tabindex="-1"></a><span class="co">#&gt; 54             not     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-409"><a href="#cb6-409" tabindex="-1"></a><span class="co">#&gt; 55    not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-410"><a href="#cb6-410" tabindex="-1"></a><span class="co">#&gt; 56            &lt;NA&gt;  &lt;NA&gt; 11459       &lt;NA&gt;</span></span>
+<span id="cb6-411"><a href="#cb6-411" tabindex="-1"></a><span class="co">#&gt; 57            &lt;NA&gt;  &lt;NA&gt; 16016      16016</span></span>
+<span id="cb6-412"><a href="#cb6-412" tabindex="-1"></a><span class="co">#&gt; 58    not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-413"><a href="#cb6-413" tabindex="-1"></a><span class="co">#&gt; 59            &lt;NA&gt;  &lt;NA&gt; 12938       &lt;NA&gt;</span></span>
+<span id="cb6-414"><a href="#cb6-414" tabindex="-1"></a><span class="co">#&gt; 60            &lt;NA&gt;  &lt;NA&gt; 16038      16038</span></span>
+<span id="cb6-415"><a href="#cb6-415" tabindex="-1"></a><span class="co">#&gt; 61             and  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-416"><a href="#cb6-416" tabindex="-1"></a><span class="co">#&gt; 62           times  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-417"><a href="#cb6-417" tabindex="-1"></a><span class="co">#&gt; 63            &lt;NA&gt;  &lt;NA&gt; 16035      16035</span></span>
+<span id="cb6-418"><a href="#cb6-418" tabindex="-1"></a><span class="co">#&gt; 64    not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-419"><a href="#cb6-419" tabindex="-1"></a><span class="co">#&gt; 65            &lt;NA&gt;  &lt;NA&gt; 12939       &lt;NA&gt;</span></span>
+<span id="cb6-420"><a href="#cb6-420" tabindex="-1"></a><span class="co">#&gt; 66            &lt;NA&gt;  &lt;NA&gt; 16037      16037</span></span>
+<span id="cb6-421"><a href="#cb6-421" tabindex="-1"></a><span class="co">#&gt; 67              or  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-422"><a href="#cb6-422" tabindex="-1"></a><span class="co">#&gt; 68    not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-423"><a href="#cb6-423" tabindex="-1"></a><span class="co">#&gt; 69            &lt;NA&gt;  &lt;NA&gt; 12932       &lt;NA&gt;</span></span>
+<span id="cb6-424"><a href="#cb6-424" tabindex="-1"></a><span class="co">#&gt; 70    not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-425"><a href="#cb6-425" tabindex="-1"></a><span class="co">#&gt; 71            &lt;NA&gt;  &lt;NA&gt; 12933       &lt;NA&gt;</span></span>
+<span id="cb6-426"><a href="#cb6-426" tabindex="-1"></a><span class="co">#&gt; 72    not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-427"><a href="#cb6-427" tabindex="-1"></a><span class="co">#&gt; 73            &lt;NA&gt;  &lt;NA&gt; 13093       &lt;NA&gt;</span></span>
+<span id="cb6-428"><a href="#cb6-428" tabindex="-1"></a><span class="co">#&gt; 74             not     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-429"><a href="#cb6-429" tabindex="-1"></a><span class="co">#&gt; 75            &lt;NA&gt;  &lt;NA&gt; 15974      15974</span></span>
+<span id="cb6-430"><a href="#cb6-430" tabindex="-1"></a><span class="co">#&gt; 76    not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-431"><a href="#cb6-431" tabindex="-1"></a><span class="co">#&gt; 77            &lt;NA&gt;  &lt;NA&gt; 12917       &lt;NA&gt;</span></span>
+<span id="cb6-432"><a href="#cb6-432" tabindex="-1"></a><span class="co">#&gt; 78            &lt;NA&gt;  &lt;NA&gt; 16040      16040</span></span>
+<span id="cb6-433"><a href="#cb6-433" tabindex="-1"></a><span class="co">#&gt; 79           times  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-434"><a href="#cb6-434" tabindex="-1"></a><span class="co">#&gt; 80            &lt;NA&gt;  &lt;NA&gt; 16041      16041</span></span>
+<span id="cb6-435"><a href="#cb6-435" tabindex="-1"></a><span class="co">#&gt; 81             and  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-436"><a href="#cb6-436" tabindex="-1"></a><span class="co">#&gt; 82    not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-437"><a href="#cb6-437" tabindex="-1"></a><span class="co">#&gt; 83            &lt;NA&gt;  &lt;NA&gt; 13207       &lt;NA&gt;</span></span>
+<span id="cb6-438"><a href="#cb6-438" tabindex="-1"></a><span class="co">#&gt; 84    not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-439"><a href="#cb6-439" tabindex="-1"></a><span class="co">#&gt; 85            &lt;NA&gt;  &lt;NA&gt; 13208       &lt;NA&gt;</span></span>
+<span id="cb6-440"><a href="#cb6-440" tabindex="-1"></a><span class="co">#&gt; 86            &lt;NA&gt;  &lt;NA&gt; 15996      15996</span></span>
+<span id="cb6-441"><a href="#cb6-441" tabindex="-1"></a><span class="co">#&gt; 87             and  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-442"><a href="#cb6-442" tabindex="-1"></a><span class="co">#&gt; 88            &lt;NA&gt;  &lt;NA&gt; 12934       &lt;NA&gt;</span></span>
+<span id="cb6-443"><a href="#cb6-443" tabindex="-1"></a><span class="co">#&gt; 89              or  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-444"><a href="#cb6-444" tabindex="-1"></a><span class="co">#&gt; 90            &lt;NA&gt;  &lt;NA&gt; 13106       &lt;NA&gt;</span></span>
+<span id="cb6-445"><a href="#cb6-445" tabindex="-1"></a><span class="co">#&gt; 91            &lt;NA&gt;  &lt;NA&gt; 11459       &lt;NA&gt;</span></span>
+<span id="cb6-446"><a href="#cb6-446" tabindex="-1"></a><span class="co">#&gt; 92            &lt;NA&gt;  &lt;NA&gt; 15975      15975</span></span>
+<span id="cb6-447"><a href="#cb6-447" tabindex="-1"></a><span class="co">#&gt; 93             and  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-448"><a href="#cb6-448" tabindex="-1"></a><span class="co">#&gt; 94           times  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-449"><a href="#cb6-449" tabindex="-1"></a><span class="co">#&gt; 95            &lt;NA&gt;  &lt;NA&gt; 15974      15974</span></span>
+<span id="cb6-450"><a href="#cb6-450" tabindex="-1"></a><span class="co">#&gt; 96    not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-451"><a href="#cb6-451" tabindex="-1"></a><span class="co">#&gt; 97            &lt;NA&gt;  &lt;NA&gt; 12917       &lt;NA&gt;</span></span>
+<span id="cb6-452"><a href="#cb6-452" tabindex="-1"></a><span class="co">#&gt; 98            &lt;NA&gt;  &lt;NA&gt; 15971      15971</span></span>
+<span id="cb6-453"><a href="#cb6-453" tabindex="-1"></a><span class="co">#&gt; 99    not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-454"><a href="#cb6-454" tabindex="-1"></a><span class="co">#&gt; 100           &lt;NA&gt;  &lt;NA&gt; 12919       &lt;NA&gt;</span></span>
+<span id="cb6-455"><a href="#cb6-455" tabindex="-1"></a><span class="co">#&gt; 101          times  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-456"><a href="#cb6-456" tabindex="-1"></a><span class="co">#&gt; 102           &lt;NA&gt;  &lt;NA&gt; 15974      15974</span></span>
+<span id="cb6-457"><a href="#cb6-457" tabindex="-1"></a><span class="co">#&gt; 103   not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-458"><a href="#cb6-458" tabindex="-1"></a><span class="co">#&gt; 104           &lt;NA&gt;  &lt;NA&gt; 12917       &lt;NA&gt;</span></span>
+<span id="cb6-459"><a href="#cb6-459" tabindex="-1"></a><span class="co">#&gt; 105           &lt;NA&gt;  &lt;NA&gt; 16044      16044</span></span>
+<span id="cb6-460"><a href="#cb6-460" tabindex="-1"></a><span class="co">#&gt; 106   not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-461"><a href="#cb6-461" tabindex="-1"></a><span class="co">#&gt; 107           &lt;NA&gt;  &lt;NA&gt; 12947       &lt;NA&gt;</span></span>
+<span id="cb6-462"><a href="#cb6-462" tabindex="-1"></a><span class="co">#&gt; 108           &lt;NA&gt;  &lt;NA&gt; 49444      49444</span></span>
+<span id="cb6-463"><a href="#cb6-463" tabindex="-1"></a><span class="co">#&gt; 109          times  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-464"><a href="#cb6-464" tabindex="-1"></a><span class="co">#&gt; 110           &lt;NA&gt;  &lt;NA&gt; 49443      49443</span></span>
+<span id="cb6-465"><a href="#cb6-465" tabindex="-1"></a><span class="co">#&gt; 111 null_not_rated     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-466"><a href="#cb6-466" tabindex="-1"></a><span class="co">#&gt; 112           &lt;NA&gt;  &lt;NA&gt; 50479       &lt;NA&gt;</span></span>
+<span id="cb6-467"><a href="#cb6-467" tabindex="-1"></a><span class="co">#&gt; 113           &lt;NA&gt;  &lt;NA&gt; 49445      49445</span></span>
+<span id="cb6-468"><a href="#cb6-468" tabindex="-1"></a><span class="co">#&gt; 114           &lt;NA&gt;  &lt;NA&gt; 50480       &lt;NA&gt;</span></span>
+<span id="cb6-469"><a href="#cb6-469" tabindex="-1"></a><span class="co">#&gt; 115           &lt;NA&gt;  &lt;NA&gt; 15748      15748</span></span>
+<span id="cb6-470"><a href="#cb6-470" tabindex="-1"></a><span class="co">#&gt; 116 null_not_rated     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-471"><a href="#cb6-471" tabindex="-1"></a><span class="co">#&gt; 117           &lt;NA&gt;  &lt;NA&gt; 12800       &lt;NA&gt;</span></span>
+<span id="cb6-472"><a href="#cb6-472" tabindex="-1"></a><span class="co">#&gt; 118           &lt;NA&gt;  &lt;NA&gt; 49440      49440</span></span>
+<span id="cb6-473"><a href="#cb6-473" tabindex="-1"></a><span class="co">#&gt; 119            and  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-474"><a href="#cb6-474" tabindex="-1"></a><span class="co">#&gt; 120           &lt;NA&gt;  &lt;NA&gt; 49441      49441</span></span>
+<span id="cb6-475"><a href="#cb6-475" tabindex="-1"></a><span class="co">#&gt; 121        null_or     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-476"><a href="#cb6-476" tabindex="-1"></a><span class="co">#&gt; 122           &lt;NA&gt;  &lt;NA&gt; 50477       &lt;NA&gt;</span></span>
+<span id="cb6-477"><a href="#cb6-477" tabindex="-1"></a><span class="co">#&gt; 123           &lt;NA&gt;  &lt;NA&gt; 49442      49442</span></span>
+<span id="cb6-478"><a href="#cb6-478" tabindex="-1"></a><span class="co">#&gt; 124        null_or     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-479"><a href="#cb6-479" tabindex="-1"></a><span class="co">#&gt; 125           &lt;NA&gt;  &lt;NA&gt; 50478       &lt;NA&gt;</span></span>
+<span id="cb6-480"><a href="#cb6-480" tabindex="-1"></a><span class="co">#&gt; 126           &lt;NA&gt;  &lt;NA&gt; 49439      49439</span></span>
+<span id="cb6-481"><a href="#cb6-481" tabindex="-1"></a><span class="co">#&gt; 127        null_or     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-482"><a href="#cb6-482" tabindex="-1"></a><span class="co">#&gt; 128            and  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-483"><a href="#cb6-483" tabindex="-1"></a><span class="co">#&gt; 129           &lt;NA&gt;  &lt;NA&gt; 50475       &lt;NA&gt;</span></span>
+<span id="cb6-484"><a href="#cb6-484" tabindex="-1"></a><span class="co">#&gt; 130           &lt;NA&gt;  &lt;NA&gt; 50476       &lt;NA&gt;</span></span>
+<span id="cb6-485"><a href="#cb6-485" tabindex="-1"></a><span class="co">#&gt; 131           &lt;NA&gt;  &lt;NA&gt; 15746      15746</span></span>
+<span id="cb6-486"><a href="#cb6-486" tabindex="-1"></a><span class="co">#&gt; 132            and  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-487"><a href="#cb6-487" tabindex="-1"></a><span class="co">#&gt; 133           &lt;NA&gt;  &lt;NA&gt; 16320      16320</span></span>
+<span id="cb6-488"><a href="#cb6-488" tabindex="-1"></a><span class="co">#&gt; 134             or  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-489"><a href="#cb6-489" tabindex="-1"></a><span class="co">#&gt; 135            sum  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-490"><a href="#cb6-490" tabindex="-1"></a><span class="co">#&gt; 136          limit   0.9  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-491"><a href="#cb6-491" tabindex="-1"></a><span class="co">#&gt; 137           &lt;NA&gt;  &lt;NA&gt; 16549      16549</span></span>
+<span id="cb6-492"><a href="#cb6-492" tabindex="-1"></a><span class="co">#&gt; 138 null_not_rated     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-493"><a href="#cb6-493" tabindex="-1"></a><span class="co">#&gt; 139           &lt;NA&gt;  &lt;NA&gt; 13114       &lt;NA&gt;</span></span>
+<span id="cb6-494"><a href="#cb6-494" tabindex="-1"></a><span class="co">#&gt; 140             or  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-495"><a href="#cb6-495" tabindex="-1"></a><span class="co">#&gt; 141          limit   0.1  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-496"><a href="#cb6-496" tabindex="-1"></a><span class="co">#&gt; 142           &lt;NA&gt;  &lt;NA&gt; 16314      16314</span></span>
+<span id="cb6-497"><a href="#cb6-497" tabindex="-1"></a><span class="co">#&gt; 143   not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-498"><a href="#cb6-498" tabindex="-1"></a><span class="co">#&gt; 144           &lt;NA&gt;  &lt;NA&gt; 13117       &lt;NA&gt;</span></span>
+<span id="cb6-499"><a href="#cb6-499" tabindex="-1"></a><span class="co">#&gt; 145          limit  0.05  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-500"><a href="#cb6-500" tabindex="-1"></a><span class="co">#&gt; 146           &lt;NA&gt;  &lt;NA&gt; 16317      16317</span></span>
+<span id="cb6-501"><a href="#cb6-501" tabindex="-1"></a><span class="co">#&gt; 147   not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-502"><a href="#cb6-502" tabindex="-1"></a><span class="co">#&gt; 148           &lt;NA&gt;  &lt;NA&gt; 13121       &lt;NA&gt;</span></span>
+<span id="cb6-503"><a href="#cb6-503" tabindex="-1"></a><span class="co">#&gt; 149            sum  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-504"><a href="#cb6-504" tabindex="-1"></a><span class="co">#&gt; 150          limit   0.7  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-505"><a href="#cb6-505" tabindex="-1"></a><span class="co">#&gt; 151           &lt;NA&gt;  &lt;NA&gt; 16548      16548</span></span>
+<span id="cb6-506"><a href="#cb6-506" tabindex="-1"></a><span class="co">#&gt; 152 null_not_rated     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-507"><a href="#cb6-507" tabindex="-1"></a><span class="co">#&gt; 153           &lt;NA&gt;  &lt;NA&gt; 13113       &lt;NA&gt;</span></span>
+<span id="cb6-508"><a href="#cb6-508" tabindex="-1"></a><span class="co">#&gt; 154             or  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-509"><a href="#cb6-509" tabindex="-1"></a><span class="co">#&gt; 155          limit   0.2  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-510"><a href="#cb6-510" tabindex="-1"></a><span class="co">#&gt; 156           &lt;NA&gt;  &lt;NA&gt; 16314      16314</span></span>
+<span id="cb6-511"><a href="#cb6-511" tabindex="-1"></a><span class="co">#&gt; 157   not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-512"><a href="#cb6-512" tabindex="-1"></a><span class="co">#&gt; 158           &lt;NA&gt;  &lt;NA&gt; 13117       &lt;NA&gt;</span></span>
+<span id="cb6-513"><a href="#cb6-513" tabindex="-1"></a><span class="co">#&gt; 159          limit   0.1  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-514"><a href="#cb6-514" tabindex="-1"></a><span class="co">#&gt; 160           &lt;NA&gt;  &lt;NA&gt; 16317      16317</span></span>
+<span id="cb6-515"><a href="#cb6-515" tabindex="-1"></a><span class="co">#&gt; 161   not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-516"><a href="#cb6-516" tabindex="-1"></a><span class="co">#&gt; 162           &lt;NA&gt;  &lt;NA&gt; 13121       &lt;NA&gt;</span></span>
+<span id="cb6-517"><a href="#cb6-517" tabindex="-1"></a><span class="co">#&gt; 163            sum  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-518"><a href="#cb6-518" tabindex="-1"></a><span class="co">#&gt; 164          limit   0.5  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-519"><a href="#cb6-519" tabindex="-1"></a><span class="co">#&gt; 165 null_not_rated     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-520"><a href="#cb6-520" tabindex="-1"></a><span class="co">#&gt; 166           &lt;NA&gt;  &lt;NA&gt; 20223      20223</span></span>
+<span id="cb6-521"><a href="#cb6-521" tabindex="-1"></a><span class="co">#&gt; 167 null_not_rated     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-522"><a href="#cb6-522" tabindex="-1"></a><span class="co">#&gt; 168           &lt;NA&gt;  &lt;NA&gt; 13112       &lt;NA&gt;</span></span>
+<span id="cb6-523"><a href="#cb6-523" tabindex="-1"></a><span class="co">#&gt; 169             or  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-524"><a href="#cb6-524" tabindex="-1"></a><span class="co">#&gt; 170          limit   0.4  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-525"><a href="#cb6-525" tabindex="-1"></a><span class="co">#&gt; 171           &lt;NA&gt;  &lt;NA&gt; 16314      16314</span></span>
+<span id="cb6-526"><a href="#cb6-526" tabindex="-1"></a><span class="co">#&gt; 172   not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-527"><a href="#cb6-527" tabindex="-1"></a><span class="co">#&gt; 173           &lt;NA&gt;  &lt;NA&gt; 13117       &lt;NA&gt;</span></span>
+<span id="cb6-528"><a href="#cb6-528" tabindex="-1"></a><span class="co">#&gt; 174          limit   0.1  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-529"><a href="#cb6-529" tabindex="-1"></a><span class="co">#&gt; 175           &lt;NA&gt;  &lt;NA&gt; 16317      16317</span></span>
+<span id="cb6-530"><a href="#cb6-530" tabindex="-1"></a><span class="co">#&gt; 176   not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-531"><a href="#cb6-531" tabindex="-1"></a><span class="co">#&gt; 177           &lt;NA&gt;  &lt;NA&gt; 13121       &lt;NA&gt;</span></span>
+<span id="cb6-532"><a href="#cb6-532" tabindex="-1"></a><span class="co">#&gt; 178           &lt;NA&gt;  &lt;NA&gt; 16546      16546</span></span>
+<span id="cb6-533"><a href="#cb6-533" tabindex="-1"></a><span class="co">#&gt; 179 null_not_rated     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-534"><a href="#cb6-534" tabindex="-1"></a><span class="co">#&gt; 180           &lt;NA&gt;  &lt;NA&gt; 13107       &lt;NA&gt;</span></span>
+<span id="cb6-535"><a href="#cb6-535" tabindex="-1"></a><span class="co">#&gt; 181          limit  0.85  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-536"><a href="#cb6-536" tabindex="-1"></a><span class="co">#&gt; 182           &lt;NA&gt;  &lt;NA&gt; 16547      16547</span></span>
+<span id="cb6-537"><a href="#cb6-537" tabindex="-1"></a><span class="co">#&gt; 183 null_not_rated     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-538"><a href="#cb6-538" tabindex="-1"></a><span class="co">#&gt; 184           &lt;NA&gt;  &lt;NA&gt; 13111       &lt;NA&gt;</span></span>
+<span id="cb6-539"><a href="#cb6-539" tabindex="-1"></a><span class="co">#&gt; 185           &lt;NA&gt;  &lt;NA&gt; 15749      15749</span></span>
+<span id="cb6-540"><a href="#cb6-540" tabindex="-1"></a><span class="co">#&gt; 186            and  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-541"><a href="#cb6-541" tabindex="-1"></a><span class="co">#&gt; 187           &lt;NA&gt;  &lt;NA&gt; 16304      16304</span></span>
+<span id="cb6-542"><a href="#cb6-542" tabindex="-1"></a><span class="co">#&gt; 188           &lt;NA&gt;  &lt;NA&gt; 13115       &lt;NA&gt;</span></span>
+<span id="cb6-543"><a href="#cb6-543" tabindex="-1"></a><span class="co">#&gt; 189           &lt;NA&gt;  &lt;NA&gt; 16048      16048</span></span>
+<span id="cb6-544"><a href="#cb6-544" tabindex="-1"></a><span class="co">#&gt; 190             or  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-545"><a href="#cb6-545" tabindex="-1"></a><span class="co">#&gt; 191           &lt;NA&gt;  &lt;NA&gt; 10265       &lt;NA&gt;</span></span>
+<span id="cb6-546"><a href="#cb6-546" tabindex="-1"></a><span class="co">#&gt; 192           &lt;NA&gt;  &lt;NA&gt; 12952       &lt;NA&gt;</span></span>
+<span id="cb6-547"><a href="#cb6-547" tabindex="-1"></a><span class="co">#&gt; 193           &lt;NA&gt;  &lt;NA&gt; 16566      16566</span></span>
+<span id="cb6-548"><a href="#cb6-548" tabindex="-1"></a><span class="co">#&gt; 194             or  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-549"><a href="#cb6-549" tabindex="-1"></a><span class="co">#&gt; 195           &lt;NA&gt;  &lt;NA&gt; 16564      16564</span></span>
+<span id="cb6-550"><a href="#cb6-550" tabindex="-1"></a><span class="co">#&gt; 196            and  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-551"><a href="#cb6-551" tabindex="-1"></a><span class="co">#&gt; 197           &lt;NA&gt;  &lt;NA&gt; 15974      15974</span></span>
+<span id="cb6-552"><a href="#cb6-552" tabindex="-1"></a><span class="co">#&gt; 198   not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-553"><a href="#cb6-553" tabindex="-1"></a><span class="co">#&gt; 199           &lt;NA&gt;  &lt;NA&gt; 12917       &lt;NA&gt;</span></span>
+<span id="cb6-554"><a href="#cb6-554" tabindex="-1"></a><span class="co">#&gt; 200           &lt;NA&gt;  &lt;NA&gt; 16557      16557</span></span>
+<span id="cb6-555"><a href="#cb6-555" tabindex="-1"></a><span class="co">#&gt; 201             or  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-556"><a href="#cb6-556" tabindex="-1"></a><span class="co">#&gt; 202          limit  0.95  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-557"><a href="#cb6-557" tabindex="-1"></a><span class="co">#&gt; 203           &lt;NA&gt;  &lt;NA&gt; 16558      16558</span></span>
+<span id="cb6-558"><a href="#cb6-558" tabindex="-1"></a><span class="co">#&gt; 204        null_or     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-559"><a href="#cb6-559" tabindex="-1"></a><span class="co">#&gt; 205           &lt;NA&gt;  &lt;NA&gt; 13213       &lt;NA&gt;</span></span>
+<span id="cb6-560"><a href="#cb6-560" tabindex="-1"></a><span class="co">#&gt; 206          limit  0.85  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-561"><a href="#cb6-561" tabindex="-1"></a><span class="co">#&gt; 207           &lt;NA&gt;  &lt;NA&gt; 16562      16562</span></span>
+<span id="cb6-562"><a href="#cb6-562" tabindex="-1"></a><span class="co">#&gt; 208        null_or     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-563"><a href="#cb6-563" tabindex="-1"></a><span class="co">#&gt; 209           &lt;NA&gt;  &lt;NA&gt; 13214       &lt;NA&gt;</span></span>
+<span id="cb6-564"><a href="#cb6-564" tabindex="-1"></a><span class="co">#&gt; 210          limit  0.75  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-565"><a href="#cb6-565" tabindex="-1"></a><span class="co">#&gt; 211           &lt;NA&gt;  &lt;NA&gt; 16561      16561</span></span>
+<span id="cb6-566"><a href="#cb6-566" tabindex="-1"></a><span class="co">#&gt; 212        null_or     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-567"><a href="#cb6-567" tabindex="-1"></a><span class="co">#&gt; 213           &lt;NA&gt;  &lt;NA&gt; 13217       &lt;NA&gt;</span></span>
+<span id="cb6-568"><a href="#cb6-568" tabindex="-1"></a><span class="co">#&gt; 214          limit  0.65  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-569"><a href="#cb6-569" tabindex="-1"></a><span class="co">#&gt; 215           &lt;NA&gt;  &lt;NA&gt; 16560      16560</span></span>
+<span id="cb6-570"><a href="#cb6-570" tabindex="-1"></a><span class="co">#&gt; 216        null_or     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-571"><a href="#cb6-571" tabindex="-1"></a><span class="co">#&gt; 217           &lt;NA&gt;  &lt;NA&gt; 13216       &lt;NA&gt;</span></span>
+<span id="cb6-572"><a href="#cb6-572" tabindex="-1"></a><span class="co">#&gt; 218           &lt;NA&gt;  &lt;NA&gt; 16563      16563</span></span>
+<span id="cb6-573"><a href="#cb6-573" tabindex="-1"></a><span class="co">#&gt; 219        null_or     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-574"><a href="#cb6-574" tabindex="-1"></a><span class="co">#&gt; 220           &lt;NA&gt;  &lt;NA&gt; 13212       &lt;NA&gt;</span></span>
+<span id="cb6-575"><a href="#cb6-575" tabindex="-1"></a><span class="co">#&gt; 221           &lt;NA&gt;  &lt;NA&gt; 16565      16565</span></span>
+<span id="cb6-576"><a href="#cb6-576" tabindex="-1"></a><span class="co">#&gt; 222            and  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-577"><a href="#cb6-577" tabindex="-1"></a><span class="co">#&gt; 223           &lt;NA&gt;  &lt;NA&gt; 16557      16557</span></span>
+<span id="cb6-578"><a href="#cb6-578" tabindex="-1"></a><span class="co">#&gt; 224             or  &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-579"><a href="#cb6-579" tabindex="-1"></a><span class="co">#&gt; 225          limit  0.95  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-580"><a href="#cb6-580" tabindex="-1"></a><span class="co">#&gt; 226           &lt;NA&gt;  &lt;NA&gt; 16558      16558</span></span>
+<span id="cb6-581"><a href="#cb6-581" tabindex="-1"></a><span class="co">#&gt; 227        null_or     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-582"><a href="#cb6-582" tabindex="-1"></a><span class="co">#&gt; 228           &lt;NA&gt;  &lt;NA&gt; 13213       &lt;NA&gt;</span></span>
+<span id="cb6-583"><a href="#cb6-583" tabindex="-1"></a><span class="co">#&gt; 229          limit  0.85  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-584"><a href="#cb6-584" tabindex="-1"></a><span class="co">#&gt; 230           &lt;NA&gt;  &lt;NA&gt; 16562      16562</span></span>
+<span id="cb6-585"><a href="#cb6-585" tabindex="-1"></a><span class="co">#&gt; 231        null_or     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-586"><a href="#cb6-586" tabindex="-1"></a><span class="co">#&gt; 232           &lt;NA&gt;  &lt;NA&gt; 13214       &lt;NA&gt;</span></span>
+<span id="cb6-587"><a href="#cb6-587" tabindex="-1"></a><span class="co">#&gt; 233          limit  0.75  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-588"><a href="#cb6-588" tabindex="-1"></a><span class="co">#&gt; 234           &lt;NA&gt;  &lt;NA&gt; 16561      16561</span></span>
+<span id="cb6-589"><a href="#cb6-589" tabindex="-1"></a><span class="co">#&gt; 235        null_or     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-590"><a href="#cb6-590" tabindex="-1"></a><span class="co">#&gt; 236           &lt;NA&gt;  &lt;NA&gt; 13217       &lt;NA&gt;</span></span>
+<span id="cb6-591"><a href="#cb6-591" tabindex="-1"></a><span class="co">#&gt; 237          limit  0.65  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-592"><a href="#cb6-592" tabindex="-1"></a><span class="co">#&gt; 238           &lt;NA&gt;  &lt;NA&gt; 16560      16560</span></span>
+<span id="cb6-593"><a href="#cb6-593" tabindex="-1"></a><span class="co">#&gt; 239        null_or     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-594"><a href="#cb6-594" tabindex="-1"></a><span class="co">#&gt; 240           &lt;NA&gt;  &lt;NA&gt; 13216       &lt;NA&gt;</span></span>
+<span id="cb6-595"><a href="#cb6-595" tabindex="-1"></a><span class="co">#&gt; 241           &lt;NA&gt;  &lt;NA&gt; 16563      16563</span></span>
+<span id="cb6-596"><a href="#cb6-596" tabindex="-1"></a><span class="co">#&gt; 242        null_or     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-597"><a href="#cb6-597" tabindex="-1"></a><span class="co">#&gt; 243           &lt;NA&gt;  &lt;NA&gt; 13212       &lt;NA&gt;</span></span>
+<span id="cb6-598"><a href="#cb6-598" tabindex="-1"></a><span class="co">#&gt; 244            not     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-599"><a href="#cb6-599" tabindex="-1"></a><span class="co">#&gt; 245           &lt;NA&gt;  &lt;NA&gt; 15974      15974</span></span>
+<span id="cb6-600"><a href="#cb6-600" tabindex="-1"></a><span class="co">#&gt; 246   not_null_and     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-601"><a href="#cb6-601" tabindex="-1"></a><span class="co">#&gt; 247           &lt;NA&gt;  &lt;NA&gt; 12917       &lt;NA&gt;</span></span>
+<span id="cb6-602"><a href="#cb6-602" tabindex="-1"></a><span class="co">#&gt; 248           &lt;NA&gt;  &lt;NA&gt; 16049      16049</span></span>
+<span id="cb6-603"><a href="#cb6-603" tabindex="-1"></a><span class="co">#&gt; 249        null_or     0  &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span id="cb6-604"><a href="#cb6-604" tabindex="-1"></a><span class="co">#&gt; 250           &lt;NA&gt;  &lt;NA&gt; 12954       &lt;NA&gt;</span></span>
+<span id="cb6-605"><a href="#cb6-605" tabindex="-1"></a><span class="co">#&gt; 251           &lt;NA&gt;  &lt;NA&gt; 49449      49449</span></span>
+<span id="cb6-606"><a href="#cb6-606" tabindex="-1"></a><span class="co">#&gt; 252           &lt;NA&gt;  &lt;NA&gt; 50482       &lt;NA&gt;</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="run-a-rule-tree-with-custom-data">Run a rule tree with custom data<a class="anchor" aria-label="anchor" href="#run-a-rule-tree-with-custom-data"></a>
+</h2>
+<p>The <code><a href="reference/interpret.html">interpret()</a></code> function takes a data.frame or SpatRaster where column or variable names correspond to input property names. Property names can be extracted using <code><a href="reference/getPropertySet.html">getPropertySet()</a></code> and then made into compatible names using the base R function <code><a href="https://rdrr.io/r/base/make.names.html" class="external-link">make.names()</a></code>.</p>
+<p>Here we pick a simple rule that utilizes only one property and evaluation (“Erodibility Factor Maximum”). The numeric input to the evaluation function is an erodibility (“K”) factor ranging from 0 to 1.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># parse rule and properties</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">initRuleset</span>(<span class="st">"Erodibility Factor Maximum"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">getPropertySet</span>(r)</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co"># prepare input data</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>kf <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.01</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>input <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">kf =</span> kf)</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="fu">colnames</span>(input) <span class="ot">&lt;-</span> <span class="fu">make.names</span>(p<span class="sc">$</span>propname)</span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co"># run interpretation</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>output <span class="ot">&lt;-</span> <span class="fu">interpret</span>(r, input)</span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co"># visualize results</span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="fu">plot</span>(output<span class="sc">$</span>rating <span class="sc">~</span> input<span class="sc">$</span>SOIL.EROSION.FACTOR.MAXIMUM.<span class="fl">1.99</span>)</span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-5-1.png" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="resources">Resources<a class="anchor" aria-label="anchor" href="#resources"></a>
@@ -96,553 +786,22 @@
 </ol>
 </div>
 <div class="section level2">
+<h2 id="sample-spatial-data">Sample Spatial Data<a class="anchor" aria-label="anchor" href="#sample-spatial-data"></a>
+</h2>
+<p>Input data for extended demonstrations by @josephbrehm and others can be found in the <code>inst/extdata</code> portion of this repository.</p>
+<p>To have all that data to you can download the repository as a static ZIP file, or “clone” with <code>git</code>! These larger data sets are not included when the R package is installed with {remotes}. A demonstration script and input boundary files can be found in <code>/demo</code> folder.</p>
+</div>
+<div class="section level2">
 <h2 id="things-to-figure-out">Things to Figure Out<a class="anchor" aria-label="anchor" href="#things-to-figure-out"></a>
 </h2>
 <ul>
-<li>convert property NASIS-report language into actual values</li>
-<li>link properties or insert new data</li>
-<li>apply logical / arith. operators to nodes</li>
-<li>how can we get required properties from SDA?</li>
-<li>some properties return an RV, some {low,RV,high}: all functions must be vectorized</li>
-</ul>
-</div>
-<div class="section level2">
-<h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
-</h2>
-<div class="section level3">
-<h3 id="evaluation-curves">Evaluation Curves<a class="anchor" aria-label="anchor" href="#evaluation-curves"></a>
-</h3>
-<p>The following image was generated from a evaluation curve data from NASIS.</p>
-</div>
-</div>
-</div>
-<div class="section level1">
-<h1 id="examples-1">Examples<a class="anchor" aria-label="anchor" href="#examples-1"></a>
-</h1>
+<li>convert NASIS property scripts into R code (see: <a href="https://github.com/brownag/cvirrr/" class="external-link uri">https://github.com/brownag/cvirrr/</a> for an incomplete attempt at this)</li>
+<li>some properties return an RV, some {low,RV,high}:
 <ul>
-<li><a href="http://ncss-tech.github.io/interpretation-engine/misc/nasis-interp-guts.html" class="uri">http://ncss-tech.github.io/interpretation-engine/misc/nasis-interp-guts.html</a></li>
-<li><a href="http://ncss-tech.github.io/interpretation-engine/misc/D3/tree.html" class="uri">http://ncss-tech.github.io/interpretation-engine/misc/D3/tree.html</a></li>
+<li>alternately, allow for selection of one specific value that can be customized on property basis.</li>
 </ul>
-<p><img src="misc/static-figures/ca-storie-index-slope-eval.png" alt="alt text"><img src="misc/static-figures/ca-storie-index-slope-eval-spline-0to8percent.png" alt="alt text"></p>
-<div class="section level3">
-<h3 id="rule-trees">Rule Trees<a class="anchor" aria-label="anchor" href="#rule-trees"></a>
-</h3>
-<p>The following blocks of text are a simple representation of the <code>data.tree</code> objects that describe the hierachy of rules and evaluations that define an interpretation.</p>
-<strong>Dust PM10 and PM2.5 Generation</strong>
-<pre style="font-size: 70%; font-family: monospace">
-                                                                       levelName           Type Value RefId rule_refid eval_refid evalType
-1  Dust PM10 and PM2.5 Generation                                                                                                         
-2   °--RuleHedge_de473ab5                                                              multiply   0.5                                     
-3       °--RuleOperator_0a397761                                                        product                                           
-4           ¦--Dryness Index 0.5 to 3                                                                 18448                 18448  Sigmoid
-5           °--RuleOperator_7025ab26                                                        sum                                           
-6               ¦--Dust Due to Gypsum                                                                 23659      23659                    
-7               ¦   °--RuleHedge_5c18cb73                                          not_null_and     0                                     
-8               ¦       °--Dust from Gypsum Content 2 to 15 Percent                                   18446                 18446  Sigmoid
-9               °--Dust Due to Silt and Clay                                                          23661      23661                    
-10                  °--RuleHedge_caf7e2e0                                        null_not_rated     0                                     
-11                      °--Dust from Silt and Clay Content 20 to 70 Percent Sand                      18447                 18447   Linear
-</pre>
-<p><strong>CA Storie Index</strong></p>
-<p>Using the <code>data.tree</code> representation of the CA Storie Index Primary Rule, we can extract the entire set of evaluations and required properties:</p>
-<table class="table">
-<colgroup>
-<col width="2%">
-<col width="48%">
-<col width="49%">
-</colgroup>
-<thead><tr class="header">
-<th align="left"></th>
-<th align="left">evaluation</th>
-<th align="left">property</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">1</td>
-<td align="left">*Storie Factor A Pedon Group not rated taxonomy rev</td>
-<td align="left">TAXONOMIC ORDER</td>
-</tr>
-<tr class="even">
-<td align="left">2</td>
-<td align="left">*Storie Factor A Pedon Group 1 and 2 soil depth</td>
-<td align="left">*Storie depth to first restriction for Profile Group 1-3</td>
-</tr>
-<tr class="odd">
-<td align="left">3</td>
-<td align="left">*Storie Factor A Pedon Group 1 suborders</td>
-<td align="left">TAXONOMIC SUBORDER</td>
-</tr>
-<tr class="even">
-<td align="left">4</td>
-<td align="left">*Storie Factor A Pedon Group 1 great groups</td>
-<td align="left">TAXONOMIC GREAT GROUP</td>
-</tr>
-<tr class="odd">
-<td align="left">5</td>
-<td align="left">*Storie Factor A Pedon Group 1 subgroups</td>
-<td align="left">TAXONOMIC SUBGROUP</td>
-</tr>
-<tr class="even">
-<td align="left">6</td>
-<td align="left">*Storie Factor A Pedon Group 7, 8, 9 landform</td>
-<td align="left">*Storie landforms in hills and mountains of California</td>
-</tr>
-<tr class="odd">
-<td align="left">8</td>
-<td align="left">*Storie Factor A Pedon Group 2 suborders Arents and Cambids</td>
-<td align="left">TAXONOMIC SUBORDER</td>
-</tr>
-<tr class="even">
-<td align="left">9</td>
-<td align="left">*Storie Factor A Pedon Group 2 great groups</td>
-<td align="left">TAXONOMIC GREAT GROUP</td>
-</tr>
-<tr class="odd">
-<td align="left">11</td>
-<td align="left">*Storie Factor A Pedon Group 3 great groups</td>
-<td align="left">TAXONOMIC GREAT GROUP</td>
-</tr>
-<tr class="even">
-<td align="left">12</td>
-<td align="left">*Storie Factor A Pedon Group 4/6 great groups</td>
-<td align="left">TAXONOMIC GREAT GROUP</td>
-</tr>
-<tr class="odd">
-<td align="left">13</td>
-<td align="left">*Storie featkind = abrupt textural change</td>
-<td align="left">*Storie where at least one cdfkind = abrupt textural change</td>
-</tr>
-<tr class="even">
-<td align="left">14</td>
-<td align="left">Component restriction = “abrupt textural change”</td>
-<td align="left">Component restrictions</td>
-</tr>
-<tr class="odd">
-<td align="left">15</td>
-<td align="left">*Storie Factor A Pedon Group 3 soil depth</td>
-<td align="left">*Storie depth to first restriction for Profile Group 1-3</td>
-</tr>
-<tr class="even">
-<td align="left">16</td>
-<td align="left">*Storie Factor A Pedon Group 5 soil depth</td>
-<td align="left">*Storie depth to pan for Profile Group 5</td>
-</tr>
-<tr class="odd">
-<td align="left">17</td>
-<td align="left">*Storie Factor A Pedon Group 5 durids</td>
-<td align="left">TAXONOMIC SUBORDER</td>
-</tr>
-<tr class="even">
-<td align="left">18</td>
-<td align="left">*Storie Factor A Pedon Group 5 great groups</td>
-<td align="left">TAXONOMIC GREAT GROUP</td>
-</tr>
-<tr class="odd">
-<td align="left">19</td>
-<td align="left">*Storie Factor A Pedon Group 5 subgroups</td>
-<td align="left">TAXONOMIC SUBGROUP</td>
-</tr>
-<tr class="even">
-<td align="left">21</td>
-<td align="left">*Storie Factor A Pedon Group 4/6 depth abrupt text featkind</td>
-<td align="left">*Storie depth to featknd abrupt tex change Profile Group 4/6</td>
-</tr>
-<tr class="odd">
-<td align="left">22</td>
-<td align="left">*Storie Factor A Pedon Group 4/6 depth abrupt tex reskind</td>
-<td align="left">*Storie depth to reskind abrupt tex change Profile Grp 4/6</td>
-</tr>
-<tr class="even">
-<td align="left">27</td>
-<td align="left">*Storie Factor A Pedon Group 7 and 8 soil depth</td>
-<td align="left">
-<em>Storie depth to hard bedrock/petro</em> for Profile Grp 7/8/9</td>
-</tr>
-<tr class="odd">
-<td align="left">29</td>
-<td align="left">*Storie Factor A Pedon Group 9 soil depth</td>
-<td align="left">*Storie depth to soft bedrock or densics for Profile Grp 7-9</td>
-</tr>
-<tr class="even">
-<td align="left">30</td>
-<td align="left">*Storie Factor B Surface Texture</td>
-<td align="left">*Storie texture score - first horizon below duff</td>
-</tr>
-<tr class="odd">
-<td align="left">31</td>
-<td align="left">*Storie Factor B rock frag volume 0-25 cm</td>
-<td align="left">ROCK FRAG VOLUME IN DEPTH 0-25 cm OR RESTRICTION</td>
-</tr>
-<tr class="even">
-<td align="left">32</td>
-<td align="left">*Storie Factor C Slope 0 to 100%</td>
-<td align="left">Slope, rv</td>
-</tr>
-<tr class="odd">
-<td align="left">33</td>
-<td align="left">*Storie Factor X Toxicity EC maximum 0-25 cm</td>
-<td align="left">EC MAXIMUM IN DEPTH 0-25 CM BELOW DUFF</td>
-</tr>
-<tr class="even">
-<td align="left">34</td>
-<td align="left">*Storie Factor X Toxicity SAR maximum 0-25 cm</td>
-<td align="left">SAR MAXIMUM IN DEPTH 0-25 CM BELOW DUFF</td>
-</tr>
-<tr class="odd">
-<td align="left">35</td>
-<td align="left">*Storie Factor X Toxicity pH minimum 0-25 cm</td>
-<td align="left">pH MINIMUM IN DEPTH 0-25 CM BELOW DUFF</td>
-</tr>
-<tr class="even">
-<td align="left">36</td>
-<td align="left">*Storie Factor X Toxicity pH maximum 0-25 cm</td>
-<td align="left">pH MAXIMUM IN DEPTH 0-25 CM BELOW DUFF</td>
-</tr>
-<tr class="odd">
-<td align="left">37</td>
-<td align="left">*Storie Factor X drainage class = moderately</td>
-<td align="left">GRL-DRAINAGE CLASS</td>
-</tr>
-<tr class="even">
-<td align="left">38</td>
-<td align="left">
-<em>Storie component local phase is </em>drained*</td>
-<td align="left">**Storie component local phase is drained</td>
-</tr>
-<tr class="odd">
-<td align="left">39</td>
-<td align="left">
-<em>Storie component local phase is </em>partially drained*</td>
-<td align="left">**Storie component local phase is partially drained</td>
-</tr>
-<tr class="even">
-<td align="left">40</td>
-<td align="left">*Storie Factor X drainage class = somewhat poorly</td>
-<td align="left">GRL-DRAINAGE CLASS</td>
-</tr>
-<tr class="odd">
-<td align="left">43</td>
-<td align="left">*Storie Factor X drainage class = poor or very poorly</td>
-<td align="left">GRL-DRAINAGE CLASS</td>
-</tr>
-<tr class="even">
-<td align="left">46</td>
-<td align="left">*Storie Factor X drainage class = well</td>
-<td align="left">GRL-DRAINAGE CLASS</td>
-</tr>
-<tr class="odd">
-<td align="left">47</td>
-<td align="left">*Storie Factor X drainage class = all excessively</td>
-<td align="left">GRL-DRAINAGE CLASS</td>
-</tr>
-<tr class="even">
-<td align="left">48</td>
-<td align="left">*Storie Factor X landscape ponding in growing season</td>
-<td align="left">*Storie ponding interaction max in growing season</td>
-</tr>
-<tr class="odd">
-<td align="left">49</td>
-<td align="left">Landscape Flooding “NONE”</td>
-<td align="left">FLOODING FREQUENCY (Maximum Frequency)</td>
-</tr>
-<tr class="even">
-<td align="left">50</td>
-<td align="left">*Storie Factor X landscape flooding in growing season</td>
-<td align="left">*Storie flooding interaction max in growing season</td>
-</tr>
-<tr class="odd">
-<td align="left">52</td>
-<td align="left">*Storie Factor X erosion class = 1</td>
-<td align="left">Erosion Class in component table</td>
-</tr>
-<tr class="even">
-<td align="left">53</td>
-<td align="left">*Storie Factor X erosion class = 2</td>
-<td align="left">Erosion Class in component table</td>
-</tr>
-<tr class="odd">
-<td align="left">54</td>
-<td align="left">*Storie Factor X erosion class = 3</td>
-<td align="left">Erosion Class in component table</td>
-</tr>
-<tr class="even">
-<td align="left">55</td>
-<td align="left">*Storie Factor X erosion class = 4</td>
-<td align="left">Erosion Class in component table</td>
-</tr>
-<tr class="odd">
-<td align="left">56</td>
-<td align="left">*Storie Factor X erosion class = 0</td>
-<td align="left">Erosion Class in component table</td>
-</tr>
-<tr class="even">
-<td align="left">63</td>
-<td align="left">*Storie Factor X landscape wetness, grow. season, 25-100</td>
-<td align="left">*Storie near surface wetness rv depth in growing season</td>
-</tr>
-<tr class="odd">
-<td align="left">64</td>
-<td align="left">*Storie Factor X temperature regime</td>
-<td align="left">*Storie temperature regime score</td>
-</tr>
-</tbody>
-</table>
-Here is a text-based representation of most of the <code>data.tree</code> object:
-<pre style="font-size: 65%; font-family: monospace">
-                                                                                              levelName           Type Value RefId rule_refid eval_refid        evalType
-1   AGR - California Revised Storie Index (CA)                                                                                                                          
-2    °--RuleOperator_31a1eb65                                                                                  product                                                  
-3        ¦--*Storie Factor A Not Rated Soil Orders rev                                                                       49446      49446                           
-4        ¦   °--RuleHedge_1193d3c1                                                                             null_or     0                                            
-5        ¦       °--*Storie Factor A Pedon Group not rated taxonomy rev                                                      50481                 50481           Crisp
-6        ¦--*Storie Factor A                                                                                                 15976      15976                           
-7        ¦   °--RuleOperator_01948bb8                                                                               or                                                  
-8        ¦       ¦--*Storie Factor A Profile Group 1 rev                                                                     49448      49448                           
-9        ¦       ¦   °--RuleOperator_a72ba798                                                                      and                                                  
-10       ¦       ¦       ¦--RuleOperator_b267bf8e                                                                times                                                  
-11       ¦       ¦       ¦   ¦--*Storie Factor A Profile Group 1 and 2 fuzzy depth                                           15967      15967                           
-12       ¦       ¦       ¦   ¦   °--RuleHedge_7fad1a79                                                    not_null_and     0                                            
-13       ¦       ¦       ¦   ¦       °--*Storie Factor A Pedon Group 1 and 2 soil depth                                      12916                 12916  ArbitraryCurve
-14       ¦       ¦       ¦   °--*Storie Factor A Profile Group 1 taxonomy rev                                                49447      49447                           
-15       ¦       ¦       ¦       °--RuleOperator_4d1fdd8f                                                           or                                                  
-16       ¦       ¦       ¦           ¦--RuleHedge_44b2d8f3                                                not_null_and     0                                            
-17       ¦       ¦       ¦           ¦   °--*Storie Factor A Pedon Group 1 suborders                                         12914                 12914           Crisp
-18       ¦       ¦       ¦           ¦--RuleHedge_f2a5b4ba                                                not_null_and     0                                            
-19       ¦       ¦       ¦           ¦   °--*Storie Factor A Pedon Group 1 great groups                                      12915                 12915           Crisp
-20       ¦       ¦       ¦           °--RuleHedge_25e606a5                                                not_null_and     0                                            
-21       ¦       ¦       ¦               °--*Storie Factor A Pedon Group 1 subgroups                                         13092                 13092           Crisp
-22       ¦       ¦       °--RuleHedge_ea4b1839                                                                     not     0                                            
-23       ¦       ¦           °--*Storie Factor A Profile Group 7,8,9 landform                                                15974      15974                           
-24       ¦       ¦               °--RuleHedge_608f03c8                                                    not_null_and     0                                            
-25       ¦       ¦                   °--*Storie Factor A Pedon Group 7, 8, 9 landform                                        12917                 12917           Crisp
-26       ¦       ¦--*Storie Factor A Profile Group 2 rev                                                                     49428      49428                           
-27       ¦       ¦   °--RuleOperator_8a20de79                                                                      and                                                  
-28       ¦       ¦       ¦--RuleOperator_71911310                                                                times                                                  
-29       ¦       ¦       ¦   ¦--*Storie Factor A Profile Group 1 and 2 fuzzy depth                                           15967      15967                           
-30       ¦       ¦       ¦   ¦   °--RuleHedge_7fad1a79                                                    not_null_and     0                                            
-31       ¦       ¦       ¦   ¦       °--*Storie Factor A Pedon Group 1 and 2 soil depth                                      12916                 12916  ArbitraryCurve
-32       ¦       ¦       ¦   °--*Storie Factor A Profile Group 2 taxonomy                                                    15991      15991                           
-33       ¦       ¦       ¦       °--RuleOperator_0ad34d47                                                           or                                                  
-34       ¦       ¦       ¦           ¦--RuleHedge_698c3a67                                                not_null_and     0                                            
-35       ¦       ¦       ¦           ¦   °--*Storie Factor A Pedon Group 2 suborders Arents and Cambids                      12929                 12929           Crisp
-36       ¦       ¦       ¦           °--RuleHedge_8fbcb397                                                not_null_and     0                                            
-37       ¦       ¦       ¦               °--*Storie Factor A Pedon Group 2 great groups                                      12927                 12927           Crisp
-38       ¦       ¦       °--RuleHedge_ea4b1839                                                                     not     0                                            
-39       ¦       ¦           °--*Storie Factor A Profile Group 7,8,9 landform                                                15974      15974                           
-40       ¦       ¦               °--RuleHedge_608f03c8                                                    not_null_and     0                                            
-41       ¦       ¦                   °--*Storie Factor A Pedon Group 7, 8, 9 landform                                        12917                 12917           Crisp
-42       ¦       ¦--*Storie Factor A Profile Group 3                                                                         16017      16017                           
-43       ¦       ¦   °--RuleOperator_a84c18cd                                                                      and                                                  
-44       ¦       ¦       ¦--*Storie Factor A Profile Group 3 taxonomy                                                        15992      15992                           
-45       ¦       ¦       ¦   °--RuleOperator_c859411b                                                               or                                                  
-46       ¦       ¦       ¦       ¦--RuleHedge_a14e5a0e                                                    not_null_and     0                                            
-47       ¦       ¦       ¦       ¦   °--*Storie Factor A Pedon Group 3 great groups                                          12931                 12931           Crisp
-48       ¦       ¦       ¦       °--RuleOperator_15a86db4                                                          and                                                  
-49       ¦       ¦       ¦           ¦--RuleHedge_da245a09                                                not_null_and     0                                            
-50       ¦       ¦       ¦           ¦   °--*Storie Factor A Pedon Group 4/6 great groups                                    12934                 12934           Crisp
-51       ¦       ¦       ¦           ¦--RuleHedge_61008193                                                         not     0                                            
-52       ¦       ¦       ¦           ¦   °--RuleHedge_1a2fddac                                            not_null_and     0                                            
-53       ¦       ¦       ¦           ¦       °--*Storie featkind = abrupt textural change                                    13106                 13106           Crisp
-54       ¦       ¦       ¦           °--RuleHedge_214d73a9                                                         not     0                                            
-55       ¦       ¦       ¦               °--RuleHedge_137ed382                                            not_null_and     0                                            
-56       ¦       ¦       ¦                   °--Component restriction = "abrupt textural change"                             11459                 11459           Crisp
-57       ¦       ¦       °--*Storie Factor A Profile Group 3 fuzzy depth                                                     16016      16016                           
-58       ¦       ¦           °--RuleHedge_725c57d0                                                        not_null_and     0                                            
-59       ¦       ¦               °--*Storie Factor A Pedon Group 3 soil depth                                                12938                 12938  ArbitraryCurve
-60       ¦       ¦--*Storie Factor A Profile Group 5                                                                         16038      16038                           
-61       ¦       ¦   °--RuleOperator_38a12238                                                                      and                                                  
-62       ¦       ¦       ¦--RuleOperator_1ffc51b2                                                                times                                                  
-63       ¦       ¦       ¦   ¦--*Storie Factor A Profile Group 5 fuzzy depth                                                 16035      16035                           
-64       ¦       ¦       ¦   ¦   °--RuleHedge_a4df1747                                                    not_null_and     0                                            
-65       ¦       ¦       ¦   ¦       °--*Storie Factor A Pedon Group 5 soil depth                                            12939                 12939  ArbitraryCurve
-66       ¦       ¦       ¦   °--*Storie Factor A Profile Group 5 taxonomy                                                    16037      16037                           
-67       ¦       ¦       ¦       °--RuleOperator_d8ea2331                                                           or                                                  
-68       ¦       ¦       ¦           ¦--RuleHedge_aba67333                                                not_null_and     0                                            
-69       ¦       ¦       ¦           ¦   °--*Storie Factor A Pedon Group 5 durids                                            12932                 12932           Crisp
-70       ¦       ¦       ¦           ¦--RuleHedge_a831076b                                                not_null_and     0                                            
-71       ¦       ¦       ¦           ¦   °--*Storie Factor A Pedon Group 5 great groups                                      12933                 12933           Crisp
-72       ¦       ¦       ¦           °--RuleHedge_7954eb2b                                                not_null_and     0                                            
-73       ¦       ¦       ¦               °--*Storie Factor A Pedon Group 5 subgroups                                         13093                 13093           Crisp
-74       ¦       ¦       °--RuleHedge_ea4b1839                                                                     not     0                                            
-75       ¦       ¦           °--*Storie Factor A Profile Group 7,8,9 landform                                                15974      15974                           
-76       ¦       ¦               °--RuleHedge_608f03c8                                                    not_null_and     0                                            
-77       ¦       ¦                   °--*Storie Factor A Pedon Group 7, 8, 9 landform                                        12917                 12917           Crisp
-78       ¦       ¦--*Storie Factor A Profile Group 4/6                                                                       16040      16040                           
-79       ¦       ¦   °--RuleOperator_867650f1                                                                    times                                                  
-80       ¦       ¦       ¦--*Storie Factor A Profile Group 4/6 fuzzy depth                                                   16041      16041                           
-81       ¦       ¦       ¦   °--RuleOperator_804837c6                                                              and                                                  
-82       ¦       ¦       ¦       ¦--RuleHedge_74ec3ef6                                                    not_null_and     0                                            
-83       ¦       ¦       ¦       ¦   °--*Storie Factor A Pedon Group 4/6 depth abrupt text featkind                          13207                 13207  ArbitraryCurve
-84       ¦       ¦       ¦       °--RuleHedge_5d562f5b                                                    not_null_and     0                                            
-85       ¦       ¦       ¦           °--*Storie Factor A Pedon Group 4/6 depth abrupt tex reskind                            13208                 13208  ArbitraryCurve
-86       ¦       ¦       °--*Storie Factor A Profile Group 4/6 taxonomy w/ abrupt text                                       15996      15996                           
-87       ¦       ¦           °--RuleOperator_d7eb1bf2                                                              and                                                  
-88       ¦       ¦               ¦--*Storie Factor A Pedon Group 4/6 great groups                                            12934                 12934           Crisp
-89       ¦       ¦               °--RuleOperator_55f9f74b                                                           or                                                  
-90       ¦       ¦                   ¦--*Storie featkind = abrupt textural change                                            13106                 13106           Crisp
-91       ¦       ¦                   °--Component restriction = "abrupt textural change"                                     11459                 11459           Crisp
-92       ¦       °--*Storie Factor A Profile Groups 7, 8 or 9                                                                15975      15975                           
-93       ¦           °--RuleOperator_e9966d4d                                                                      and                                                  
-94       ¦               ¦--RuleOperator_48460ff8                                                                times                                                  
-95       ¦               ¦   ¦--*Storie Factor A Profile Group 7,8,9 landform                                                15974      15974                           
-96       ¦               ¦   ¦   °--RuleHedge_608f03c8                                                    not_null_and     0                                            
-97       ¦               ¦   ¦       °--*Storie Factor A Pedon Group 7, 8, 9 landform                                        12917                 12917           Crisp
-98       ¦               ¦   °--*Storie Factor A Profile Groups 7, 8, 9 fuzzy depth (hard)                                   15971      15971                           
-99       ¦               ¦       °--RuleHedge_62ac73b3                                                    not_null_and     0                                            
-100      ¦               ¦           °--*Storie Factor A Pedon Group 7 and 8 soil depth                                      12919                 12919  ArbitraryCurve
-101      ¦               °--RuleOperator_9ffcd0a2                                                                times                                                  
-102      ¦                   ¦--*Storie Factor A Profile Group 7,8,9 landform                                                15974      15974                           
-103      ¦                   ¦   °--RuleHedge_608f03c8                                                    not_null_and     0                                            
-104      ¦                   ¦       °--*Storie Factor A Pedon Group 7, 8, 9 landform                                        12917                 12917           Crisp
-105      ¦                   °--*Storie Factor A Profile Group 7, 8 and 9 fuzzy depth (soft)                                 16044      16044                           
-106      ¦                       °--RuleHedge_c0fd8926                                                    not_null_and     0                                            
-107      ¦                           °--*Storie Factor A Pedon Group 9 soil depth                                            12947                 12947  ArbitraryCurve
-108      ¦--*Storie Factor B rev                                                                                             49444      49444                           
-109      ¦   °--RuleOperator_21467f0e                                                                            times                                                  
-110      ¦       ¦--*Storie Factor B surface texture rev                                                                     49443      49443                           
-111      ¦       ¦   °--RuleHedge_14c104e8                                                              null_not_rated     0                                            
-112      ¦       ¦       °--*Storie Factor B Surface Texture                                                                 50479                 50479  ArbitraryCurve
-113      ¦       °--*Storie Factor B surface rock fragments rev                                                              49445      49445                           
-114      ¦           °--*Storie Factor B rock frag volume 0-25 cm                                                            50480                 50480 ArbitraryLinear
-115      ¦--*Storie Factor C Slope fuzzy                                                                                     15748      15748                           
-116      ¦   °--RuleHedge_d4054451                                                                      null_not_rated     0                                            
-117      ¦       °--*Storie Factor C Slope 0 to 100%                                                                         12800                 12800  ArbitraryCurve
-118      ¦--*Storie Factor X (all chemistry) rev                                                                             49440      49440                           
-119      ¦   °--RuleOperator_12d91bc8                                                                              and                                                  
-120      ¦       ¦--*Storie Factor X (toxicity EC) rev                                                                       49441      49441                           
-121      ¦       ¦   °--RuleHedge_7334ea83                                                                     null_or     0                                            
-122      ¦       ¦       °--*Storie Factor X Toxicity EC maximum 0-25 cm                                                     50477                 50477  ArbitraryCurve
-123      ¦       ¦--*Storie Factor X (toxicity SAR) rev                                                                      49442      49442                           
-124      ¦       ¦   °--RuleHedge_70d0ed1f                                                                     null_or     0                                            
-125      ¦       ¦       °--*Storie Factor X Toxicity SAR maximum 0-25 cm                                                    50478                 50478 ArbitraryLinear
-126      ¦       °--*Storie Factor X (toxicity pH) rev                                                                       49439      49439                           
-127      ¦           °--RuleHedge_dea55415                                                                     null_or     0                                            
-128      ¦               °--RuleOperator_37d7e82f                                                                  and                                                  
-129      ¦                   ¦--*Storie Factor X Toxicity pH minimum 0-25 cm                                                 50475                 50475 ArbitraryLinear
-130      ¦                   °--*Storie Factor X Toxicity pH maximum 0-25 cm                                                 50476                 50476 ArbitraryLinear
-131      ¦--*Storie Factor X (all hydrologic and erosion features)                                                           15746      15746                           
-132      ¦   °--RuleOperator_e5feb45e                                                                              and                                                  
-133      ¦       ¦--*Storie Factor X (drainage class)                                                                        16320      16320                           
-134      ¦       ¦   °--RuleOperator_3be6bd57                                                                       or                                                  
-135      ¦       ¦       ¦--RuleOperator_fb03758e                                                                  sum                                                  
-136      ¦       ¦       ¦   ¦--RuleHedge_773dd408                                                               limit   0.9                                            
-137      ¦       ¦       ¦   ¦   °--*Storie Factor X drainage = moderately well                                              16549      16549                           
-138      ¦       ¦       ¦   ¦       °--RuleHedge_cacbefaa                                              null_not_rated     0                                            
-139      ¦       ¦       ¦   ¦           °--*Storie Factor X drainage class = moderately                                     13114                 13114           Crisp
-140      ¦       ¦       ¦   °--RuleOperator_bff68afb                                                               or                                                  
-141      ¦       ¦       ¦       ¦--RuleHedge_60689286                                                           limit   0.1                                            
-142      ¦       ¦       ¦       ¦   °--*Storie Factor X local phase is "drained"                                            16314      16314                           
-143      ¦       ¦       ¦       ¦       °--RuleHedge_be509db7                                            not_null_and     0                                            
-144      ¦       ¦       ¦       ¦           °--*Storie component local phase is *drained*                                   13117                 13117           Crisp
-145      ¦       ¦       ¦       °--RuleHedge_9acf6418                                                           limit  0.05                                            
-146      ¦       ¦       ¦           °--*Storie Factor X local phase is "partially drained"                                  16317      16317                           
-147      ¦       ¦       ¦               °--RuleHedge_a792a01a                                            not_null_and     0                                            
-148      ¦       ¦       ¦                   °--*Storie component local phase is *partially drained*                         13121                 13121           Crisp
-149      ¦       ¦       ¦--RuleOperator_b07fd13d                                                                  sum                                                  
-150      ¦       ¦       ¦   ¦--RuleHedge_4f74ec66                                                               limit   0.7                                            
-151      ¦       ¦       ¦   ¦   °--*Storie Factor X drainage = somewhat poorly                                              16548      16548                           
-152      ¦       ¦       ¦   ¦       °--RuleHedge_72e64559                                              null_not_rated     0                                            
-153      ¦       ¦       ¦   ¦           °--*Storie Factor X drainage class = somewhat poorly                                13113                 13113           Crisp
-154      ¦       ¦       ¦   °--RuleOperator_fac62418                                                               or                                                  
-155      ¦       ¦       ¦       ¦--RuleHedge_7c3c6ede                                                           limit   0.2                                            
-156      ¦       ¦       ¦       ¦   °--*Storie Factor X local phase is "drained"                                            16314      16314                           
-157      ¦       ¦       ¦       ¦       °--RuleHedge_be509db7                                            not_null_and     0                                            
-158      ¦       ¦       ¦       ¦           °--*Storie component local phase is *drained*                                   13117                 13117           Crisp
-159      ¦       ¦       ¦       °--RuleHedge_b1c9b07e                                                           limit   0.1                                            
-160      ¦       ¦       ¦           °--*Storie Factor X local phase is "partially drained"                                  16317      16317                           
-161      ¦       ¦       ¦               °--RuleHedge_a792a01a                                            not_null_and     0                                            
-162      ¦       ¦       ¦                   °--*Storie component local phase is *partially drained*                         13121                 13121           Crisp
-163      ¦       ¦       ¦--RuleOperator_f2cb68fb                                                                  sum                                                  
-164      ¦       ¦       ¦   ¦--RuleHedge_80a214a1                                                               limit   0.5                                            
-165      ¦       ¦       ¦   ¦   °--RuleHedge_f60f0b26                                                  null_not_rated     0                                            
-166      ¦       ¦       ¦   ¦       °--*Storie Factor X drainage = poorly or very poorly                                    20223      20223                           
-167      ¦       ¦       ¦   ¦           °--RuleHedge_9edb6995                                          null_not_rated     0                                            
-168      ¦       ¦       ¦   ¦               °--*Storie Factor X drainage class = poor or very poorly                        13112                 13112           Crisp
-169      ¦       ¦       ¦   °--RuleOperator_799a4c22                                                               or                                                  
-170      ¦       ¦       ¦       ¦--RuleHedge_711817c6                                                           limit   0.4                                            
-171      ¦       ¦       ¦       ¦   °--*Storie Factor X local phase is "drained"                                            16314      16314                           
-172      ¦       ¦       ¦       ¦       °--RuleHedge_be509db7                                            not_null_and     0                                            
-173      ¦       ¦       ¦       ¦           °--*Storie component local phase is *drained*                                   13117                 13117           Crisp
-174      ¦       ¦       ¦       °--RuleHedge_b1c9b07e                                                           limit   0.1                                            
-175      ¦       ¦       ¦           °--*Storie Factor X local phase is "partially drained"                                  16317      16317                           
-176      ¦       ¦       ¦               °--RuleHedge_a792a01a                                            not_null_and     0                                            
-177      ¦       ¦       ¦                   °--*Storie component local phase is *partially drained*                         13121                 13121           Crisp
-178      ¦       ¦       ¦--*Storie Factor X drainage = well drained                                                         16546      16546                           
-179      ¦       ¦       ¦   °--RuleHedge_80e2e2c3                                                      null_not_rated     0                                            
-180      ¦       ¦       ¦       °--*Storie Factor X drainage class = well                                                   13107                 13107           Crisp
-181      ¦       ¦       °--RuleHedge_c0debf92                                                                   limit  0.85                                            
-182      ¦       ¦           °--*Storie Factor X drainage = all excessively                                                  16547      16547                           
-183      ¦       ¦               °--RuleHedge_2347996a                                                  null_not_rated     0                                            
-184      ¦       ¦                   °--*Storie Factor X drainage class = all excessively                                    13111                 13111           Crisp
-185      ¦       ¦--*Storie Factor X (flooding and ponding)                                                                  15749      15749                           
-186      ¦       ¦   °--RuleOperator_dae2aeb4                                                                      and                                                  
-187      ¦       ¦       ¦--*Storie Factor X (ponding interaction)                                                           16304      16304                           
-188      ¦       ¦       ¦   °--*Storie Factor X landscape ponding in growing season                                         13115                 13115          Linear
-189      ¦       ¦       °--*Storie Factor X (flooding interaction)                                                          16048      16048                           
-190      ¦       ¦           °--RuleOperator_fe6380a3                                                               or                                                  
-191      ¦       ¦               ¦--Landscape Flooding "NONE"                                                                10265                 10265           Crisp
-192      ¦       ¦               °--*Storie Factor X landscape flooding in growing season                                    12952                 12952          Linear
-193      ¦       ¦--*Storie Factor X (erosion)                                                                               16566      16566                           
-194      ¦       ¦   °--RuleOperator_435f004a                                                                       or                                                  
-195      ¦       ¦       ¦--*Storie Factor X (erosion in uplands)                                                            16564      16564                           
-196      ¦       ¦       ¦   °--RuleOperator_2be43cb6                                                              and                                                  
-197      ¦       ¦       ¦       ¦--*Storie Factor A Profile Group 7,8,9 landform                                            15974      15974                           
-198      ¦       ¦       ¦       ¦   °--RuleHedge_608f03c8                                                not_null_and     0                                            
-199      ¦       ¦       ¦       ¦       °--*Storie Factor A Pedon Group 7, 8, 9 landform                                    12917                 12917           Crisp
-200      ¦       ¦       ¦       °--*Storie Factor X (erosion class)                                                         16557      16557                           
-201      ¦       ¦       ¦           °--RuleOperator_3ecc937e                                                       or                                                  
-202      ¦       ¦       ¦               ¦--RuleHedge_d47e12df                                                   limit  0.95                                            
-203      ¦       ¦       ¦               ¦   °--*Storie Factor X erosion class = 1                                           16558      16558                           
-204      ¦       ¦       ¦               ¦       °--RuleHedge_be73ca0c                                         null_or     0                                            
-205      ¦       ¦       ¦               ¦           °--*Storie Factor X erosion class = 1                                   13213                 13213           Crisp
-206      ¦       ¦       ¦               ¦--RuleHedge_62c7497e                                                   limit  0.85                                            
-207      ¦       ¦       ¦               ¦   °--*Storie Factor X erosion class = 2                                           16562      16562                           
-208      ¦       ¦       ¦               ¦       °--RuleHedge_5c67fdf4                                         null_or     0                                            
-209      ¦       ¦       ¦               ¦           °--*Storie Factor X erosion class = 2                                   13214                 13214           Crisp
-210      ¦       ¦       ¦               ¦--RuleHedge_16378273                                                   limit  0.75                                            
-211      ¦       ¦       ¦               ¦   °--*Storie Factor X erosion class = 3                                           16561      16561                           
-212      ¦       ¦       ¦               ¦       °--RuleHedge_c65bf0da                                         null_or     0                                            
-213      ¦       ¦       ¦               ¦           °--*Storie Factor X erosion class = 3                                   13217                 13217           Crisp
-214      ¦       ¦       ¦               ¦--RuleHedge_68a3b3e6                                                   limit  0.65                                            
-215      ¦       ¦       ¦               ¦   °--*Storie Factor X erosion class = 4                                           16560      16560                           
-216      ¦       ¦       ¦               ¦       °--RuleHedge_772054de                                         null_or     0                                            
-217      ¦       ¦       ¦               ¦           °--*Storie Factor X erosion class = 4                                   13216                 13216           Crisp
-218      ¦       ¦       ¦               °--*Storie Factor X erosion class = 0                                               16563      16563                           
-219      ¦       ¦       ¦                   °--RuleHedge_b3c4b963                                             null_or     0                                            
-220      ¦       ¦       ¦                       °--*Storie Factor X erosion class = 0                                       13212                 13212           Crisp
-221      ¦       ¦       °--*Storie Factor X (erosion in valley)                                                             16565      16565                           
-222      ¦       ¦           °--RuleOperator_9fee9122                                                              and                                                  
-223      ¦       ¦               ¦--*Storie Factor X (erosion class)                                                         16557      16557                           
-224      ¦       ¦               ¦   °--RuleOperator_3ecc937e                                                       or                                                  
-225      ¦       ¦               ¦       ¦--RuleHedge_d47e12df                                                   limit  0.95                                            
-226      ¦       ¦               ¦       ¦   °--*Storie Factor X erosion class = 1                                           16558      16558                           
-227      ¦       ¦               ¦       ¦       °--RuleHedge_be73ca0c                                         null_or     0                                            
-228      ¦       ¦               ¦       ¦           °--*Storie Factor X erosion class = 1                                   13213                 13213           Crisp
-229      ¦       ¦               ¦       ¦--RuleHedge_62c7497e                                                   limit  0.85                                            
-230      ¦       ¦               ¦       ¦   °--*Storie Factor X erosion class = 2                                           16562      16562                           
-231      ¦       ¦               ¦       ¦       °--RuleHedge_5c67fdf4                                         null_or     0                                            
-232      ¦       ¦               ¦       ¦           °--*Storie Factor X erosion class = 2                                   13214                 13214           Crisp
-233      ¦       ¦               ¦       ¦--RuleHedge_16378273                                                   limit  0.75                                            
-234      ¦       ¦               ¦       ¦   °--*Storie Factor X erosion class = 3                                           16561      16561                           
-235      ¦       ¦               ¦       ¦       °--RuleHedge_c65bf0da                                         null_or     0                                            
-236      ¦       ¦               ¦       ¦           °--*Storie Factor X erosion class = 3                                   13217                 13217           Crisp
-237      ¦       ¦               ¦       ¦--RuleHedge_68a3b3e6                                                   limit  0.65                                            
-238      ¦       ¦               ¦       ¦   °--*Storie Factor X erosion class = 4                                           16560      16560                           
-239      ¦       ¦               ¦       ¦       °--RuleHedge_772054de                                         null_or     0                                            
-240      ¦       ¦               ¦       ¦           °--*Storie Factor X erosion class = 4                                   13216                 13216           Crisp
-241      ¦       ¦               ¦       °--*Storie Factor X erosion class = 0                                               16563      16563                           
-242      ¦       ¦               ¦           °--RuleHedge_b3c4b963                                             null_or     0                                            
-243      ¦       ¦               ¦               °--*Storie Factor X erosion class = 0                                       13212                 13212           Crisp
-244      ¦       ¦               °--RuleHedge_ea4b1839                                                             not     0                                            
-245      ¦       ¦                   °--*Storie Factor A Profile Group 7,8,9 landform                                        15974      15974                           
-246      ¦       ¦                       °--RuleHedge_608f03c8                                            not_null_and     0                                            
-247      ¦       ¦                           °--*Storie Factor A Pedon Group 7, 8, 9 landform                                12917                 12917           Crisp
-248      ¦       °--*Storie Factor X (wetness in growing season, 25-100cm)                                                   16049      16049                           
-249      ¦           °--RuleHedge_7981f6f4                                                                     null_or     0                                            
-250      ¦               °--*Storie Factor X landscape wetness, grow. season, 25-100                                         12954                 12954 ArbitraryLinear
-251      °--*Storie Factor X (temperature regime)                                                                            49449      49449                           
-252          °--*Storie Factor X temperature regime                                                                          50482                 50482 ArbitraryLinear
-</pre>
+</li>
+</ul>
 </div>
 </div>
 
@@ -667,18 +826,24 @@ Here is a text-based representation of most of the <code>data.tree</code> object
 <ul class="list-unstyled">
 <li>Dylan Beaudette <br><small class="roles"> Author, maintainer </small>  </li>
 <li>Joseph Brehm <br><small class="roles"> Author </small>  </li>
-<li><a href="authors.html">More about authors...</a></li>
+<li>Andrew Brown <br><small class="roles"> Author </small>  </li>
 </ul>
 </div>
 
-
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/ncss-tech/interpretation-engine/actions/workflows/R-CMD-check.yml" class="external-link"><img src="https://github.com/ncss-tech/interpretation-engine/actions/workflows/R-CMD-check.yml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="http://ncss-tech.github.io/interpretation-engine/"><img src="https://img.shields.io/badge/docs-HTML-informational" alt="InterpretationEngine Manual"></a></li>
+</ul>
+</div>
 
   </aside>
 </div>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Dylan Beaudette, Joseph Brehm.</p>
+  <p>Developed by Dylan Beaudette, Joseph Brehm, Andrew Brown.</p>
 </div>
 
 <div class="pkgdown-footer-right">

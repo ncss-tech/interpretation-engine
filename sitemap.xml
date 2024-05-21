@@ -73,7 +73,13 @@
     <loc>http://ncss-tech.github.io/interpretation-engine/reference/initRuleset.html</loc>
   </url>
   <url>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/interpret.html</loc>
+  </url>
+  <url>
     <loc>http://ncss-tech.github.io/interpretation-engine/reference/linkEvaluationFunctions.html</loc>
+  </url>
+  <url>
+    <loc>http://ncss-tech.github.io/interpretation-engine/reference/linkHedgeOperatorFunctions.html</loc>
   </url>
   <url>
     <loc>http://ncss-tech.github.io/interpretation-engine/reference/linkSubRules.html</loc>
@@ -110,9 +116,6 @@
   </url>
   <url>
     <loc>http://ncss-tech.github.io/interpretation-engine/reference/pull_SDA_compup.html</loc>
-  </url>
-  <url>
-    <loc>http://ncss-tech.github.io/interpretation-engine/reference/ruleByRulename.html</loc>
   </url>
   <url>
     <loc>http://ncss-tech.github.io/interpretation-engine/reference/tree_eval.html</loc>

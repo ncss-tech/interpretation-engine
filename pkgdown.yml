@@ -2,7 +2,7 @@ pandoc: 3.1.11
 pkgdown: 2.0.9
 pkgdown_sha: ~
 articles: {}
-last_built: 2024-05-10T22:44Z
+last_built: 2024-05-21T15:06Z
 urls:
   reference: http://ncss-tech.github.io/interpretation-engine/reference
   article: http://ncss-tech.github.io/interpretation-engine/articles
