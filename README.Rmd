@@ -1,0 +1,131 @@
+---
+output: md_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+ <!-- badges: start -->
+  [![R-CMD-check](https://github.com/ncss-tech/interpretation-engine/actions/workflows/R-CMD-check.yml/badge.svg)](https://github.com/ncss-tech/interpretation-engine/actions/workflows/R-CMD-check.yml)
+[![InterpretationEngine Manual](https://img.shields.io/badge/docs-HTML-informational)](http://ncss-tech.github.io/interpretation-engine/)
+  <!-- badges: end -->
+
+# {InterpretationEngine} (alpha) R package
+
+To install the alpha version of the "interpretation engine" R package use {remotes} to get the latest version from GitHub. This will install all dependencies.
+
+```r
+# install package from ncss-tech interpretation-engine repository                   
+remotes::install_github('ncss-tech/interpretation-engine')
+```
+
+# Interpretations Outside of NASIS
+
+There are many reasons for wanting to develop, test, and apply interpretations to soil data outside the context of NASIS. This project aims to create a prototype from existing interpretation rules, evaluations, and properties as managed in NASIS. Once the prototype is complete it should be possible to generate fuzzy ratings from arbitrary sources of soil and environmental data sources.
+
+## How Does it Work?
+
+The [data.tree](https://cran.r-project.org/web/packages/data.tree/vignettes/data.tree.html) package defines objects and methods that are well suited to the task of describing the hierarchy of rules and evaluations. NASIS evaluations utilize  definitions of shape functions and cubic splines, which are further interpolated using `approxfun()` and `splinefun()`. NASIS hedges and operators perform arithmetic operations on numeric matrices to facilitate combining multiple properties and
+evaluations into rules.
+
+## Outline
+1. Load all rules, evaluations, properties into R via ODBC as `data.frame` objects 
+3. Load single rule and (recursively) load sub-rules into a `data.tree` object
+4. Load evaluation functions into each terminal node of `data.tree` object 
+5. Load hedge and operator functions into each decision node of `data.tree` object
+6. Use wrapper function (`interpret()`) to:
+      - Send properties to evaluation functions
+      - Combine fuzzy values via operators and hedges to generate a final fuzzy rating
+
+## Examples
+
+```{r}
+library(InterpretationEngine)
+```
+
+### Evaluation Curves
+
+The following images show the output of an evaluation function for slope (`"*Storie Factor C Slope 0 to 100%"`) in NASIS.
+
+```{r}
+eval <- subset(NASIS_evaluations, evalname == "*Storie Factor C Slope 0 to 100%")
+plotEvaluation(eval, xlim = c(0, 100))
+
+# zoom in on  custom shape in [0, 8]% slope range
+plotEvaluation(eval, xlim = c(0,8))
+```
+
+### Rule Trees
+
+The following examples generate data.frame representation of the `data.tree` objects in terms of an input property list, and the hierarchy of rules, operators, hedges, evaluations and properties that define a "primary rule" or interpretation.
+
+**Dust PM10 and PM2.5 Generation**
+
+```{r}
+# use initRuleset() to parse a rule by name
+r <- initRuleset("Dust PM10 and PM2.5 Generation")
+
+# view input properties
+getPropertySet(r)
+
+# view rule tree
+data.tree::ToDataFrameTree(r, "Type", "Value", "RefId", "rule_refid")
+```
+
+
+**California Storie Index**
+
+Using the `data.tree` representation of the California Storie Index primary rule, we can extract the entire set of evaluations and required properties:
+
+```{r}
+r <- initRuleset("AGR - California Revised Storie Index (CA)")
+
+# view input properties
+getPropertySet(r)
+
+# view rule tree
+data.tree::ToDataFrameTree(r, "Type", "Value", "RefId", "rule_refid")
+```
+
+## Run a rule tree with custom data
+
+The `interpret()` function takes a data.frame or SpatRaster where column or variable names correspond to input property names. Property names can be extracted using `getPropertySet()` and then made into compatible names using the base R function `make.names()`.
+
+Here we pick a simple rule that utilizes only one property and evaluation ("Erodibility Factor Maximum"). The numeric input to the evaluation function is an erodibility ("K") factor ranging from 0 to 1.
+
+```{r}
+# parse rule and properties
+r <- initRuleset("Erodibility Factor Maximum")
+p <- getPropertySet(r)
+
+# prepare input data
+kf <- seq(0, 1, 0.01)
+input <- data.frame(kf = kf)
+colnames(input) <- make.names(p$propname)
+
+# run interpretation
+output <- interpret(r, input)
+
+# visualize results
+plot(output$rating ~ input$SOIL.EROSION.FACTOR.MAXIMUM.1.99)
+```
+
+## Resources
+1. MO-6: INTERP-Rule Tree Diagram Chart (Interactive) v1.1+
+
+
+## Sample Spatial Data
+Input data for extended demonstrations by @josephbrehm and others can be found in the `inst/extdata` portion of this repository. 
+
+To have all that data to you can download the repository as a static ZIP file, or "clone" with `git`! These larger data sets are not included when the R package is installed with {remotes}. A demonstration script and input boundary files can be found in `/demo` folder.
+
+## Things to Figure Out
+* convert NASIS property scripts into R code (see: https://github.com/brownag/cvirrr/ for an incomplete attempt at this)
+* some properties return an RV, some {low,RV,high}:
+  * alternately, allow for selection of one specific value that can be customized on property basis.

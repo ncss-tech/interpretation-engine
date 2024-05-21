@@ -2,24 +2,23 @@
 % Please edit documentation in R/pull_SDA_compandup.R
 \name{pull_SDA_compup}
 \alias{pull_SDA_compup}
-\title{Quick SDA data acquisition (component up)
-This function is a shortcut for loading in a broad set of SDA data, filtered to area symbols specified by an input character vector.}
+\title{Quick SDA data acquisition (component up)}
 \usage{
 pull_SDA_compup(asym, fun = "in")
 }
 \arguments{
-\item{asym}{area symbol}
+\item{asym}{character. Area symbol}
 
-\item{fun}{default "in"; alternately: "like}
+\item{fun}{Default: "in" uses SQL "IN" operator. Alternately: "like".}
 }
 \value{
-SDA table result
+list object containing SDA table information for legend, mapunit, component
 }
 \description{
-Other than filtering by area symbol, no modifications are made to the data
-at last edit, these tables are returned:
+This function is a shortcut for loading in a broad set of SDA data, filtered to area symbols specified by an input character vector.
 }
 \details{
+The following tables are returned:
 \itemize{
 \item \code{legend}
 \item \code{mapunit}

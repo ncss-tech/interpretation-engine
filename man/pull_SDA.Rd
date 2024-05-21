@@ -8,16 +8,15 @@ This function is a shortcut for loading in a broad set of SDA data, filtered to 
 pull_SDA(asym, fun = "in")
 }
 \arguments{
-\item{asym}{area symbol}
+\item{asym}{character. Area symbol}
 
-\item{fun}{default "in"; alternately: "like}
+\item{fun}{Default: "in" uses SQL "IN" operator. Alternately: "like".}
 }
 \value{
 SDA table result
 }
 \description{
-Other than filtering by area symbol, no modifications are made to the data
-at last edit, these tables are returned:
+The following tables are returned:
 }
 \details{
 \itemize{

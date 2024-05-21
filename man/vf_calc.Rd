@@ -7,12 +7,12 @@
 vf_calc(indata, doxeric = "auto")
 }
 \arguments{
-\item{indata}{input data}
+\item{indata}{Input data (as data.frame or SpatRaster)}
 
 \item{doxeric}{force xeric or nonxeric function, or let it choose for each data row/pixel depending on an input raster (accepts "auto" / "xeric" / "nonxeric")}
 }
 \value{
-evaluation result
+Evaluation result (as data.frame or SpatRaster)
 }
 \description{
 Valley Fever

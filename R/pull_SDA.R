@@ -3,16 +3,10 @@
 # last edited 12/1/2020
 
 ## added a function to allow "like" commands
-
-
-# require(soilDB)
-# require(tidyverse)
-
 #' Quick SDA data acquisition
 #' This function is a shortcut for loading in a broad set of SDA data, filtered to area symbols specified by an input character vector.
 #' 
-#' Other than filtering by area symbol, no modifications are made to the data
-#' at last edit, these tables are returned: 
+#' The following tables are returned:
 #' 
 #' - `legend`
 #' - `mapunit`
@@ -31,31 +25,30 @@
 #' - `chunified`
 #' - `cointerpENG` -- "ENG" rules only though
 #' 
-#' @param asym area symbol
-#' @param fun default "in"; alternately: "like
+#' @param asym character. Area symbol
+#' @param fun Default: "in" uses SQL "IN" operator. Alternately: "like".
 #'
 #' @author Joseph Brehm
 #' @return SDA table result
 #' @export
 #' @importFrom soilDB SDA_query
-#' @importFrom dplyr select %>%
-pull_SDA <- function(asym, fun = "in"){
+pull_SDA <- function(asym, fun = "in") {
   ls.tables.sda <- list()
   
-  
   # convert from character vector to a text string SDA_query can parse, using either an in or like areasymbol filter
-  if(fun == "in") {
+  if (fun == "in") {
     parsesym <- paste0(" ('", paste0(asym, collapse = "', '"), "')")
     
     w <- paste0(" WHERE areasymbol IN", parsesym)
     
-  } else if(fun == "like"){
-    if(length(asym) > 1) stop("Only one area symbol at a time with the 'like' function")
-
+  } else if (fun == "like") {
+    if (length(asym) > 1)
+      stop("Only one area symbol at a time with the 'like' function")
+    
     w <- paste0(" WHERE areasymbol LIKE '%", asym, "%'")
   }
   
-  print(w)
+  message("Pulling data from Soil Data Access for ", asym)
   
   #for all queries:
   ## get a list of keys in the selected area symbols
@@ -78,7 +71,7 @@ pull_SDA <- function(asym, fun = "in"){
                 ", w, ")
      SELECT *
      FROM m
-     INNER JOIN mapunit ON m.mukey = mapunit.mukey")) %>%
+     INNER JOIN mapunit ON m.mukey = mapunit.mukey")) |>
     dplyr::select(-1)
   
   ls.tables.sda[["component"]] <-
@@ -90,7 +83,7 @@ pull_SDA <- function(asym, fun = "in"){
                 ", w, ")
      SELECT *
      FROM c
-     INNER JOIN component ON c.cokey = component.cokey")) %>%
+     INNER JOIN component ON c.cokey = component.cokey")) |>
     dplyr::select(-1)
   
   
@@ -106,7 +99,7 @@ pull_SDA <- function(asym, fun = "in"){
      SELECT *
      FROM c
      INNER JOIN cointerp ON c.cokey = cointerp.cokey
-     WHERE mrulename = 'ENG - Dwellings With Basements'")) %>%
+     WHERE mrulename = 'ENG - Dwellings With Basements'")) |>
     dplyr::select(-1)
   
   
@@ -119,7 +112,7 @@ pull_SDA <- function(asym, fun = "in"){
                 ", w, ")
      SELECT *
      FROM c
-     LEFT JOIN chorizon ON c.cokey = chorizon.cokey")) %>%
+     LEFT JOIN chorizon ON c.cokey = chorizon.cokey")) |>
     dplyr::select(-1)
   
   ls.tables.sda[["corestrictions"]] <-
@@ -131,8 +124,7 @@ pull_SDA <- function(asym, fun = "in"){
                 ", w, ")
      SELECT *
      FROM c
-     LEFT JOIN corestrictions ON c.cokey = corestrictions.cokey")) %>%
-    dplyr::select(-1)
+     LEFT JOIN corestrictions ON c.cokey = corestrictions.cokey"))[,-1]
   
   ls.tables.sda[["cosurffrags"]] <-
     soilDB::SDA_query(paste0(
@@ -143,8 +135,7 @@ pull_SDA <- function(asym, fun = "in"){
                 ", w, ")
      SELECT *
      FROM c
-     LEFT JOIN cosurffrags ON c.cokey = cosurffrags.cokey")) %>%
-    dplyr::select(-1)
+     LEFT JOIN cosurffrags ON c.cokey = cosurffrags.cokey"))[,-1]
   
   ls.tables.sda[["cotaxfmmin"]] <-
     soilDB::SDA_query(paste0(
@@ -155,8 +146,7 @@ pull_SDA <- function(asym, fun = "in"){
                 ", w, ")
      SELECT *
      FROM c
-     LEFT JOIN cotaxfmmin ON c.cokey = cotaxfmmin.cokey")) %>%
-    dplyr::select(-1)
+     LEFT JOIN cotaxfmmin ON c.cokey = cotaxfmmin.cokey"))[,-1]
   
   ls.tables.sda[["codiagfeatures"]] <-
     soilDB::SDA_query(paste0(
@@ -167,8 +157,7 @@ pull_SDA <- function(asym, fun = "in"){
                 ", w, ")
      SELECT *
      FROM c
-     LEFT JOIN codiagfeatures ON c.cokey = codiagfeatures.cokey")) %>%
-    dplyr::select(-1)
+     LEFT JOIN codiagfeatures ON c.cokey = codiagfeatures.cokey"))[,-1]
   
   ls.tables.sda[["comonth"]] <-
     soilDB::SDA_query(paste0(
@@ -179,8 +168,7 @@ pull_SDA <- function(asym, fun = "in"){
                 ", w, ")
      SELECT *
      FROM c
-     LEFT JOIN comonth ON c.cokey = comonth.cokey")) %>%
-    dplyr::select(-1)
+     LEFT JOIN comonth ON c.cokey = comonth.cokey"))[,-1]
   
   ### tables beneath chorizon ####
   
@@ -194,8 +182,7 @@ pull_SDA <- function(asym, fun = "in"){
                  ", w, ")
      SELECT *
      FROM ch
-     LEFT JOIN chtexturegrp ON ch.chkey = chtexturegrp.chkey")) %>%
-    dplyr::select(-1)
+     LEFT JOIN chtexturegrp ON ch.chkey = chtexturegrp.chkey"))[,-1]
   
   ls.tables.sda[["chfrags"]] <-
     soilDB::SDA_query(paste0(
@@ -207,8 +194,7 @@ pull_SDA <- function(asym, fun = "in"){
                  ", w, ")
      SELECT *
      FROM ch
-     LEFT JOIN chfrags ON ch.chkey = chfrags.chkey")) %>%
-    dplyr::select(-1)
+     LEFT JOIN chfrags ON ch.chkey = chfrags.chkey"))[,-1]
   
   ls.tables.sda[["chunified"]] <-
     soilDB::SDA_query(paste0(
@@ -220,8 +206,7 @@ pull_SDA <- function(asym, fun = "in"){
                  ", w, ")
      SELECT *
      FROM ch
-     LEFT JOIN chunified ON ch.chkey = chunified.chkey")) %>%
-    dplyr::select(-1)
+     LEFT JOIN chunified ON ch.chkey = chunified.chkey"))[,-1]
   
   ### other tables ####
   
@@ -236,8 +221,7 @@ pull_SDA <- function(asym, fun = "in"){
                    ", w, ")
      SELECT * 
      FROM chtg
-     LEFT JOIN chtexture ON chtg.chtgkey = chtexture.chtgkey")) %>%
-    dplyr::select(-1)
+     LEFT JOIN chtexture ON chtg.chtgkey = chtexture.chtgkey"))[,-1]
   
   ls.tables.sda[["chtexturemod"]] <-
     soilDB::SDA_query(paste0(
@@ -251,8 +235,7 @@ pull_SDA <- function(asym, fun = "in"){
                    ", w, ")
      SELECT * 
      FROM cht
-     LEFT JOIN chtexturemod ON cht.chtkey = chtexturemod.chtkey")) %>%
-    dplyr::select(-1)
+     LEFT JOIN chtexturemod ON cht.chtkey = chtexturemod.chtkey"))[,-1]
   
   
   
@@ -267,8 +250,7 @@ pull_SDA <- function(asym, fun = "in"){
                    ", w, ")
      SELECT * 
      FROM com
-     LEFT JOIN cosoilmoist ON com.comonthkey = cosoilmoist.comonthkey")) %>%
-    dplyr::select(-1)
+     LEFT JOIN cosoilmoist ON com.comonthkey = cosoilmoist.comonthkey"))[,-1]
   
   ls.tables.sda[["muaggatt"]] <-
     soilDB::SDA_query(paste0(
@@ -278,8 +260,7 @@ pull_SDA <- function(asym, fun = "in"){
                 ", w, ")
      SELECT *
      FROM m
-     INNER JOIN muaggatt ON m.mukey = muaggatt.mukey")) %>%
-    dplyr::select(-1)
+     INNER JOIN muaggatt ON m.mukey = muaggatt.mukey"))[,-1]
   
   ### end ####
   return(ls.tables.sda)

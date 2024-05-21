@@ -17,15 +17,14 @@
 #' 
 #' @export
 #' @aliases hsg_calc svi_calc
-#' @importFrom raster as.data.frame
 #' @importFrom data.tree isLeaf
 #' @importFrom parallel detectCores stopCluster
 #' @importFrom foreach foreach registerDoSEQ %dopar%
 #' @importFrom doParallel registerDoParallel 
 tree_eval <- function(
-  tree,
-  indata,
-  ncores = 1
+    tree,
+    indata,
+    ncores = 1
 ){
   ### data pre-processing 
   
@@ -36,12 +35,11 @@ tree_eval <- function(
   # remove the all-na rows
   ## this might need to go away, check what it does to raster data
   
-  if (inclass %in% c("RasterBrick", "RasterStack")) {
-    prepdata <- raster::as.data.frame(indata)
-    prepdata <- prepdata[rowSums(is.na(prepdata)) != ncol(prepdata), ]
-    
+  if (inherits(indata, c("SpatRaster", "RasterBrick", "RasterStack"))) {
+    prepdata <- as.data.frame(indata)
+    prepdata <- prepdata[rowSums(is.na(prepdata)) != ncol(prepdata), , drop = FALSE]
   } else {
-    prepdata <- indata[rowSums(is.na(indata)) != ncol(indata), ]
+    prepdata <- indata[rowSums(is.na(indata)) != ncol(indata), , drop = FALSE]
   }
   #### last minute patch 3/19. Fix the above lines, something is very wrong there
   prepdata <- indata
@@ -49,8 +47,9 @@ tree_eval <- function(
   
   ### set up paralellization
   # auto core counting: use n cores in computer, minus 2
-  if(ncores == "auto") {
-    if(parallel::detectCores() == 2) { # just in case there's a dual core machine out there
+  if (ncores == "auto") {
+    if (parallel::detectCores() == 2) {
+      # just in case there's a dual core machine out there
       ncores = 1
     } else {
       ncores <- parallel::detectCores() - 2
@@ -58,7 +57,7 @@ tree_eval <- function(
   }
   
   # check if user requested too many cores for the machine
-  if(ncores > parallel::detectCores()){
+  if (ncores > parallel::detectCores()) {
     stop(cat("Cannot run with", ncores, "cores as your computer only has", parallel::detectCores()))
   } 
   
@@ -138,7 +137,7 @@ tree_eval <- function(
   
   out <- unlist(outlist)
   
-  if (inclass %in% c("RasterBrick", "RasterStack")) {
+  if (inclass %in% c("RasterBrick", "RasterStack", "SpatRaster")) {
     
     if (is.character(out)) 
       out <- factor(out)
@@ -171,79 +170,79 @@ svi_calc <- function(indata, ncores = 1) {
 }
 
 ### vf
-# require(tidyverse)
-# require(soilDB)
-# require(XML)
-# require(digest)
 
 #' Valley Fever 
 #'
-#' @param indata input data
+#' @param indata Input data (as data.frame or SpatRaster)
 #' @param doxeric force xeric or nonxeric function, or let it choose for each data row/pixel depending on an input raster (accepts "auto" / "xeric" / "nonxeric")
 #' @author Joseph Brehm
-#' @return evaluation result
+#' @return Evaluation result (as data.frame or SpatRaster)
 #' @export
-#' @importFrom dplyr select %>% if_else
-#' @importFrom raster setValues brick
-#' @importFrom tidyr replace_na
-vf_calc <- function(indata, 
-                    doxeric = "auto" # 
-){ 
-  if(!(doxeric %in% c("auto", F, T))){
+#' @importFrom terra as.data.frame
+vf_calc <- function(indata, doxeric = "auto") {
+  
+  if (!(doxeric %in% c("auto", F, T))) {
     print("Unknown input for xeric parameter, which determines whether to process data as xeric or nonxeric conditions")
     print("Accepted input is 'auto', 'T' (process all as xeric), or 'F' (process all as nonxeric).")
     print("Defaulting to auto. This requires data specifying conditions by data point, and will error if not provided")
     doxeric <- "auto"
   }
   
-  # if a raster stack or brick is provided as input, the output will be a raster brick
-  rasterinput <- class(indata)[1] %in% c("RasterStack", "RasterBrick")
+  stopifnot(requireNamespace("dplyr"))
+  stopifnot(requireNamespace("tidyr"))
+  stopifnot(requireNamespace("raster"))  
   
-  if(rasterinput) {
-    # require(raster)
-    r.template <- indata[[1]] # save the first raster in the obj as a template to create an out raster later
-    indata <- as.data.frame(indata)
+  # if a raster stack or brick is passed as input, it will convert to df
+  rasterinput <- inherits(indata, c("RasterStack", "RasterBrick", "SpatRaster"))
+  if (rasterinput) {
+    r.template <- indata[[1]] # save the first one as a template to create an out raster later
+    indata <- terra::as.data.frame(indata)
   }
   
-  outdata <- indata[,'xeric',drop=FALSE]
+  outdata <- indata[, 'xeric', drop = FALSE]
   
   ## 1 - chemical subrule
   
-  outdata$fuzzsar <- evalbyeid(42999, indata$sar, sig.scale = 5) %>% replace_na(0)
-  outdata$fuzzgypsumcontent <- evalbyeid(42991, indata$gypsumcontent) ^ (0.5) %>% replace_na(0)
+  outdata$fuzzsar <- evalByEID(42999, indata$sar, sig.scale = 5) |> tidyr::replace_na(0)
+  outdata$fuzzgypsumcontent <- evalByEID(42991, indata$gypsumcontent) ^ (0.5) |> tidyr::replace_na(0)
   
   
-  outdata$fuzzec <- evalbyeid(43000, indata$ec) %>% replace_na(0)
-  outdata$fuzzph <- evalbyeid(42985, indata$ph, sig.scale = 0.125) %>% replace_na(0)
+  outdata$fuzzec <- evalByEID(43000, indata$ec) |> tidyr::replace_na(0)
+  outdata$fuzzph <- evalByEID(42985, indata$ph, sig.scale = 0.125) |> tidyr::replace_na(0)
   
   outdata$fuzzchem <- 
     do.call(pmax, c(outdata[,c('fuzzsar', 'fuzzec', 'fuzzgypsumcontent', 'fuzzph')], na.rm = T))
   
   ## 2 - climatic subrule
-  if(!("xeric"  %in% colnames(indata))) indata$xeric <- NA
-  if(doxeric != "auto"){
-    if(doxeric) {indata$xeric <- 1}
-    if(!doxeric) {indata$xeric <- 0}
+  if (!("xeric"  %in% colnames(indata)))
+    indata$xeric <- NA
+  if (doxeric != "auto") {
+    if (doxeric) {
+      indata$xeric <- 1
+    }
+    if (!doxeric) {
+      indata$xeric <- 0
+    }
   }
   
-  outdata$fuzzprecipX <- evalbyeid(42997, indata$map)
-  outdata$fuzzprecipNX <- evalbyeid(42998, indata$map)
+  outdata$fuzzprecipX <- evalByEID(42997, indata$map)
+  outdata$fuzzprecipNX <- evalByEID(42998, indata$map)
   
-  outdata$fuzzalbedo <- evalbyeid(43047, 1 - indata$albedo)
+  outdata$fuzzalbedo <- evalByEID(43047, 1 - indata$albedo)
   
-  indata$aspectfactor = if_else( ## this is translated from cvir "VALLEY FEVER ASPECT FACTOR", property 35987
+  indata$aspectfactor = ifelse( ## this is translated from cvir "VALLEY FEVER ASPECT FACTOR", property 35987
     is.na(indata$aspect), 0,
-    if_else(
+    ifelse(
       indata$aspect >= 0 & indata$aspect < 0, 0,
-      if_else(
-        indata$aspect >= 80 & indata$aspect < 280, -((indata$aspect-180)**2)/9000+1,
+      ifelse(
+        indata$aspect >= 80 & indata$aspect < 280, -((indata$aspect - 180) ** 2) / 9000 + 1, 
         0 # if all false
       )
     )
   )
   
-  outdata$fuzzslopeheatload <- evalbyeid(43048, indata$slope)
-  outdata$fuzzaspect <- evalbyeid(43049, indata$aspectfactor)
+  outdata$fuzzslopeheatload <- evalByEID(43048, indata$slope)
+  outdata$fuzzaspect <- evalByEID(43049, indata$aspectfactor)
   outdata$fuzzheatingfactor <- 
     outdata$fuzzalbedo *
     outdata$fuzzslopeheatload *
@@ -253,29 +252,29 @@ vf_calc <- function(indata,
   outdata$airtempchopperX <- indata$airtemp / 16
   outdata$airtempchopperNX <- indata$airtemp / 18.5
   
-  outdata$fuzzsurftempX <- evalbyeid(43050, outdata$airtempchopperX)
-  outdata$fuzzsurftempNX <- evalbyeid(43051, outdata$airtempchopperNX) 
+  outdata$fuzzsurftempX <- evalByEID(43050, outdata$airtempchopperX)
+  outdata$fuzzsurftempNX <- evalByEID(43051, outdata$airtempchopperNX) 
   
-  outdata$fuzzairtempX <- evalbyeid(42995, indata$airtemp)
-  outdata$fuzzairtempNX <- evalbyeid(42996, indata$airtemp)
+  outdata$fuzzairtempX <- evalByEID(42995, indata$airtemp)
+  outdata$fuzzairtempNX <- evalByEID(42996, indata$airtemp)
   
   ### combine all the x/nx rows together
   outdata$fuzzprecip <-
-    if_else(
+    ifelse(
       indata$xeric == 1,
       outdata$fuzzprecipX,
       outdata$fuzzprecipNX
     )
   
   outdata$fuzzsurftemp <-
-    if_else(
+    ifelse(
       indata$xeric == 1,
       outdata$fuzzsurftempX,
       outdata$fuzzsurftempNX
     )
   
   outdata$fuzzairtemp <-
-    if_else(
+    ifelse(
       indata$xeric == 1,
       outdata$fuzzairtempX,
       outdata$fuzzairtempNX
@@ -285,12 +284,12 @@ vf_calc <- function(indata,
     (outdata$fuzzheatingfactor * outdata$fuzzsurftemp + outdata$fuzzairtemp) * outdata$fuzzprecip
   
   ## 3 others 
-  outdata$fuzzwrd <- evalbyeid(42987, indata$wrd, sig.scale = 2)
-  outdata$fuzzwatergatheringsurface <- evalbyeid(42988, sqrt(indata$watergatheringsurface))
-  outdata$fuzzom <- evalbyeid(42990, indata$om)
+  outdata$fuzzwrd <- evalByEID(42987, indata$wrd, sig.scale = 2)
+  outdata$fuzzwatergatheringsurface <- evalByEID(42988, sqrt(indata$watergatheringsurface))
+  outdata$fuzzom <- evalByEID(42990, indata$om)
   
-  outdata$fuzzsaturation <- evalbyeid(63800, indata$saturationmonths)
-  outdata$fuzzflood <- evalbyeid(63801, indata$floodmonths) #### this is not used?
+  outdata$fuzzsaturation <- evalByEID(63800, indata$saturationmonths)
+  outdata$fuzzflood <- evalByEID(63801, indata$floodmonths) #### this is not used?
   outdata$fuzzsurfsat <- 
     do.call(pmin, c(outdata[,c('fuzzsaturation', 'fuzzflood')], na.rm = T))
   
@@ -315,24 +314,23 @@ vf_calc <- function(indata,
   outdata$vf <- base::cut(outdata$fuzzvf, breaks = classbreaks, labels = classlabels, right = TRUE, include.lowest = T)
   
   # outdata <- 
-  #   outdata %>%
+  #   outdata |>
   #   mutate(cokey = as.character(cokey),
   #          coiid = as.character(coiid),
   #          mukey = as.character(mukey))
   
   ## all fuzzy values are returned, as is the column for the maximum fuzzy score, and the final classification
   ## if the input was a raster stack or brick, the output will be a small 2 layer brick instead of the df
-  if(rasterinput){
-    vf <- r.template %>%
-      setValues(factor(outdata$vf),
+  if (rasterinput) {
+    vf <- r.template |>
+      raster::setValues(factor(outdata$vf),
                 levels = rev(classlabels))
-    fuzzvf <- r.template %>%
-      setValues(outdata$fuzzvf)
+    fuzzvf <- r.template |>
+      raster::setValues(outdata$fuzzvf)
     
-    outdatabrk <- brick(vf, fuzzvf)
+    outdatabrk <- raster::brick(vf, fuzzvf)
     outdata <- outdatabrk
     names(outdata) <- c("vf", "fuzzvf")
-    
   }
   
   return(outdata)
@@ -341,23 +339,22 @@ vf_calc <- function(indata,
 ## dwb
 #' Dwewllings Without Basements
 #'
-#' @param indata Input data
+#' @param indata Input data (data.frame or SpatRaster)
 #'
-#' @return evaluation result
+#' @return Evaluation result
 #' @export
-#' @importFrom dplyr select %>% if_else
-#' @importFrom tidyr replace_na
-#' @importFrom raster brick setValues
-dwb_calc <- function(indata){
+#' @importFrom terra as.data.frame
+dwb_calc <- function(indata) {
   
-  # this works on a data frame. 
+  stopifnot(requireNamespace("dplyr"))
+  stopifnot(requireNamespace("tidyr"))
+  stopifnot(requireNamespace("raster"))  
+  
   # if a raster stack or brick is passed as input, it will convert to df
-  
-  rasterinput <- class(indata)[1] %in% c("RasterStack", "RasterBrick")
-  #print(rasterinput)
-  if(rasterinput) {
+  rasterinput <- inherits(indata, c("RasterStack", "RasterBrick", "SpatRaster"))
+  if (rasterinput) {
     r.template <- indata[[1]] # save the first one as a template to create an out raster later
-    indata <- as.data.frame(indata)
+    indata <- terra::as.data.frame(indata)
   }
   
   outdata <- indata[,0] # this makes an empty data frame with the correct num of rows
@@ -365,65 +362,65 @@ dwb_calc <- function(indata){
   # 1 - depth to permafrost
   outdata$fuzzpermdepth <-
     pmax(
-      evalbyeid(10356, indata$permdepth) %>% replace_na(0), ### case 1: fuzzy logic eval
-      indata$pftex %>% as.integer() %>% replace_na(0) # T when there is a pf code in either texinlieu or texmod      
+      evalByEID(10356, indata$permdepth) |> tidyr::replace_na(0), ### case 1: fuzzy logic eval
+      indata$pftex |> as.integer() |> tidyr::replace_na(0) # T when there is a pf code in either texinlieu or texmod      
     )
   
   # 2 - ponding duration
   outdata$fuzzpond <- 
-    indata$ponding %>% as.integer() %>% replace_na(0)
+    indata$ponding |> as.integer() |> tidyr::replace_na(0)
   
   # 3 - slope
-  outdata$fuzzslope <- evalbyeid(10125, indata$slope_r) #%>% replace_na(0) # null goes to NR
+  outdata$fuzzslope <- evalByEID(10125, indata$slope_r) #|> tidyr::replace_na(0) # null goes to NR
   
   # 4 - subsidence(cm)
   # this is secretly a crisp eval
-  outdata$fuzzsubsidence <- as.numeric(as.numeric(indata$totalsub_r) >= 30) %>% replace_na(0)
+  outdata$fuzzsubsidence <- as.numeric(as.numeric(indata$totalsub_r) >= 30) |> tidyr::replace_na(0)
   
   # 5 - flooding frequency
   outdata$fuzzfloodlim <- 
-    indata$flooding %>% as.integer() %>% replace_na(0)
+    indata$flooding |> as.integer() |> tidyr::replace_na(0)
   
   # 6 - depth to water table
-  outdata$fuzzwt <- evalbyeid(299, indata$wt) %>% replace_na(0)
+  outdata$fuzzwt <- evalByEID(299, indata$wt) |> tidyr::replace_na(0)
   
   # 7 - shrink-swell
-  outdata$fuzzshrinkswell <- evalbyeid(18502, indata$lep) %>% replace_na(0)
+  outdata$fuzzshrinkswell <- evalByEID(18502, indata$lep) |> tidyr::replace_na(0)
   
   # 8 - om content class of the last layer above bedrock / deepest layer
   outdata$fuzzomlim <- 
-    indata$organicsoil %>% as.integer() %>% replace_na(0)
+    indata$organicsoil |> as.integer() |> tidyr::replace_na(0)
   
   # 9 - depth to bedrock (hard)
-  outdata$fuzzdepbrockhard <- evalbyeid(18503, indata$depbrockhard) %>% replace_na(0)
+  outdata$fuzzdepbrockhard <- evalByEID(18503, indata$depbrockhard) |> tidyr::replace_na(0)
   
   # 10 - depth to bedrock (soft)
-  outdata$fuzzdepbrocksoft <- evalbyeid(18504, indata$depbrocksoft) %>% replace_na(0)
+  outdata$fuzzdepbrocksoft <- evalByEID(18504, indata$depbrocksoft) |> tidyr::replace_na(0)
   
   # 11 - large stone content
-  outdata$fuzzlgstone <- evalbyeid(267, indata$fragvol_wmn) # %>% replace_na(0) #### null goes to not rated
+  outdata$fuzzlgstone <- evalByEID(267, indata$fragvol_wmn) # |> tidyr::replace_na(0) #### null goes to not rated
   
   # 12 - depth to cemented pan (thick)
-  outdata$fuzzdepcementthick <- evalbyeid(18505, indata$depcementthick) %>% replace_na(0) ### the fuzzy space here is not whats in the notes
+  outdata$fuzzdepcementthick <- evalByEID(18505, indata$depcementthick) |> tidyr::replace_na(0) ### the fuzzy space here is not whats in the notes
   #outdata$fuzzdepcementthick[indata$noncemented] <- 0
   
   # 13 - depth to cemented pan (thin)
-  outdata$fuzzdepcementthin <- evalbyeid(18501, indata$depcementthin) %>% replace_na(0)
+  outdata$fuzzdepcementthin <- evalByEID(18501, indata$depcementthin) |> tidyr::replace_na(0)
   #outdata$fuzzdepcementthin[indata$noncemented] <- 0
   
   # 14 - unstable fill
   outdata$fuzzunstable <- 
-    indata$unstablefill %>% as.integer() %>% replace_na(0)
+    indata$unstablefill |> as.integer() |> tidyr::replace_na(0)
   
   # 15 - subsidence due to gypsum
-  outdata$fuzzgypsum <- evalbyeid(16254, indata$gypsum) # %>% replace_na(0) ## null to not rated
+  outdata$fuzzgypsum <- evalByEID(16254, indata$gypsum) # |> tidyr::replace_na(0) ## null to not rated
   
   # 16 impaction
   outdata$fuzzimpaction <- 
-    indata$impaction %>% as.integer() %>% replace_na(0)
+    indata$impaction |> as.integer() |> tidyr::replace_na(0)
   
   # 17 drainage class
-  outdata$fuzzdrainage <- (indata$drainageclass != 1) %>% as.integer() %>% replace_na(0)
+  outdata$fuzzdrainage <- (indata$drainageclass != 1) |> as.integer() |> tidyr::replace_na(0)
   
   ### aggregate, returning the highest fuzzy value (ie, most limiting variable) and classifying based on it
   firstcol <- which(colnames(outdata) == "fuzzpermdepth")
@@ -432,31 +429,29 @@ dwb_calc <- function(indata){
   outdata$maxfuzz <- do.call(pmax, c(outdata[,firstcol:lastcol], na.rm = T))
   
   outdata$dwb <- 
-    if_else(outdata$maxfuzz == 1, 
+    ifelse(outdata$maxfuzz == 1, 
             "Very limited",
-            if_else(outdata$maxfuzz == 0, 
+            ifelse(outdata$maxfuzz == 0, 
                     "Not limited",
                     "Somewhat limited"))
   
   ## all fuzzy values are returned, as is the column for the maximum fuzzy score, and the final DWB classification
   
   ## if the input was a raster stack or brick, the output will be a small 2 layer brick instead of the df
-  if(rasterinput){
+  if (rasterinput) {
     
     ## this used to work. now it doesnt. export
-    dwb <- r.template %>%
-      setValues(factor(outdata$dwb),
+    dwb <- r.template |>
+      raster::setValues(factor(outdata$dwb),
                 levels = rev(c("Not limited", "Somewhat limited", "Very limited")))
     
-    # dwb <- r.template %>% 
-    #   setValues(outdata$dwb)
+    # dwb <- r.template |> 
+    #   raster::setValues(outdata$dwb)
     
+    fuzzdwb <- r.template |>
+      raster::setValues(outdata$maxfuzz)
     
-    
-    fuzzdwb <- r.template %>%
-      setValues(outdata$maxfuzz)
-    
-    outdata <- brick(dwb, fuzzdwb)
+    outdata <- raster::brick(dwb, fuzzdwb)
     names(outdata) <- c("dwb", "maxfuzz")
   }
   

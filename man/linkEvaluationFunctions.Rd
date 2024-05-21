@@ -10,7 +10,7 @@ linkEvaluationFunctions(node)
 \item{node}{a data.tree node}
 }
 \value{
-a (modified) data.tree?
+a modified data.tree object
 }
 \description{
 Link Evaluation Functions

@@ -61,10 +61,8 @@ initRuleset <- function(rulename) {
   
   # recursively splice-in sub-rules
   dt$Do(traversal = 'pre-order', fun = linkSubRules)
-  
-  ## TODO: is this working?
-  # splice-in evaluation functions, if possible
   dt$Do(traversal = 'pre-order', fun = linkEvaluationFunctions)
+  dt$Do(traversal = 'pre-order', fun = linkHedgeOperatorFunctions)
   
   return(dt)
 }
@@ -350,12 +348,11 @@ parseRule <- function(x) {
   return(n)
 }
 
-## TODO: splice/prune issues
 #' Link Subrules
 #'
 #' @param node a data.tree node
 #'
-#' @return a (modified) data.tree?
+#' @return a modified data.tree object
 #' @export
 #'
 linkSubRules <- function(node) {
@@ -389,7 +386,7 @@ linkSubRules <- function(node) {
 #'
 #' @param node a data.tree node
 #'
-#' @return a (modified) data.tree?
+#' @return a modified data.tree object
 #' @export
 #'
 linkEvaluationFunctions <- function(node) {
@@ -416,6 +413,38 @@ linkEvaluationFunctions <- function(node) {
     } else {
       node$evalFunction <- function(x) {
         return(NULL)
+      }
+    }
+  }
+}
+
+#' Link Hedge and Operator Functions
+#'
+#' @param node a data.tree node
+#'
+#' @return a modified data.tree object
+#' @export
+#'
+linkHedgeOperatorFunctions <- function(node) {
+  noc <- node$children
+  for (n in noc) {
+    name <- n$name
+    if (is.null(name))
+      return(NULL)
+    if (grepl("Rule(Hedge|Operator)_", name)) {
+        type <- n$Type
+      if (!is.null(n$Value) && 
+          is.numeric(as.numeric(n$Value))) {
+        # used for POWER, MULTIPLY
+        val <- n$Value
+        n$evalFunction <- eval(substitute(function(x){
+          FUN(x, val)
+        }, list(FUN = functionHedgeOp(type),
+                val = as.numeric(val))))
+      } else {
+        n$evalFunction <- eval(substitute(function(x) {
+          FUN(x)
+        }, list(FUN = functionHedgeOp(type))))
       }
     }
   }
