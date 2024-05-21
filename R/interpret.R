@@ -256,7 +256,7 @@ setMethod("interpret", signature = c("character", "SpatRaster"),
                                               each = sz)[1:length(cids)])
             r <- data.table::rbindlist(
               parallel::clusterApply(cls, X, function(y) {
-                .interpret(x, y, mode = mode, cache = FALSE, ...)
+                .interpret(x, y, mode = mode, cache = FALSE)
               }),
               use.names = TRUE,
               fill = TRUE
