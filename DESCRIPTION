@@ -22,24 +22,25 @@ Depends: R (>= 3.5.0)
 Imports: 
     methods,
     data.tree,
+    digest,
+    XML,
     data.table,
     parallel,
-    digest,
+    doParallel,
+    foreach,
     soilDB,
     terra,
-    XML,
-    caret,
-    doParallel,
-    dplyr,
-    foreach,
-    raster,
-    forcats,
-    tidyr,
     matrixStats
+Suggests:
+    raster,
+    dplyr,
+    tidyr,
+    forcats,
+    caret,
+    testthat (>= 3.0.0)
 LazyData: true
 LazyDataCompression: xz
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
-Suggests: testthat (>= 3.0.0)
 Config/testthat/edition: 3
 URL: http://ncss-tech.github.io/interpretation-engine/

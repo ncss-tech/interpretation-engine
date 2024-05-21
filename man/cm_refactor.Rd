@@ -2,21 +2,19 @@
 % Please edit documentation in R/cm_refactor.R
 \name{cm_refactor}
 \alias{cm_refactor}
-\title{Helper function to make confusion matricies easier
-Refactor two inputs and make confusion matrix with caret package}
+\title{Helper function to make confusion matrices easier}
 \usage{
 cm_refactor(predvar, refvar)
 }
 \arguments{
-\item{predvar}{predictor var}
+\item{predvar}{Predictor variable}
 
-\item{refvar}{reference var}
+\item{refvar}{Reference variable}
 }
 \value{
-a caret confusion matrix
+A caret confusion matrix
 }
 \description{
-Helper function to make confusion matricies easier
 Refactor two inputs and make confusion matrix with caret package
 }
 \author{

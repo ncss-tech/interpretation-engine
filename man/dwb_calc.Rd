@@ -7,10 +7,10 @@
 dwb_calc(indata)
 }
 \arguments{
-\item{indata}{Input data}
+\item{indata}{Input data (data.frame or SpatRaster)}
 }
 \value{
-evaluation result
+Evaluation result
 }
 \description{
 Dwewllings Without Basements
