@@ -1,6 +1,6 @@
 Package: InterpretationEngine
 Title: Stand-alone NASIS Interpretation Engine
-Version: 0.0.0.9003
+Version: 0.1.0
 Authors@R: 
     c(person(given = "Dylan",
            family = "Beaudette",
@@ -32,6 +32,7 @@ Imports:
     terra,
     matrixStats
 Suggests:
+    rvest,
     raster,
     dplyr,
     tidyr,
