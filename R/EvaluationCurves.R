@@ -555,7 +555,7 @@ extractCrispExpression <- function(x, invert = FALSE, asString = FALSE) {
   step1 <- gsub(
     "i?matches \"([^\"]*)\"",
     "grepl(\"^\\1$\", x, ignore.case = TRUE)",
-    gsub("\" or i?matches ?\"", "$|^", step0, ignore.case = TRUE),
+    gsub("\" *or *i?matches *\"|\", \"|\" *or *\"", "$|^", step0, ignore.case = TRUE),
     ignore.case = TRUE
   )
   step2 <- gsub("*", ".*", step1, fixed = TRUE)
@@ -567,10 +567,10 @@ extractCrispExpression <- function(x, invert = FALSE, asString = FALSE) {
   step4 <- gsub("x =? ", "x == ", gsub("\" ?(, ?| or ?)\"", "\" | x == \"", step3, ignore.case = TRUE))
   
   # convert and/or to &/|
-  expr <- trimws(gsub(" or x?", " | x ", gsub(" and x?", " & x ", step4, ignore.case = TRUE), ignore.case = TRUE))
+  expr <- trimws(gsub("([^n])or *x?", "\\1 | x ", gsub(" *and *x?", " & x ", step4, ignore.case = TRUE), ignore.case = TRUE))
   
   # various !=
-  expr <- gsub("== != \"|== not \"", "!= \"", expr, ignore.case = TRUE)
+  expr <- gsub("== != *\"|== not *\"", "!= \"", expr, ignore.case = TRUE)
   expr <- gsub("== \"any class other than ", "!= \"", expr)
   
   # final matches
