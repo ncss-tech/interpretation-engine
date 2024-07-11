@@ -135,8 +135,10 @@ extractEvalCurve <- function(evalrec, xlim = NULL, resolution = NULL, sig.scale 
   ## ... there are others
   #   IsNull -- not needed? / not a curve?
   
-  warning("extractEvalCurve: curve type not yet supported", call. = FALSE)
-  return(function(evalrec) {return(NULL)})
+  warning("extractEvalCurve: curve type (", et, ") not yet supported", call. = FALSE)
+  return(function(evalrec) {
+    return(NULL)
+  })
 }
 
 #' Function Generators for Interpolating Evaluation Curves
