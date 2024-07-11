@@ -262,8 +262,8 @@ extractCrispExpression <- function(x, invert = FALSE, asString = FALSE) {
     crisp.expression <- paste0('domain ', crisp.expression)
     
     # replace logical operators, and add domain vector
-    crisp.expression <- gsub('and', '& domain', crisp.expression)
-    crisp.expression <- gsub('or', '| domain', crisp.expression)
+    crisp.expression <- gsub('and', '& domain', crisp.expression, ignore.case = TRUE)
+    crisp.expression <- gsub('or', '| domain', crisp.expression, ignore.case = TRUE)
   }
   
   if (is.null(xlim)) {
@@ -560,7 +560,7 @@ extractCrispExpression <- function(x, invert = FALSE, asString = FALSE) {
   step4 <- gsub("x =? ", "x == ", gsub("\" ?(, ?| or ?)\"", "\" | x == \"", step3, ignore.case = TRUE))
   
   # convert and/or to &/|
-  expr <- trimws(gsub(" or ", " | ", gsub(" and ", " & ", step4)))
+  expr <- trimws(gsub(" *or *", " | ", gsub(" *and *", " & ", step4, ignore.case = TRUE), ignore.case = TRUE))
   
   # various !=
   expr <- gsub("== != \"|== not \"", "!= \"", expr, ignore.case = TRUE)
