@@ -119,20 +119,20 @@ getAndCacheData <- function() {
   # get rules, note that "rule" is a reserved word, use [] to protect
   # load ALL rules, even those not ready for use
   rules <- soilDB::dbQueryNASIS(soilDB::NASIS(), 
-                                "SELECT rulename, ruledesign, primaryinterp, notratedphrase, 
+                                "SELECT rulename, ruledesign, primaryinterp, notratedphrase, dataafuse, 
                                         ruledbiidref, ruleiid, [rule]
                                  FROM rule_View_0")
   
   # get all evaluation curves
   evals <- soilDB::dbQueryNASIS(soilDB::NASIS(), 
-                                "SELECT evaliid, evalname, evaldesc, CAST(eval AS text) AS eval,
+                                "SELECT evaliid, evalname, evaldesc, CAST(eval AS text) AS eval, dataafuse,
                                         evaluationtype, invertevaluationresults, propiidref AS propiid
                                  FROM evaluation_View_0")
   
   # get basic property parameters, but not the property definition
   properties <- soilDB::dbQueryNASIS(soilDB::NASIS(), 
                                      "SELECT propiid, propuom, propmin, propmax, propmod, propdefval,
-                                             propname 
+                                             propname, dataafuse
                                       FROM property_View_0")
   
   # property descriptions and CVIR code
