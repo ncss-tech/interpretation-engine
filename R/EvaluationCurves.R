@@ -572,13 +572,13 @@ extractIsNull <- function(invert = FALSE) {
 # regex based property crispexpression parser (naive but it works)
 .crispFunctionGenerator <- function(x, invert = FALSE, asString = FALSE) {
   # remove empty quotations (some expressions have these trailing with no content)\
-  step0 <- gsub("\"\"", "", x)
+  step0 <- gsub("or +or", "or", gsub("\t", " ", gsub("\"\"", "", x)))
   
   # wildcards matches/imatches
   step1 <- gsub(
     "i?matches \"([^\"]*)\"",
     "grepl(\"^\\1$\", x, ignore.case = TRUE)",
-    gsub("\" *or *i?matches *\"|\", \"|\" *or *\"", "$|^", step0, ignore.case = TRUE),
+    gsub("\" *or *i?matches *\"|\", \"", "$|^", step0, ignore.case = TRUE),
     ignore.case = TRUE
   )
   step2 <- gsub("*", ".*", step1, fixed = TRUE)
@@ -591,8 +591,11 @@ extractIsNull <- function(invert = FALSE) {
                 gsub("\" ?(, ?| or ?)\"", "\" | x == \"", 
                      step3, ignore.case = TRUE))
   
+  # convert partial matches to grepl
+  step5 <- gsub("x == +(\"[^\"]*\\.\\*[^\"]*\")", "grepl(\\1, x)", step4, ignore.case = TRUE)
+  
   # convert and/or to &/|
-  expr <- trimws(gsub("([^n])or *x?", "\\1 | x ", gsub(" *and *x?", " & x ", step4, ignore.case = TRUE), ignore.case = TRUE))
+  expr <- trimws(gsub("([^n])or *x?", "\\1 | x ", gsub(" *and *x?", " & x ", step5, ignore.case = TRUE), ignore.case = TRUE))
   
   # various !=
   expr <- gsub("== != *\"|== not *\"", "!= \"", expr, ignore.case = TRUE)
