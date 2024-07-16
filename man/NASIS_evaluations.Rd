@@ -5,7 +5,7 @@
 \alias{NASIS_evaluations}
 \title{Cached NASIS Evaluations}
 \format{
-An object of class \code{data.frame} with 10858 rows and 13 columns.
+An object of class \code{data.frame} with 10861 rows and 15 columns.
 }
 \source{
 NASIS 7.x evaluations

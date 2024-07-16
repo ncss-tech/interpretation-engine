@@ -5,7 +5,7 @@
 \alias{NASIS_rules}
 \title{Cached NASIS Rules}
 \format{
-An object of class \code{data.frame} with 14274 rows and 7 columns.
+An object of class \code{data.frame} with 14279 rows and 8 columns.
 }
 \source{
 NASIS 7.x rules
