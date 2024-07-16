@@ -581,7 +581,7 @@ extractIsNull <- function(invert = FALSE) {
   }
   
   # remove empty quotations (some expressions have these trailing with no content)\
-  step0 <- gsub("or +or", "or", gsub("\t", " ", gsub("\"\"", "", x)))
+  step0 <- gsub("or +or", "or", gsub("\t", " ", gsub("\"\"", "", gsub("'", "\"", x))))
   
   if (grepl("[^(]*\\)$", step0)) {
     step0 <- gsub(")$", "", step0)

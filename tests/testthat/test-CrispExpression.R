@@ -37,4 +37,6 @@ test_that("crisp expression parsing works", {
  expect_silent(initRuleset(rulename = "LCC-irr"))
  
  expect_silent(initRuleset(rulename = "FOR - Conservation Tree/Shrub Groups (MT)"))
+ 
+ expect_silent(initRuleset(rulename = "Commodity Crop Productivity Index (Corn) (WI)"))
 })
