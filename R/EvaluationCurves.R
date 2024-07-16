@@ -564,17 +564,23 @@ extractCrispExpression <- function(x, invert = FALSE, asString = FALSE) {
   step3 <- gsub(" x  grepl", "grepl", gsub("^([><=]*) ?(\")?|(and|or) ([><=]*)? ?(\")?", "\\3 x \\1\\4 \\2\\5", step2))
   
   # convert = to ==
-  step4 <- gsub("x =? ", "x == ", gsub("\" ?(, ?| or ?)\"", "\" | x == \"", step3, ignore.case = TRUE))
+  step4 <- gsub("x =? ", "x == ", 
+                gsub("\" ?(, ?| or ?)\"", "\" | x == \"", 
+                     step3, ignore.case = TRUE))
   
   # convert and/or to &/|
   expr <- trimws(gsub("([^n])or *x?", "\\1 | x ", gsub(" *and *x?", " & x ", step4, ignore.case = TRUE), ignore.case = TRUE))
   
   # various !=
   expr <- gsub("== != *\"|== not *\"", "!= \"", expr, ignore.case = TRUE)
+  expr <- gsub("== !=", "!= ", expr, ignore.case = TRUE)
   expr <- gsub("== \"any class other than ", "!= \"", expr)
   
   # final matches
-  expr <- gsub("== MATCHES ", "== ", expr, ignore.case = TRUE)
+  expr <- gsub("== =", "==", gsub("== MATCHES ", "== ", expr, ignore.case = TRUE))
+  
+  # not grepl
+  expr <- gsub("x == not grepl", "!grepl", expr, ignore.case = TRUE)
   
   # many evals just return the property
   expr[expr == "x =="] <- "x"
