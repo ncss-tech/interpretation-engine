@@ -39,4 +39,9 @@ test_that("crisp expression parsing works", {
  expect_silent(initRuleset(rulename = "FOR - Conservation Tree/Shrub Groups (MT)"))
  
  expect_silent(initRuleset(rulename = "Commodity Crop Productivity Index (Corn) (WI)"))
+ 
+ ## infinite recursion problem? Error: C stack usage #### is too close to the limit\
+ ## bob dobos removed these superseded/erroneous rules on 7/16/24
+ # expect_error(initRuleset(rulename = "MIL - Trafficability Vehicle; Type 3 dry season"))
+ # expect_error(expect_silent(initRuleset(rulename = "MIL - Trafficability Vehicle Type 7 1-pass wet season"))
 })
