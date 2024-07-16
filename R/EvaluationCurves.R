@@ -132,10 +132,13 @@ extractEvalCurve <- function(evalrec, xlim = NULL, resolution = NULL, sig.scale 
     return(res)
   }
   
-  ## ... there are others
-  #   IsNull -- not needed? / not a curve?
+  if (et == "IsNull") {
+    res <- extractIsNull(invert = invert.eval)
+    return(res)
+  }
   
-  warning("extractEvalCurve: curve type (", et, ") not yet supported", call. = FALSE)
+  warning("extractEvalCurve: curve type (", et, ") not supported", call. = FALSE)
+  
   return(function(evalrec) {
     return(NULL)
   })
@@ -237,6 +240,26 @@ extractCrispExpression <- function(x, invert = FALSE, asString = FALSE) {
   expr <- l$CrispExpression
   if (length(expr) == 0) expr <- ""
   .crispFunctionGenerator(expr, invert = invert, asString = asString)
+}
+
+
+#' Extract IsNull Evaluation Logic as R function
+#' 
+#' Default behavior of IsNull evaluation returns value > `0` (1) if `NULL`, inverted behavior returns `0` if `NULL`
+#' 
+#' @param invert invert logic with `!`? Default: `FALSE`
+#'
+#' @return a generated function of an input variable `x` 
+#' 
+#' @details The generated function returns a logical value (converted to numeric) when the relevant property data are supplied.
+#' 
+#' @export
+extractIsNull <- function(invert = FALSE) {
+  if (invert) {
+    function(x) .NULL_HEDGE(x, null.value = 1)
+  } else {
+    function(x) .NULL_HEDGE(x, null.value = 0)
+  }
 }
 
 
