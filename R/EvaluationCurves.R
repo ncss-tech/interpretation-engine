@@ -571,23 +571,48 @@ extractIsNull <- function(invert = FALSE) {
 
 # regex based property crispexpression parser (naive but it works)
 .crispFunctionGenerator <- function(x, invert = FALSE, asString = FALSE) {
+  
+  # numeric constants get a short circuit
+  if (grepl("^\\d+$", x)) {
+    res <- sprintf("function(x) { %s }", x)
+    if (asString) return(res)
+    res <- try(eval(parse(text = res)))
+    return(res)
+  }
+  
   # remove empty quotations (some expressions have these trailing with no content)\
   step0 <- gsub("or +or", "or", gsub("\t", " ", gsub("\"\"", "", x)))
+  
+  if (grepl("[^(]*\\)$", step0)) {
+    step0 <- gsub(")$", "", step0)
+  }
+  
+  if (grepl(" TO ", step0, ignore.case = TRUE)) {
+    step0 <- gsub("(.*) TO (.*)", "x >= \\1 & x <= \\2", step0, ignore.case = TRUE)
+  }
+  
+  if (grepl("^i?matches", step0)) {
+    step0.5 <- gsub("\" *or *i?matches *\"|\" or \"|\", \"", "$|^", step0, ignore.case = TRUE)
+  } else {
+    step0.5 <- gsub("\" *or *i?matches *\"|\", \"", "$|^", step0, ignore.case = TRUE)
+  }  
   
   # wildcards matches/imatches
   step1 <- gsub(
     "i?matches \"([^\"]*)\"",
     "grepl(\"^\\1$\", x, ignore.case = TRUE)",
-    gsub("\" *or *i?matches *\"|\", \"", "$|^", step0, ignore.case = TRUE),
+    step0.5,
     ignore.case = TRUE
   )
   step2 <- gsub("*", ".*", step1, fixed = TRUE)
   
   # (in)equality  
   step3 <- gsub(" x  grepl", "grepl", gsub("^([><=]*) ?(\")?|(and|or) ([><=]*)? ?(\")?", "\\3 x \\1\\4 \\2\\5", step2))
+  step3 <- gsub("x +x", "x", step3)
+  step3 <- gsub("x  \"", "x == \"", step3)
   
   # convert = to ==
-  step4 <- gsub("x =? ", "x == ", 
+  step4 <- gsub("x [^<>]=? ", "x == ", 
                 gsub("\" ?(, ?| or ?)\"", "\" | x == \"", 
                      step3, ignore.case = TRUE))
   
@@ -595,7 +620,7 @@ extractIsNull <- function(invert = FALSE) {
   step5 <- gsub("x == +(\"[^\"]*\\.\\*[^\"]*\")", "grepl(\\1, x)", step4, ignore.case = TRUE)
   
   # convert and/or to &/|
-  expr <- trimws(gsub("([^n])or *x?", "\\1 | x ", gsub(" *and *x?", " & x ", step5, ignore.case = TRUE), ignore.case = TRUE))
+  expr <- trimws(gsub("([^no])or *x?", "\\1 | x ", gsub(" *and *x?", " & x ", step5, ignore.case = TRUE), ignore.case = TRUE))
   
   # various !=
   expr <- gsub("== != *\"|== not *\"", "!= \"", expr, ignore.case = TRUE)
@@ -605,8 +630,11 @@ extractIsNull <- function(invert = FALSE) {
   # final matches
   expr <- gsub("== =", "==", gsub("== MATCHES ", "== ", expr, ignore.case = TRUE))
   
+  # grepl
+  expr <- gsub("x grepl", "grepl", expr, ignore.case = TRUE)
+  
   # not grepl
-  expr <- gsub("x == not grepl", "!grepl", expr, ignore.case = TRUE)
+  expr <- gsub("x =* *not grepl", "!grepl", expr, ignore.case = TRUE)
   
   # many evals just return the property
   expr[expr == "x =="] <- "x"
@@ -616,7 +644,9 @@ extractIsNull <- function(invert = FALSE) {
   res <- sprintf("function(x) { as.numeric(%s(%s)) }", 
                  ifelse(invert, "!", ""), expr)
   if (asString) return(res)
-  res <- eval(parse(text = res))
+  res <- try(eval(parse(text = res)))
+  # if (inherits(res, "try-error"))
+  #   browser()
   attr(res, 'CrispExpression') <- x
   res
 }
