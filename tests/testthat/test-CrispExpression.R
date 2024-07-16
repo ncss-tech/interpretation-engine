@@ -8,7 +8,13 @@ test_that("crisp expression parsing works", {
   
  expect_silent(initRuleset(rulename = "FOR - Potential Erosion Hazard, Road/Trail, Spring Thaw (AK)"))
   
+ expect_silent(initRuleset(rulename = "FOR - Potential Seedling Mortality (FL)"))
+  
  expect_silent(initRuleset(rulename = "AGR - Spring Wheat Yield (MT)"))
+ 
+ expect_silent(initRuleset(rulename = "GRL-ESD (NE) MLRA 75, 102C, 106 KEY (NE-Test)"))
+ 
+ expect_silent(initRuleset(rulename = "AGR-Growing Season Wetness (ND)"))
   
  expect_silent(initRuleset(rulename = "ENG - Daily Cover for Landfill (AK)"))
   

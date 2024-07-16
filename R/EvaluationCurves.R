@@ -591,15 +591,15 @@ extractIsNull <- function(invert = FALSE) {
     step0 <- gsub("(.*) TO (.*)", "x >= \\1 & x <= \\2", step0, ignore.case = TRUE)
   }
   
-  if (grepl("^i?matches", step0)) {
-    step0.5 <- gsub("\" *or *i?matches *\"|\" or \"|\", \"", "$|^", step0, ignore.case = TRUE)
+  if (grepl("^i?matches", step0, ignore.case = TRUE)) {
+    step0.5 <- gsub("\" *or *i?matches *\"|\" *or *\"|\", \"", "$|^", step0, ignore.case = TRUE)
   } else {
     step0.5 <- gsub("\" *or *i?matches *\"|\", \"", "$|^", step0, ignore.case = TRUE)
   }  
   
   # wildcards matches/imatches
   step1 <- gsub(
-    "i?matches \"([^\"]*)\"",
+    "i?matches +\"([^\"]*)\"",
     "grepl(\"^\\1$\", x, ignore.case = TRUE)",
     step0.5,
     ignore.case = TRUE
@@ -638,6 +638,8 @@ extractIsNull <- function(invert = FALSE) {
   
   # many evals just return the property
   expr[expr == "x =="] <- "x"
+  
+  expr <- gsub("x +NOT", "x !=", expr)
   
   # logical expression, possibly inverted, then converted to numeric (0/1)
   # TODO: handle NA via na.rm/na.omit, returning attribute of offending indices
