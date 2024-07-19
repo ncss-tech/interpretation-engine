@@ -5,7 +5,7 @@
 \alias{NASIS_properties}
 \title{Cached NASIS Properties}
 \format{
-An object of class \code{data.frame} with 8070 rows and 7 columns.
+An object of class \code{data.frame} with 8096 rows and 8 columns.
 }
 \source{
 NASIS 7.x properties

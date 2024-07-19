@@ -194,8 +194,20 @@ muagg <- comp3[, .SD[which.max(comp_pct)[1], ], by = "mukey"]
 ssurgo_rc <- ssurgo_r
 levels(ssurgo_rc) <- cbind(data.frame(ID = as.numeric(muagg$mukey)), muagg)
 ssurgo_rc <- catalyze(ssurgo_rc)
-plot(ssurgo_rc$Mass_movement_rt, col = hcl.colors(3))
-plot(ssurgo_rc$SLOPE)
+ssurgo_rc_wgs84 <- project(ssurgo_rc, "EPSG:4326")
+
+plot(ssurgo_rc_wgs84$Mass_movement_rt, 
+     col = hcl.colors(20), 
+     range = c(0, 0.8))
+plot(ssurgo_rc_wgs84$rating_new, 
+     col = hcl.colors(20), 
+     range = c(0, 0.8))
+
+plot(ssurgo_rc_wgs84$SLOPE, 
+     col = hcl.colors(20), 
+     range = c(0, 100))
+plot(ssurgo_rc_wgs84$TWO.DIMENSIONAL.SURFACE.MORPHOMETRY, 
+     col = hcl.colors(20))
 cnm <- c("SLOPE", "DEPTH.OF.ISOTROPIC.SOIL", "LIQUID.LIMIT.OF.LAST.LAYER.OR.AT.RESTRICTIVE.LAYER", 
   "CLAY.IN.DIFFERENTIAL.ZONE", "LEP.OF.LAST.LAYER.OR.AT.RESTRICTIVE.LAYER", 
   "LIQUID.LIMIT.IN.DIFFERENTIAL.ZONE", "DEPTH.TO.FIRST.RESTRICTIVE.LAYER..NONE.IS.NULL", 
@@ -220,6 +232,13 @@ rtp <- rast("D:/DebrisFlow/mosquito_rtp.tif")
 test <- c(ssurgo_rc$SLOPE, 
           project(mask(slope, ssurgo_b), ssurgo_rc),
           project(mask(rtp, ssurgo_b), ssurgo_rc))
+test_wgs84 <- project(test, "EPSG:4326")
+
+plot(test_wgs84$slope, 
+     col = hcl.colors(20), 
+     range = c(0, 100))
+plot(test_wgs84$mosquito_rtp, 
+     col = hcl.colors(5))
 # plot(test[[1:2]], range = c(0,100), col = hcl.colors(10))
 # plet(rtp, alpha=0.5, tiles="OpenTopoMap")
 
@@ -230,6 +249,9 @@ rtpk <- k_means(test[[3]], centers = 5)
 ## determine labels for kmeans clusters manually
 ## note that class order depends on seed
 plet(rtpk, alpha=0.5, tiles="OpenTopoMap")
+
+plot(project(rtpk, "EPSG:4326"), 
+     col = hcl.colors(5))
 
 luth <- c("backslope", # 1
           "toeslope",  # 2
