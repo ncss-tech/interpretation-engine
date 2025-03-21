@@ -256,9 +256,9 @@ extractCrispExpression <- function(x, invert = FALSE, asString = FALSE) {
 #' @export
 extractIsNull <- function(invert = FALSE) {
   if (invert) {
-    function(x) .NULL_HEDGE(x, null.value = 1)
-  } else {
     function(x) .NULL_HEDGE(x, null.value = 0)
+  } else {
+    function(x) .NULL_HEDGE(x, null.value = 1)
   }
 }
 
@@ -594,7 +594,7 @@ extractIsNull <- function(invert = FALSE) {
   if (grepl("^i?matches", step0, ignore.case = TRUE)) {
     step0.5 <- gsub("\" *or *i?matches *\"|\" *or *\"|\", \"", "$|^", step0, ignore.case = TRUE)
   } else {
-    step0.5 <- gsub("\" *or *i?matches *\"|\", \"", "$|^", step0, ignore.case = TRUE)
+    step0.5 <- step0 #gsub("\" *or *i?matches *\"|\", \"", "$|^", step0, ignore.case = TRUE)
   }  
   
   # wildcards matches/imatches
@@ -643,7 +643,11 @@ extractIsNull <- function(invert = FALSE) {
   
   # logical expression, possibly inverted, then converted to numeric (0/1)
   # TODO: handle NA via na.rm/na.omit, returning attribute of offending indices
-  res <- sprintf("function(x) { as.numeric(%s(%s)) }", 
+  res <- sprintf("function(x) { 
+                    y <- as.numeric(%s(%s)) 
+                    y[is.na(y)] <- 0
+                    y
+                  }", 
                  ifelse(invert, "!", ""), expr)
   if (asString) return(res)
   res <- try(eval(parse(text = res)))
