@@ -4,7 +4,7 @@ Version: 0.1.2
 Authors@R: 
     c(person(given = "Dylan",
            family = "Beaudette",
-           role = c("aut", "cre"),
+           role = c("aut"),
            email = "dylan.beaudette@usda.gov"),
     person(given = "Joseph",
            family = "Brehm",
@@ -12,9 +12,9 @@ Authors@R:
            email = "jrbrehm@nmsu.edu"),
     person(given = "Andrew",
            family = "Brown",
-           role = c("aut"),
+           role = c("aut", "cre"),
            email = "andrew.g.brown@usda.gov"))
-Maintainer: Dylan Beaudette <dylan.beaudette@usda.gov>
+Maintainer: Andrew Brown <andrew.g.brown@usda.gov>
 Description: InterpretationEngine contains tools to develop, test, and apply interpretations to soil data outside the context of NASIS. This project aims to create a prototype from existing interpretation rules, evaluations, and properties as managed in NASIS. Once the prototype is complete it should be possible to generate fuzzy ratings from arbitrary sources of soil and environmental data sources.
 License: GPL (>= 3)
 Encoding: UTF-8
