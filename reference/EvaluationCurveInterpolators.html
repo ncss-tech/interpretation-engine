@@ -82,20 +82,29 @@
 
 
 <dt id="arg-resolution">resolution<a class="anchor" aria-label="anchor" href="#arg-resolution"></a></dt>
-<dd><p>Number of segments to calculate spline points for, which are then interpolated with <code><a href="https://rdrr.io/r/stats/splinefun.html" class="external-link">splinefun()</a></code>. Used only for <code>extractArbitraryCurveEval()</code>. Default <code>1000</code></p></dd>
+<dd><p>Number of segments to calculate spline points for, which
+are then interpolated with <code><a href="https://rdrr.io/r/stats/splinefun.html" class="external-link">splinefun()</a></code>. Used only for
+<code>extractArbitraryCurveEval()</code>. Default <code>1000</code></p></dd>
 
 
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
-<dd><p>Passed to <code><a href="https://rdrr.io/r/stats/splinefun.html" class="external-link">splinefun()</a></code>. Used only for <code>extractArbitraryCurveEval()</code>. Default <code>"natural"</code></p></dd>
+<dd><p>Passed to <code><a href="https://rdrr.io/r/stats/splinefun.html" class="external-link">splinefun()</a></code>. Used only for
+<code>extractArbitraryCurveEval()</code>. Default <code>"natural"</code></p></dd>
 
 
 <dt id="arg-bounded">bounded<a class="anchor" aria-label="anchor" href="#arg-bounded"></a></dt>
-<dd><p>Used only for <code>extractArbitraryCurveEval()</code>. Used to constrain spline results to <code>[0,1]</code>. Default <code>TRUE</code></p></dd>
+<dd><p>Used only for <code>extractArbitraryCurveEval()</code>. Used to constrain
+spline results to <code>[0,1]</code>. Default <code>TRUE</code></p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Generally the <code>xlim</code> argument is a numeric vector of length two that refers to the upper and lower boundaries of the domain (property value range) of interest. In the case of <code>extractTrapezoidEval()</code> <code>xlim</code> is a vector of length 4 used to specify the x-axis position of left base, two upper "plateau" boundaries, and right base. For arbitrary linear curves, the <code>xlim</code> vector may be any length.</p>
+    <p>Generally the <code>xlim</code> argument is a numeric vector of length two that
+refers to the upper and lower boundaries of the domain (property value
+range) of interest. In the case of <code>extractTrapezoidEval()</code> <code>xlim</code> is a
+vector of length 4 used to specify the x-axis position of left base, two
+upper "plateau" boundaries, and right base. For arbitrary linear curves,
+the <code>xlim</code> vector may be any length.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
