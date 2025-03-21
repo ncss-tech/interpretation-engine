@@ -7,18 +7,20 @@
 extractCrispExpression(x, invert = FALSE, asString = FALSE)
 }
 \arguments{
-\item{x}{evaluation XML content containing a CrispExpression}
+\item{x}{\emph{character}. Evaluation XML content containing a CrispExpression}
 
-\item{invert}{invert logic with \code{!}? Default: \code{FALSE}}
+\item{invert}{\emph{logical}. Invert logic with \code{!}? Default: \code{FALSE}}
 
-\item{asString}{return un-parsed function (for debugging/inspection) Default: \code{FALSE}}
+\item{asString}{\emph{logical}. Return un-parsed function (for
+debugging/inspection) Default: \code{FALSE}}
 }
 \value{
-a generated function of an input variable \code{x}
+\emph{function}. A generated function of an input variable \code{x}
 }
 \description{
 Extract Crisp Expression Logic as R function
 }
 \details{
-The generated function returns a logical value (converted to numeric) when the relevant property data are supplied.
+The generated function returns a logical value (converted to
+numeric) when the relevant property data are supplied.
 }

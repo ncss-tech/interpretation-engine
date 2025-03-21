@@ -16,12 +16,12 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Dylan Beaudette \email{dylan.beaudette@usda.gov}
+\strong{Maintainer}: Andrew Brown \email{andrew.g.brown@usda.gov}
 
 Authors:
 \itemize{
+  \item Dylan Beaudette \email{dylan.beaudette@usda.gov}
   \item Joseph Brehm \email{jrbrehm@nmsu.edu}
-  \item Andrew Brown \email{andrew.g.brown@usda.gov}
 }
 
 }

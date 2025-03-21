@@ -2,33 +2,27 @@
 % Please edit documentation in R/EvaluationCurves.R
 \name{extractEvalCurve}
 \alias{extractEvalCurve}
-\title{Extract an Evaluation Curve}
+\title{Extract an Evaluation Function}
 \usage{
-extractEvalCurve(
-  evalrec,
-  xlim = NULL,
-  as.list = FALSE,
-  resolution = NULL,
-  sig.scale = NULL
-)
+extractEvalCurve(evalrec, xlim = NULL, as.list = FALSE)
 }
 \arguments{
-\item{evalrec}{data.frame. A single evaluation record from \code{NASIS_evaluations} data set.}
+\item{evalrec}{\emph{data.frame}. A single evaluation record from
+\code{NASIS_evaluations} data set.}
 
-\item{xlim}{numeric. Length 2. Minimum and maximum values to override internal domain range.}
+\item{xlim}{\emph{numeric}. Length 2. Minimum and maximum values to override
+internal domain range.}
 
-\item{as.list}{Return list with function and domain limits? Default \code{FALSE} returns just the
-function.}
-
-\item{resolution}{Deprecated. Not used.}
-
-\item{sig.scale}{Deprecated. Not used.}
+\item{as.list}{\emph{logical}. Return  a \emph{list} with function and domain limits?
+Default \code{FALSE} returns just the function.}
 }
 \value{
-function that can evaluate input data and return evaluation values. When \code{as.list=TRUE} a
-list object containing elements \code{FUN} (the function) and \code{domain} (a numeric vector containing
-domain minimum and maximum)
+An R function that takes arbitrary input data and returns evaluation
+values. When \code{as.list=TRUE} a list object containing elements \code{FUN} (the
+function) and \code{domain} (a numeric vector containing domain minimum and
+maximum)
 }
 \description{
-Extract an Evaluation Curve
+Extract an R function from a NASIS evaluation for to evaluate curves and
+expressions.
 }

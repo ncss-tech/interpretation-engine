@@ -13,8 +13,10 @@ extractIsNull(invert = FALSE)
 a generated function of an input variable \code{x}
 }
 \description{
-Default behavior of IsNull evaluation returns value > \code{0} (1) if \code{NULL}, inverted behavior returns \code{0} if \code{NULL}
+Default behavior of IsNull evaluation returns value > \code{0} (1) if \code{NULL},
+inverted behavior returns \code{0} if \code{NULL}
 }
 \details{
-The generated function returns a logical value (converted to numeric) when the relevant property data are supplied.
+The generated function returns a logical value (converted to
+numeric) when the relevant property data are supplied.
 }
