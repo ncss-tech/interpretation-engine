@@ -1,160 +1,137 @@
-# This file contains functions for extracting interpolation functions for different Evaluation curves
+# This file contains functions for extracting interpolation functions for
+# different Evaluation curves
 
-## TODO: return function and critical points as a list
+# Extracting Evaluation Curves ----
 
-# Extracting evaluation curves ----
-
-#' Extract an evaluation curve
+#' Extract an Evaluation Function
 #'
-#' @param evalrec Evaluation record
-#' @param xlim numeric vector, min and max values of fuzzy space
-#' @param resolution not used
-#' @param sig.scale not used
+#' Extract an R function from a NASIS evaluation for to evaluate curves and
+#' expressions.
 #' 
-#' @return evaluation curve values
+#' @param evalrec _data.frame_. A single evaluation record from
+#'   `NASIS_evaluations` data set.
+#' @param xlim _numeric_. Length 2. Minimum and maximum values to override
+#'   internal domain range.
+#' @param as.list _logical_. Return  a _list_ with function and domain limits?
+#'   Default `FALSE` returns just the function.
+#' @return An R function that takes arbitrary input data and returns evaluation
+#'   values. When `as.list=TRUE` a list object containing elements `FUN` (the
+#'   function) and `domain` (a numeric vector containing domain minimum and
+#'   maximum)
 #' @export
-extractEvalCurve <- function(evalrec, xlim = NULL, resolution = NULL, sig.scale = NULL) {
-  if (!missing(resolution))
-    .Deprecated(msg = "extractEvalCurve `resolution` argument is no longer used") 
-  
-  if (!missing(sig.scale))
-    .Deprecated(msg = "extractEvalCurve `sig.scale` argument is no longer used")
-  
+extractEvalCurve <- function(evalrec,
+                             xlim = NULL,
+                             as.list = FALSE) {
   # type
   et <- evalrec$evaluationtype
   
   # invert
   invert.eval <- evalrec$invertevaluationresults
   
-  
   # use the defined min / max values, if available
-  if(is.null(xlim)) {
-    # these are not always defined!
+  if (is.null(xlim)) {
+    # these are not always defined
     domain.min <- evalrec$propmin
     domain.max <- evalrec$propmax
     
     # if missing, encode as NULL for .linearInterpolator()
-    if(is.na(domain.min) || is.na(domain.max)) {
+    if (is.na(domain.min) || is.na(domain.max)) {
       domain.min <- NULL
       domain.max <- NULL
     }
   } else {
-    # override fuzzy domain with xlim argument
+    # override internal domain with xlim argument
     domain.min <- xlim[1]
     domain.max <- xlim[2]
   }
   
-  # spline interpolation
-  if (et  == 'ArbitraryCurve') {
+  if (et == 'ArbitraryCurve') {
+    # spline interpolation
     res <- extractArbitraryCurveEval(evalrec$eval, invert = invert.eval)
-    return(res)
-  }
-  
-  # linear interpolation
-  if (et  == 'ArbitraryLinear') {
+  } else if (et == 'ArbitraryLinear') {
+    # linear interpolation
     res <- extractArbitraryLinearCurveEval(evalrec$eval, invert = invert.eval)
-    return(res)
-  }
-  
-  if (et == 'Sigmoid') {
+  } else if (et == 'Sigmoid') {
     # sig.scale is deprecated, scaling can be determined from width of interval
     res <- extractSigmoidCurveEval(evalrec$eval, 
                                    xlim = c(domain.min, domain.max),
                                    invert = invert.eval)
-    return(res)
-  }
-  
-  if (et == 'Crisp') {
-    
+  } else if (et == 'Crisp') {
     # some crisp are logical expressions that don't utilize thresholds of domain
     if (is.null(domain.min) | is.null(domain.max)) {
       res <- extractCrispExpression(evalrec$eval, invert = invert.eval)
-      
-      # message("Evaluating CrispExpression (", attr(res, "CrispExpression"),") has only experimental support")
-      
-      return(res)
+    } else {
+      res <- extractCrispCurveEval(
+        evalrec$eval,
+        xlim = c(domain.min, domain.max),
+        invert = invert.eval
+      )
     }
-    
-    res <- extractCrispCurveEval(
-      evalrec$eval,
-      xlim = c(domain.min, domain.max),
-      invert = invert.eval
-    )
-    return(res)
-  }
-  
-  if (et == 'Linear') {
+  } else if (et == 'Linear') {
     res <- extractLinearCurveEval(evalrec$eval, invert = invert.eval) 
-    return(res)
-  }
-  
-  if (et == 'Trapezoid') {
+  } else if (et == 'Trapezoid') {
     res <- extractTrapezoidEval(evalrec$eval,
                                 xlim = c(domain.min, domain.max),
                                 invert = invert.eval)
-    return(res)
-  }
-  
-  if (et == "Beta") {
+  } else if (et == "Beta") {
     res <- extractBetaCurveEval(
       evalrec$eval,
       xlim = c(domain.min, domain.max),
       invert = invert.eval
     )
-    return(res)
-  }
-  
-  if (et == "Gauss") {
+  } else if (et == "Gauss") {
     res <- extractGaussCurveEval(
       evalrec$eval,
       xlim = c(domain.min, domain.max),
       invert = invert.eval
     )
-    return(res)
-    
-  }
-  
-  if (et == "Triangle") {
+  } else if (et == "Triangle") {
     res <- extractTriangleCurveEval(
       evalrec$eval,
       xlim = c(domain.min, domain.max),
       invert = invert.eval
     )
-    return(res)
-  }
-  
-  if (et == "PI") {
+  } else if (et == "PI") {
     res <- extractPICurveEval(
       evalrec$eval,
       xlim = c(domain.min, domain.max),
       invert = invert.eval
     )
-    return(res)
-  }
-  
-  if (et == "IsNull") {
+  } else if (et == "IsNull") {
     res <- extractIsNull(invert = invert.eval)
+  } else {
+    warning("extractEvalCurve: curve type (", et, ") not supported", call. = FALSE)
+    
+    res <- function(evalrec) {
+      return(NULL)
+    }
+  }
+  if (isFALSE(as.list)) {
     return(res)
   }
-  
-  warning("extractEvalCurve: curve type (", et, ") not supported", call. = FALSE)
-  
-  return(function(evalrec) {
-    return(NULL)
-  })
+  list(FUN = res, domain = c(domain.min, domain.max))
 }
 
 #' Function Generators for Interpolating Evaluation Curves
-#' 
+#'
 #' @param x evaluation XML content
 #' @param xlim domain points (see details)
 #' @param invert invert rating values? Default: `FALSE`
-#' @param resolution Number of segments to calculate spline points for, which are then interpolated with `splinefun()`. Used only for `extractArbitraryCurveEval()`. Default `1000`
-#' @param method Passed to `splinefun()`. Used only for `extractArbitraryCurveEval()`. Default `"natural"`
-#' @param bounded Used only for `extractArbitraryCurveEval()`. Used to constrain spline results to `[0,1]`. Default `TRUE`
-#' 
-#' @details Generally the `xlim` argument is a numeric vector of length two that refers to the upper and lower boundaries of the domain (property value range) of interest. In the case of `extractTrapezoidEval()` `xlim` is a vector of length 4 used to specify the x-axis position of left base, two upper "plateau" boundaries, and right base. For arbitrary linear curves, the `xlim` vector may be any length.
-#' 
+#' @param resolution Number of segments to calculate spline points for, which
+#'   are then interpolated with `splinefun()`. Used only for
+#'   `extractArbitraryCurveEval()`. Default `1000`
+#' @param method Passed to `splinefun()`. Used only for
+#'   `extractArbitraryCurveEval()`. Default `"natural"`
+#' @param bounded Used only for `extractArbitraryCurveEval()`. Used to constrain
+#'   spline results to `[0,1]`. Default `TRUE`
+#'
+#' @details Generally the `xlim` argument is a numeric vector of length two that
+#'   refers to the upper and lower boundaries of the domain (property value
+#'   range) of interest. In the case of `extractTrapezoidEval()` `xlim` is a
+#'   vector of length 4 used to specify the x-axis position of left base, two
+#'   upper "plateau" boundaries, and right base. For arbitrary linear curves,
+#'   the `xlim` vector may be any length.
+#'
 #' @export
 #' @rdname EvaluationCurveInterpolators
 extractTrapezoidEval <- function(x, xlim, invert = FALSE) {
@@ -168,7 +145,6 @@ extractArbitraryCurveEval <- function(x,
                                       method = 'natural',
                                       invert = FALSE, 
                                       bounded = TRUE) {
-  
   .CVIRSplineInterpolator(x,
                           resolution = resolution,
                           method = method,
@@ -227,12 +203,14 @@ extractPICurveEval <- function(x, xlim, invert = FALSE) {
 
 #' Extract Crisp Expression Logic as R function
 #'
-#' @param x evaluation XML content containing a CrispExpression
-#' @param invert invert logic with `!`? Default: `FALSE`
-#' @param asString return un-parsed function (for debugging/inspection) Default: `FALSE`
+#' @param x _character_. Evaluation XML content containing a CrispExpression
+#' @param invert _logical_. Invert logic with `!`? Default: `FALSE`
+#' @param asString _logical_. Return un-parsed function (for
+#'   debugging/inspection) Default: `FALSE`
 #'
-#' @return a generated function of an input variable `x` 
-#' @details The generated function returns a logical value (converted to numeric) when the relevant property data are supplied.
+#' @return _function_. A generated function of an input variable `x`
+#' @details The generated function returns a logical value (converted to
+#'   numeric) when the relevant property data are supplied.
 #' @export
 extractCrispExpression <- function(x, invert = FALSE, asString = FALSE) {
   # this supports arbitrary crisp expressions (i.e. expressions not about domain)
@@ -242,17 +220,18 @@ extractCrispExpression <- function(x, invert = FALSE, asString = FALSE) {
   .crispFunctionGenerator(expr, invert = invert, asString = asString)
 }
 
-
 #' Extract IsNull Evaluation Logic as R function
-#' 
-#' Default behavior of IsNull evaluation returns value > `0` (1) if `NULL`, inverted behavior returns `0` if `NULL`
-#' 
+#'
+#' Default behavior of IsNull evaluation returns value > `0` (1) if `NULL`,
+#' inverted behavior returns `0` if `NULL`
+#'
 #' @param invert invert logic with `!`? Default: `FALSE`
 #'
-#' @return a generated function of an input variable `x` 
-#' 
-#' @details The generated function returns a logical value (converted to numeric) when the relevant property data are supplied.
-#' 
+#' @return a generated function of an input variable `x`
+#'
+#' @details The generated function returns a logical value (converted to
+#'   numeric) when the relevant property data are supplied.
+#'
 #' @export
 extractIsNull <- function(invert = FALSE) {
   if (invert) {

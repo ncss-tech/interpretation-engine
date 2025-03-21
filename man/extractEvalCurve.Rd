@@ -2,22 +2,33 @@
 % Please edit documentation in R/EvaluationCurves.R
 \name{extractEvalCurve}
 \alias{extractEvalCurve}
-\title{Extract an evaluation curve}
+\title{Extract an Evaluation Curve}
 \usage{
-extractEvalCurve(evalrec, xlim = NULL, resolution = NULL, sig.scale = NULL)
+extractEvalCurve(
+  evalrec,
+  xlim = NULL,
+  as.list = FALSE,
+  resolution = NULL,
+  sig.scale = NULL
+)
 }
 \arguments{
-\item{evalrec}{Evaluation record}
+\item{evalrec}{data.frame. A single evaluation record from \code{NASIS_evaluations} data set.}
 
-\item{xlim}{numeric vector, min and max values of fuzzy space}
+\item{xlim}{numeric. Length 2. Minimum and maximum values to override internal domain range.}
 
-\item{resolution}{not used}
+\item{as.list}{Return list with function and domain limits? Default \code{FALSE} returns just the
+function.}
 
-\item{sig.scale}{not used}
+\item{resolution}{Deprecated. Not used.}
+
+\item{sig.scale}{Deprecated. Not used.}
 }
 \value{
-evaluation curve values
+function that can evaluate input data and return evaluation values. When \code{as.list=TRUE} a
+list object containing elements \code{FUN} (the function) and \code{domain} (a numeric vector containing
+domain minimum and maximum)
 }
 \description{
-Extract an evaluation curve
+Extract an Evaluation Curve
 }
