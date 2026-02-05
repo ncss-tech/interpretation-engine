@@ -1,11 +1,15 @@
 # hedge and operator functions
 
-# NULL hedge: if NULL data in `x` then `null.value`, else `0`
+# NULL hedge: if NULL data in `x` then `null.value`, else `x` (or not.null.value when specified)
 #' @importFrom stats na.omit
-.NULL_HEDGE <- function(x, null.value = NULL, not.null.value = 0, na.rm = FALSE) {
+.NULL_HEDGE <- function(x, null.value = NULL, not.null.value = NULL, na.rm = FALSE) {
   if (na.rm) x <- na.omit(x)
   if (!is.list(x)) {
-    x <- ifelse(is.null(x) | (is.na(x) & !is.nan(x)), null.value, not.null.value)
+    ldx <- is.null(x) | (is.na(x) & !is.nan(x))
+    x[ldx] <- null.value
+    if (!is.null(not.null.value)) {
+      x[!ldx] <- not.null.value
+    }
   }
   x
 }
