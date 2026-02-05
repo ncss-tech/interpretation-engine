@@ -60,13 +60,41 @@ The following images show the output of an evaluation function for slope
     eval <- subset(NASIS_evaluations, evalname == "*Storie Factor C Slope 0 to 100%")
     plotEvaluation(eval, xlim = c(0, 100))
 
-<img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-2-1.png" alt="" width="100%" />
 
 
     # zoom in on  custom shape in [0, 8]% slope range
     plotEvaluation(eval, xlim = c(0,8))
 
-<img src="man/figures/README-unnamed-chunk-2-2.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-2-2.png" alt="" width="100%" />
+
+## Run a rule tree with custom data
+
+The `interpret()` function takes a data.frame or SpatRaster where column
+or variable names correspond to input property names. Property names can
+be extracted using `getPropertySet()` and then made into compatible
+names using the base R function `make.names()`.
+
+Here we pick a simple rule that utilizes only one property and
+evaluation (“Erodibility Factor Maximum”). The numeric input to the
+evaluation function is an erodibility (“K”) factor ranging from 0 to 1.
+
+    # parse rule and properties
+    r <- initRuleset("Erodibility Factor Maximum")
+    p <- getPropertySet(r)
+
+    # prepare input data
+    kf <- seq(0, 1, 0.01)
+    input <- data.frame(kf = kf)
+    colnames(input) <- make.names(p$propname)
+
+    # run interpretation
+    output <- interpret(r, input)
+
+    # visualize results
+    plot(output$rating ~ input$SOIL.EROSION.FACTOR.MAXIMUM.1.99)
+
+<img src="man/figures/README-unnamed-chunk-3-1.png" alt="" width="100%" />
 
 ### Rule Trees
 
@@ -90,7 +118,6 @@ define a “primary rule” or interpretation.
     #> 1                                          DRYNESS INDEX   15302
     #> 2             WTD_AVG GYPSUM 0-50cm OR ABOVE RESTRICTION   15300
     #> 3 WTD_AVG SAND CONTENT 0-50cm OR ABOVE RESTRICTION, NO O   15301
-
 
     # view rule tree
     data.tree::ToDataFrameTree(r, "Type", "Value", "RefId", "rule_refid")
@@ -221,7 +248,6 @@ properties:
     #> 131                             Erosion Class in component table   12377
     #> 135      *Storie near surface wetness rv depth in growing season   12584
     #> 136                             *Storie temperature regime score   42014
-
 
     # view rule tree
     data.tree::ToDataFrameTree(r, "Type", "Value", "RefId", "rule_refid")
@@ -731,34 +757,6 @@ properties:
     #> 250           <NA>  <NA> 12954       <NA>
     #> 251           <NA>  <NA> 49449      49449
     #> 252           <NA>  <NA> 50482       <NA>
-
-## Run a rule tree with custom data
-
-The `interpret()` function takes a data.frame or SpatRaster where column
-or variable names correspond to input property names. Property names can
-be extracted using `getPropertySet()` and then made into compatible
-names using the base R function `make.names()`.
-
-Here we pick a simple rule that utilizes only one property and
-evaluation (“Erodibility Factor Maximum”). The numeric input to the
-evaluation function is an erodibility (“K”) factor ranging from 0 to 1.
-
-    # parse rule and properties
-    r <- initRuleset("Erodibility Factor Maximum")
-    p <- getPropertySet(r)
-
-    # prepare input data
-    kf <- seq(0, 1, 0.01)
-    input <- data.frame(kf = kf)
-    colnames(input) <- make.names(p$propname)
-
-    # run interpretation
-    output <- interpret(r, input)
-
-    # visualize results
-    plot(output$rating ~ input$SOIL.EROSION.FACTOR.MAXIMUM.1.99)
-
-<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
 
 ## Resources
 

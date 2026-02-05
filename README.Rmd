@@ -61,6 +61,29 @@ plotEvaluation(eval, xlim = c(0, 100))
 plotEvaluation(eval, xlim = c(0,8))
 ```
 
+## Run a rule tree with custom data
+
+The `interpret()` function takes a data.frame or SpatRaster where column or variable names correspond to input property names. Property names can be extracted using `getPropertySet()` and then made into compatible names using the base R function `make.names()`.
+
+Here we pick a simple rule that utilizes only one property and evaluation ("Erodibility Factor Maximum"). The numeric input to the evaluation function is an erodibility ("K") factor ranging from 0 to 1.
+
+```{r}
+# parse rule and properties
+r <- initRuleset("Erodibility Factor Maximum")
+p <- getPropertySet(r)
+
+# prepare input data
+kf <- seq(0, 1, 0.01)
+input <- data.frame(kf = kf)
+colnames(input) <- make.names(p$propname)
+
+# run interpretation
+output <- interpret(r, input)
+
+# visualize results
+plot(output$rating ~ input$SOIL.EROSION.FACTOR.MAXIMUM.1.99)
+```
+
 ### Rule Trees
 
 The following examples generate data.frame representation of the `data.tree` objects in terms of an input property list, and the hierarchy of rules, operators, hedges, evaluations and properties that define a "primary rule" or interpretation.
@@ -93,28 +116,6 @@ getPropertySet(r)
 data.tree::ToDataFrameTree(r, "Type", "Value", "RefId", "rule_refid")
 ```
 
-## Run a rule tree with custom data
-
-The `interpret()` function takes a data.frame or SpatRaster where column or variable names correspond to input property names. Property names can be extracted using `getPropertySet()` and then made into compatible names using the base R function `make.names()`.
-
-Here we pick a simple rule that utilizes only one property and evaluation ("Erodibility Factor Maximum"). The numeric input to the evaluation function is an erodibility ("K") factor ranging from 0 to 1.
-
-```{r}
-# parse rule and properties
-r <- initRuleset("Erodibility Factor Maximum")
-p <- getPropertySet(r)
-
-# prepare input data
-kf <- seq(0, 1, 0.01)
-input <- data.frame(kf = kf)
-colnames(input) <- make.names(p$propname)
-
-# run interpretation
-output <- interpret(r, input)
-
-# visualize results
-plot(output$rating ~ input$SOIL.EROSION.FACTOR.MAXIMUM.1.99)
-```
 
 ## Resources
 1. MO-6: INTERP-Rule Tree Diagram Chart (Interactive) v1.1+
